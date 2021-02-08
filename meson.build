@@ -1,6 +1,6 @@
 # This file is part of cpp-d4.
 #
-# Copyright (C) 2019-2020 Sebastian Ehlert
+# Copyright (C) 2019-2021 Sebastian Ehlert
 #
 # cpp-d4 is free software: you can redistribute it and/or modify it under
 # the terms of the GNU Lesser General Public License as published by
@@ -18,8 +18,8 @@
 project(
   'cpp-d4',
   'cpp',
-  version: '1.0',
-  license: 'LGPL3',
+  version: '1.1',
+  license: 'LGPL3-or-later',
   meson_version: '>=0.45',
 )
 
@@ -62,13 +62,11 @@ install_headers(
   'include/dftd_geometry.h',
 )
 
-cpp_d4_dep = [
-  declare_dependency(
-    link_with: cpp_d4_lib,
-    include_directories: cpp_d4_inc,
-  ),
-  deps,
-]
+cpp_d4_dep = declare_dependency(
+  link_with: cpp_d4_lib,
+  include_directories: cpp_d4_inc,
+  dependencies: deps,
+)
 
 executable(
   meson.project_name(),
