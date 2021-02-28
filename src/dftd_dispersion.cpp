@@ -1,6 +1,6 @@
 /* This file is part of cpp-d4.
  *
- * Copyright (C) 2019-2020 Sebastian Ehlert
+ * Copyright (C) 2019-2021 Sebastian Ehlert
  *
  * cpp-d4 is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by
@@ -107,10 +107,26 @@ int d4dim(TMolecule& mol) {
   return ndim;
 }
 
-int d4(TMolecule& mol, int ndim, double wf, TVector<double>& cn,
+int d4(TMolecule& mol, int ndim, double wf, double g_a, double g_c, TVector<double>& cn,
        TVector<double>& gw, TMatrix<double>& c6ref) {
   int iat = 0, jat = 0;
-  double norm = 0.0, twf = 0.0, c6 = 0.0, maxcn = 0.0;
+  double norm = 0.0, twf = 0.0, c6 = 0.0, maxcn = 0.0, tmp = 0.0;
+
+  TMatrix<double> alpha;
+  alpha.New(mol.NAtoms, 23*7);
+  for (int i = 0; i != mol.NAtoms; i++) {
+    iat = mol.at(i);
+    for (int ii = 0; ii != refn[iat]; ii++) {
+      int is = refsys[iat][ii];
+      double iz = zeff[is];
+      for (int k = 0; k != 23; k++) {
+        tmp = secscale[is] * secalpha[is][k]
+          * zeta(g_a, gam[is] * g_c, iz, refsq[iat][ii] + iz);
+        alpha(i, 23*ii + k) = std::max(0.0, refascale[iat][ii] * (refalpha[iat][23*ii + k]
+              - refscount[iat][ii] * tmp));
+      }
+    }
+  }
 
   for (int i = 0, k = 0; i != mol.NAtoms; i++) {
     iat = mol.at(i);
@@ -140,13 +156,15 @@ int d4(TMolecule& mol, int ndim, double wf, TVector<double>& cn,
       for (int j = 0, l = 0; j != i; j++) {
         jat = mol.at(j);
         for (int jj = 0; jj != refn[jat]; jj++, l++) {
-          c6 = thopi * trapzd(&refal[iat][23 * ii], &refal[jat][23 * jj]);
+          c6 = thopi * trapzd(&alpha[i][23 * ii], &alpha[j][23 * jj]);
           c6ref(l, k) = c6;
           c6ref(k, l) = c6;
         }
       }
     }
   }
+  alpha.Delete();
+
   return EXIT_SUCCESS;
 }
 

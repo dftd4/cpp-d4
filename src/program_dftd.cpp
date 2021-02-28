@@ -1,6 +1,6 @@
 /* This file is part of cpp-d4.
  *
- * Copyright (C) 2019-2020 Sebastian Ehlert
+ * Copyright (C) 2019-2021 Sebastian Ehlert
  *
  * cpp-d4 is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by
@@ -94,7 +94,7 @@ int DFTVDW_D4(TMolecule &mol, dparam &par, int &charge, double &energy,
   // get the D4 C6 coefficients
   info = dncoord_d4(mol, dist, covcn, dcovcndr);
   if (!info == EXIT_SUCCESS) return info;
-  info = d4(mol, ndim, wf, covcn, gweights, c6ref);
+  info = d4(mol, ndim, wf, g_a, g_c, covcn, gweights, c6ref);
   if (!info == EXIT_SUCCESS) return info;
 
   if (!lgrad) {
