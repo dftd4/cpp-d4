@@ -27,7 +27,7 @@ cxx = meson.get_compiler('cpp')
 
 deps = []
 foreach lib: ['cblas', 'lapacke']
-  this_dep = dependency(lib)
+  this_dep = dependency(lib, required: false)
   if not this_dep.found()
     this_dep = cxx.find_library(lib)
   endif
