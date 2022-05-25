@@ -1,6 +1,6 @@
 /* This file is part of cpp-d4.
  *
- * Copyright (C) 2019-2020 Sebastian Ehlert
+ * Copyright (C) 2019-2021 Sebastian Ehlert
  *
  * cpp-d4 is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by
@@ -39,8 +39,8 @@ class dparam {
 
 extern int d4dim(TMolecule& mol);
 
-extern int d4(TMolecule& mol, int ndim, double wf, TVector<double>& cn,
-              TVector<double>& gw, TMatrix<double>& c6ref);
+extern int d4(TMolecule& mol, int ndim, double wf, double g_a, double g_c,
+              TVector<double>& cn, TVector<double>& gw, TMatrix<double>& c6ref);
 
 extern int edisp(TMolecule& mol, TMatrix<double>& dist, int ndim,
                  TVector<double>& q, dparam& par, double g_a, double g_c,
