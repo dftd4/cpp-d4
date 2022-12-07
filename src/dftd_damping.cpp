@@ -149,7 +149,19 @@ enum dfunc {
   bop = 119,
   mpw1b95 = 120,
   revpbe0dh = 121,
-  revtpss0 = 122
+  revtpss0 = 122,
+  revdsdpbep86 = 123,
+  revdsdpbe = 124,
+  revdsdblyp = 125,
+  revdodpbep86 = 126,
+  am05 = 127,
+  hse12 = 128,
+  hse12s = 129,
+  rscan = 130,
+  r2scan = 131,
+  r2scanh = 132,
+  r2scan0 = 133,
+  r2scan50 = 134
 };
 
 dfunc get_dfunc(std::string name) {
@@ -338,6 +350,18 @@ dfunc get_dfunc(std::string name) {
       {"revpbe0dh", revpbe0dh},
       {"revpbe0-dh", revpbe0dh},
       {"revtpss0", revtpss0},
+      {"revdodpbep86", revdodpbep86},
+      {"revdsdpbep86", revdsdpbep86},
+      {"revdsdpbe", revdsdpbe},
+      {"revdsdblyp", revdsdblyp},
+      {"am05", am05},
+      {"hse12", hse12},
+      {"hse12s", hse12s},
+      {"rscan", rscan},
+      {"r2scan", r2scan},
+      {"r2scanh", r2scanh},
+      {"r2scan0", r2scan0},
+      {"r2scan50", r2scan50}
   };
 
   std::string func = name;
@@ -552,6 +576,36 @@ dftd::dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
       a2 = 3.35743605;
       break;
     // Fitset: MD= -0.02597 MAD= 0.34732 RMSD= 0.49719
+    case(hse03): // (SAW211107)
+      s6 = 1.0;
+      s8 = 1.19812280;
+      a1 = 0.38662939;
+      a2 = 5.22925796;
+      break;
+    case(hse06): // (SAW211107)
+      s6 = 1.0;
+      s8 = 1.19528249;
+      a1 = 0.38663183;
+      a2 = 5.19133469;
+      break;
+    case(hse12): // (SAW211107)
+      s6 = 1.0;
+      s8 = 1.23500792;
+      a1 = 0.39226921;
+      a2 = 5.22036266;
+      break;
+    case(hse12s): // (SAW211107)
+      s6 = 1.0;
+      s8 = 1.23767762;
+      a1 = 0.39989137;
+      a2 = 5.34809245;
+      break;
+    case(hsesol): // (SAW211107)
+      s6 = 1.0;
+      s8 = 1.82207807;
+      a1 = 0.45646268;
+      a2 = 5.59662251;
+      break;
     case lb94:
       s6 = 1.0000;
       s8 = 2.59538499;
@@ -615,6 +669,13 @@ dftd::dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
       a2 = 6.35314182;
       break;
     // Fitset: MD= 0.08395 MAD= 0.24888 RMSD= 0.34879
+    case(mn12sx): // (SAW211021)
+      s6 = 1.0000;
+      s8 = 0.85964873;
+      a1 = 0.62662681;
+      a2 = 5.62088906;
+      break;
+    // Fitset: MD= 0.16131 MAD= 0.34142 RMSD= 0.47113
     case mpw1b95:
       s6 = 1.0000;
       s8 = 0.50093024;
@@ -713,6 +774,13 @@ dftd::dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
       a2 = 4.80688534;
       break;
     // Fitset: MD= -0.20544 MAD= 0.33635 RMSD= 0.51168
+    case(pbesol): // (SAW211021)
+      s6 = 1.0000;
+      s8 = 1.71885698;
+      a1 = 0.47901421;
+      a2 = 5.96771589;
+      break;
+    // Fitset: MD= -0.28899 MAD= 0.52215 RMSD= 0.93584
     case pw1pw:
       s6 = 1.0000;
       s8 = 0.96850170;
@@ -762,6 +830,30 @@ dftd::dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
       a2 = 6.05861168;
       break;
     // Fitset: MD= -0.42482 MAD= 0.62607 RMSD= 0.91840
+    case(revdsdpbep86):
+      s6 = 0.5132;
+      s8 = 0.00000000;
+      a1 = 0.44000000;
+      a2 = 3.60000000;
+      break;
+    case(p_revdsdpbe):
+      s6 = 0.6706;
+      s8 = 0.00000000;
+      a1 = 0.40000000;
+      a2 = 3.60000000;
+      break;
+    case(p_revdsdblyp):
+      s6 = 0.6141;
+      s8 = 0.00000000;
+      a1 = 0.38000000;
+      a2 = 3.52000000;
+      break;
+    case(p_revdodpbep86):
+      s6 = 0.5552;
+      s8 = 0.00000000;
+      a1 = 0.44000000;
+      a2 = 3.60000000;
+      break;
     case revpbe0:
       s6 = 1.0000;
       s8 = 1.57185414;
@@ -830,6 +922,36 @@ dftd::dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
       s8 = 1.46126056;
       a1 = 0.62930855;
       a2 = 6.31284039;
+      break;
+    case(rscan): // (10.1063/5.0041008)
+      s6 = 1.0000; 
+      s8 = 0.87728975;
+      a1 = 0.49116966;
+      a2 = 5.75859346;
+      break;
+   case(r2scan): // (10.1063/5.0041008)
+      s6 = 1.0000;
+      s8 = 0.60187490;
+      a1 = 0.51559235;
+      a2 = 5.77342911;
+      break;
+   case(r2scanh):
+      s6 = 1.0;
+      s8 = 0.8324;
+      a1 = 0.4944;
+      a2 = 5.9019;
+      break;
+   case(r2scan0):
+      s6 = 1.0;
+      s8 = 0.8992;
+      a1 = 0.4778;
+      a2 = 5.8779;
+      break;
+   case(r2scan50):
+      s6 = 1.0;
+      s8 = 1.0471;
+      a1 = 0.4574;
+      a2 = 5.8969;
       break;
     // Fitset: MD= -0.13170 MAD= 0.28640 RMSD= 0.51183
     case tpss0:
@@ -1425,7 +1547,7 @@ dftd::dparam get_d4eeqbjmbd_2019_parameter(dfunc num) {
       a1 = 0.10026585;
       a2 = 5.37506460;
       break;
-      // Fitset: MD= -0.06152 MAD= 0.27318 RMSD= 0.38360
+    // Fitset: MD= -0.06152 MAD= 0.27318 RMSD= 0.38360
   }
 
   par.s6 = s6;
