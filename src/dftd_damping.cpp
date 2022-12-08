@@ -836,19 +836,19 @@ dftd::dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
       a1 = 0.44000000;
       a2 = 3.60000000;
       break;
-    case(p_revdsdpbe):
+    case(revdsdpbe):
       s6 = 0.6706;
       s8 = 0.00000000;
       a1 = 0.40000000;
       a2 = 3.60000000;
       break;
-    case(p_revdsdblyp):
+    case(revdsdblyp):
       s6 = 0.6141;
       s8 = 0.00000000;
       a1 = 0.38000000;
       a2 = 3.52000000;
       break;
-    case(p_revdodpbep86):
+    case(revdodpbep86):
       s6 = 0.5552;
       s8 = 0.00000000;
       a1 = 0.44000000;
