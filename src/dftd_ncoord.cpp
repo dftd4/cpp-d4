@@ -34,12 +34,12 @@
 namespace dftd {
 
 // convert bohr (a.u.) to Ångström and back
-static const double autoaa = 0.52917726;
+static const double autoaa = 0.52917721090449243;
 static const double aatoau = 1.0 / autoaa;
 
 /**
- * covalent radii (taken from Pyykko and Atsumi, Chem. Eur. J. 15, 2009,
- * 188-197), values for metals decreased by 10 %
+ * Covalent radii (taken from Pyykko and Atsumi, Chem. Eur. J. 15, 2009,
+ * 188-197), values for metals decreased by 10 %.
  * 
  * These values are actually never used in the code.
  * Only the scaled values below are used (`rad`).
@@ -66,7 +66,10 @@ static const double covalent_rad_d3[119]{ 0.0,
     1.22, 1.29, 1.46, 1.58, 1.48, 1.41                           //  Nh-Og
 };
 
-// D3 covalent radii used to construct the coordination number
+/**
+ * D3 covalent radii used to construct the coordination number.
+ * rad = covalent_rad_d3 * 4.0/3.0 * aatoau
+ */
 static const double rad[119]{ 0.0,
     0.8062831465047213,     1.1590320231005369,     3.0235617993927044,
     2.3684567428576182,     1.9401188212769855,     1.8897261246204402,
@@ -139,6 +142,7 @@ static const double k4 = 4.10451;
 static const double k5 = 19.08857;
 static const double k6 = 2 * pow(11.28174, 2);
 static const double hlfosqrtpi = 1.0 / 1.77245385091;
+static const double cn_max = 8.0;
 
 
 int calc_distances(TMolecule& mol, TMatrix<double>& dist) {
@@ -195,7 +199,7 @@ int dncoord_d4(TMolecule& mol, TMatrix<double>& dist, TVector<double>& cn,
   for (int i = 0; i != mol.NAtoms; i++) {
     izp = mol.at(i);
     for (int j = 0; j != i; j++) {
-      jzp = mol.at(i);
+      jzp = mol.at(j);
 
       r = dist(i, j);
       rx = (mol.xyz(j, 0) - mol.xyz(i, 0)) / r;
@@ -204,7 +208,7 @@ int dncoord_d4(TMolecule& mol, TMatrix<double>& dist, TVector<double>& cn,
 
       rcovij = rad[izp] + rad[jzp];
       rr = r / rcovij;
-      den = k4 * std::exp(-pow((abs(en[izp] - en[jzp]) + k5), 2) / k6);
+      den = k4 * std::exp(-pow((fabs(en[izp] - en[jzp]) + k5), 2) / k6);
       countf = den * erf_count(kn, rr);
       cn(i) += countf;
       cn(j) += countf;
@@ -282,12 +286,18 @@ int dncoord_erf(TMolecule& mol, TMatrix<double>& dist, TVector<double>& cn,
       dcndr(i, 3 * i + 2) += -dcountf * rz;
     }
   }
+
+  // Cutoff function for large coordination numbers
+  for (int i = 0; i != mol.NAtoms; i++) {
+    cn(i) = log(1.0 + exp(cn_max)) - log(1.0 + exp(cn_max - cn(i)));
+  }
+
   return EXIT_SUCCESS;
 }
 
 
 double erf_count(double k, double rr) {
-  return 0.5 * (1.0 + std::erf(-k * (rr - 1.0)))
+  return 0.5 * (1.0 + std::erf(-k * (rr - 1.0)));
 }
 
 
