@@ -28,9 +28,9 @@
 namespace dftd {
 
 extern int eeq_chrgeq(TMolecule& mol, int& charge, TMatrix<double>& dist,
-                      TVector<double>& cn, TMatrix<double>& dcndr,
-                      TVector<double>& q, TMatrix<double>& dqdr, double& energy,
-                      TMatrix<double>& gradient, bool lverbose = false,
-                      bool lgrad = false, bool lcpq = false);
+                      TVector<double>& cn, TVector<double>& q, double& energy,
+                      TMatrix<double>& dcndr, TMatrix<double>& dqdr, 
+                      TMatrix<double>& gradient, bool lgrad = false,
+                      bool lverbose = false, bool lcpq = false);
 
 }

@@ -38,28 +38,37 @@ namespace dftd {
 extern int calc_distances(TMolecule& mol, TMatrix<double>& dist);
 
 /**
+ * Wrapper for error function coordination number.
+ * 
+ * @param mol Molecule object.
+ * @param dist Distance matrix.
+ * @param cn Vector of coordination numbers.
+ * @param dcndr Derivative of coordination number.
+ * @param lgrad Flag for gradient computation.
+ * @param thr Real-space cutoff (default: 1600.0).
+ * @return Exit status.
+*/
+extern int get_ncoord_erf(
+  TMolecule& mol,
+  TMatrix<double>& dist,
+  TVector<double>& cn,
+  TMatrix<double>& dcndr,
+  bool lgrad = false,
+  double thr = 1600.0
+);
+
+/**
  * Calculate error function coordination number.
  * 
  * @param mol Molecule object.
  * @param dist Distance matrix.
  * @param cn Vector of coordination numbers.
+ * @param dcndr Derivative of coordination number.
  * @param thr Real-space cutoff (default: 1600.0).
  * @return Exit status.
 */
 extern int ncoord_erf(TMolecule& mol, TMatrix<double>& dist,
                       TVector<double>& cn, double thr = 1600.0);
-
-/**
- * Calculate covalent coordination number for DFT-D4.
- * 
- * @param mol Molecule object.
- * @param dist Distance matrix.
- * @param cn Vector of coordination numbers.
- * @param thr Real-space cutoff (default: 1600.0).
- * @return Exit status.
-*/
-extern int ncoord_d4(TMolecule& mol, TMatrix<double>& dist,
-                     TVector<double>& cn, double thr = 1600.0);
 
 /**
  * Calculate error function coordination number and derivative
@@ -75,6 +84,38 @@ extern int ncoord_d4(TMolecule& mol, TMatrix<double>& dist,
 extern int dncoord_erf(TMolecule& mol, TMatrix<double>& dist,
                        TVector<double>& cn, TMatrix<double>& dcndr,
                        double thr = 1600.0);
+
+
+/**
+ * Wrapper for error function coordination number for DFT-D4.
+ * 
+ * @param mol Molecule object.
+ * @param dist Distance matrix.
+ * @param cn Vector of coordination numbers.
+ * @param thr Real-space cutoff (default: 1600.0).
+ * @return Exit status.
+*/
+extern int get_ncoord_d4(
+  TMolecule& mol,
+  TMatrix<double>& dist,
+  TVector<double>& cn,
+  TMatrix<double>& dcndr,
+  bool lgrad = false,
+  double thr = 1600.0
+);
+
+/**
+ * Calculate covalent coordination number for DFT-D4.
+ * 
+ * @param mol Molecule object.
+ * @param dist Distance matrix.
+ * @param cn Vector of coordination numbers.
+ * @param thr Real-space cutoff (default: 1600.0).
+ * @return Exit status.
+*/
+extern int ncoord_d4(TMolecule& mol, TMatrix<double>& dist,
+                     TVector<double>& cn, double thr = 1600.0);
+
 
 /**
  * Calculate covalent coordination number and derivative

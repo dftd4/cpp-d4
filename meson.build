@@ -77,3 +77,5 @@ executable(
   dependencies: cpp_d4_dep,
   install: true,
 )
+
+subdir('test')

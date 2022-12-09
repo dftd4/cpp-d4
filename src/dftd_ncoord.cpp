@@ -23,10 +23,10 @@
  * This module works on a distance matrix to avoid recalculating
  * the distances every time.
  */
-
 #include "dftd_ncoord.h"
 
 #include <cmath>
+#include <iostream>
 
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
@@ -163,6 +163,36 @@ int calc_distances(TMolecule& mol, TMatrix<double>& dist) {
 }
 
 
+int get_ncoord_erf(
+  TMolecule& mol,
+  TMatrix<double>& dist,
+  TVector<double>& cn,
+  TMatrix<double>& dcndr,
+  bool lgrad,
+  double thr
+) {
+  if (lgrad) {
+    printf("asdasd");
+    return dncoord_erf(mol, dist, cn, dcndr, thr);
+  } 
+  return ncoord_erf(mol, dist, cn, thr);
+};
+
+
+int get_ncoord_d4(
+  TMolecule& mol,
+  TMatrix<double>& dist,
+  TVector<double>& cn,
+  TMatrix<double>& dcndr,
+  bool lgrad,
+  double thr
+) {
+  if (lgrad) {
+    return dncoord_d4(mol, dist, cn, dcndr, thr);
+  } 
+  return ncoord_d4(mol, dist, cn, thr);
+};
+
 int ncoord_d4(TMolecule& mol, TMatrix<double>& dist, TVector<double>& cn,
               double thr) {
   double r = 0.0, rcovij = 0.0, rr = 0.0;
@@ -173,12 +203,12 @@ int ncoord_d4(TMolecule& mol, TMatrix<double>& dist, TVector<double>& cn,
   for (int i = 0; i != mol.NAtoms; i++) {
     izp = mol.at(i);
     for (int j = 0; j != i; j++) {
-      jzp = mol.at(i);
+      jzp = mol.at(j);
 
       r = dist(i, j);
       rcovij = rad[izp] + rad[jzp];
       rr = r / rcovij;
-      den = k4 * std::exp(-pow((abs(en[izp] - en[jzp]) + k5), 2) / k6);
+      den = k4 * std::exp(-pow((fabs(en[izp] - en[jzp]) + k5), 2) / k6);
       countf = den * erf_count(kn, rr);
       
       cn(i) += countf;
@@ -246,6 +276,11 @@ int ncoord_erf(TMolecule& mol, TMatrix<double>& dist, TVector<double>& cn,
       cn(i) += countf;
       cn(j) += countf;
     }
+  }
+
+  // Cutoff function for large coordination numbers
+  for (int i = 0; i != mol.NAtoms; i++) {
+    cn(i) = log(1.0 + exp(cn_max)) - log(1.0 + exp(cn_max - cn(i)));
   }
   return EXIT_SUCCESS;
 }

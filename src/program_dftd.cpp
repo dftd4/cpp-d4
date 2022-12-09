@@ -37,63 +37,62 @@ int DFTVDW_D4(TMolecule &mol, dparam &par, int &charge, double &energy,
   bool lgrad = !!GRAD;
 
   int info = 0;
+  int ndim = 0;
 
   // this are our method constants, they could be changed, but this usually
   // breaks things
   double wf = 6.0, g_a = 3.0, g_c = 2.0;
 
-  // local
-  int ndim = 0;
+  // distances
+  TMatrix<double> dist;
+  dist.New(mol.NAtoms, mol.NAtoms);
+  calc_distances(mol, dist);
+  
+
   double es = 0.0;           // electrostatic energy
-  TVector<double> cn;        // erf-CN for EEQ model
-  TMatrix<double> dcndr;     // derivative of erf-CN
+  TVector<double> covcn;     // D4 coordination number
+  TVector<double> cn;        // EEQ cordination number
   TVector<double> q;         // partial charges from EEQ model
-  TMatrix<double> dqdr;      // derivative of partial charges
-  TMatrix<double> ges;       // derivative of electrostatic energy
-  TMatrix<double> gradient;  // derivative of dispersion energy
-  TVector<double> covcn;     // covalent CN for D4 calculation
-  TMatrix<double> dcovcndr;  // derivative of covalent D4
   TVector<double> gweights;  // Gaussian weights for C6 interpolation
   TMatrix<double> c6ref;     // reference C6 coefficients
   TMatrix<double> numg;      // derivative of dispersion energy
-  TMatrix<double> dist;      // distances
-  dist.New(mol.NAtoms, mol.NAtoms);
-
-  // print some information to the user
-  //   if (!lsilent)
-  //   {
-  //      dftd4_header(lverbose);
-  //      if (lverbose) gpl_license();
-  //      dftd4_citation();
-  //   }
-
-  calc_distances(mol, dist);
-
-  // calculation dimension of D4
-  ndim = d4dim(mol);
 
   // get memory
-  cn.New(mol.NAtoms);
-  dcndr.New(mol.NAtoms, 3 * mol.NAtoms);
-  q.New(mol.NAtoms + 1);
-  dqdr.New(mol.NAtoms + 1, 3 * mol.NAtoms);
-  gradient.New(mol.NAtoms, 3);
-  ges.New(mol.NAtoms, 3);
-  covcn.New(mol.NAtoms);
-  dcovcndr.New(mol.NAtoms, 3 * mol.NAtoms);
-  gweights.New(ndim);
   c6ref.New(ndim, ndim);
+  covcn.New(mol.NAtoms);
+  cn.New(mol.NAtoms);
+  gweights.New(ndim);
+  q.New(mol.NAtoms + 1);
+
+
+  TMatrix<double> dcndr;     // derivative of erf-CN
+  TMatrix<double> dcovcndr;  // derivative of covalent D4
+  TMatrix<double> dqdr;      // derivative of partial charges
+  TMatrix<double> ges;       // derivative of electrostatic energy
+  TMatrix<double> gradient;  // derivative of dispersion energy
+  if (lgrad) {
+    dcndr.New(mol.NAtoms, 3 * mol.NAtoms);
+    dcovcndr.New(mol.NAtoms, 3 * mol.NAtoms);
+    dqdr.New(mol.NAtoms + 1, 3 * mol.NAtoms);
+    ges.New(mol.NAtoms, 3);
+    gradient.New(mol.NAtoms, 3);
+  } 
+  
+  // get the EEQ coordination number
+  info = get_ncoord_erf(mol, dist, cn, dcndr, lgrad);
+  if (!info == EXIT_SUCCESS) return info;
 
   // calculate partial charges by EEQ model
-  info = dncoord_erf(mol, dist, cn, dcndr);
-  if (!info == EXIT_SUCCESS) return info;
-  info = eeq_chrgeq(mol, charge, dist, cn, dcndr, q, dqdr, es, ges, lverbose,
-                    false, lgrad);
+  info = eeq_chrgeq(
+    mol, charge, dist, cn, q, es, dcndr, dqdr, ges, lgrad, lverbose, false
+  );
   if (!info == EXIT_SUCCESS) return info;
 
-  // get the D4 C6 coefficients
-  info = dncoord_d4(mol, dist, covcn, dcovcndr);
+  // get the D4 coordination number
+  info = get_ncoord_d4(mol, dist, covcn, dcovcndr, lgrad);
   if (!info == EXIT_SUCCESS) return info;
+
+  // D4 weights and c6 references
   info = d4(mol, ndim, wf, g_a, g_c, covcn, gweights, c6ref);
   if (!info == EXIT_SUCCESS) return info;
 
@@ -113,19 +112,20 @@ int DFTVDW_D4(TMolecule &mol, dparam &par, int &charge, double &energy,
       }
       // printf("\n");
     }
+
+    dcndr.Delete();
+    dcovcndr.Delete();
+    dqdr.Delete();
+    ges.Delete();
+    gradient.Delete();
   }
 
-  cn.Delete();
-  dcndr.Delete();
-  q.Delete();
-  dqdr.Delete();
-  gradient.Delete();
-  ges.Delete();
-  covcn.Delete();
-  dcovcndr.Delete();
-  gweights.Delete();
   c6ref.Delete();
+  cn.Delete();
+  covcn.Delete();
   dist.Delete();
+  gweights.Delete();
+  q.Delete();
 
   return EXIT_SUCCESS;
 }
