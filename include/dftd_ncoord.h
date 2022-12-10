@@ -35,7 +35,7 @@ namespace dftd {
  * @param dist Distance matrix (inout).
  * @return Exit status.
 */
-extern int calc_distances(TMolecule& mol, TMatrix<double>& dist);
+extern int calc_distances(const TMolecule& mol, TMatrix<double>& dist);
 
 /**
  * Wrapper for error function coordination number.
@@ -49,8 +49,8 @@ extern int calc_distances(TMolecule& mol, TMatrix<double>& dist);
  * @return Exit status.
 */
 extern int get_ncoord_erf(
-  TMolecule& mol,
-  TMatrix<double>& dist,
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
   TVector<double>& cn,
   TMatrix<double>& dcndr,
   bool lgrad = false,
@@ -67,8 +67,12 @@ extern int get_ncoord_erf(
  * @param thr Real-space cutoff (default: 1600.0).
  * @return Exit status.
 */
-extern int ncoord_erf(TMolecule& mol, TMatrix<double>& dist,
-                      TVector<double>& cn, double thr = 1600.0);
+extern int ncoord_erf(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  TVector<double>& cn,
+  double thr = 1600.0
+);
 
 /**
  * Calculate error function coordination number and derivative
@@ -81,9 +85,13 @@ extern int ncoord_erf(TMolecule& mol, TMatrix<double>& dist,
  * @param thr Real-space cutoff (default: 1600.0).
  * @return Exit status.
 */
-extern int dncoord_erf(TMolecule& mol, TMatrix<double>& dist,
-                       TVector<double>& cn, TMatrix<double>& dcndr,
-                       double thr = 1600.0);
+extern int dncoord_erf(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  TVector<double>& cn,
+  TMatrix<double>& dcndr,
+  double thr = 1600.0
+);
 
 
 /**
@@ -96,8 +104,8 @@ extern int dncoord_erf(TMolecule& mol, TMatrix<double>& dist,
  * @return Exit status.
 */
 extern int get_ncoord_d4(
-  TMolecule& mol,
-  TMatrix<double>& dist,
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
   TVector<double>& cn,
   TMatrix<double>& dcndr,
   bool lgrad = false,
@@ -113,8 +121,12 @@ extern int get_ncoord_d4(
  * @param thr Real-space cutoff (default: 1600.0).
  * @return Exit status.
 */
-extern int ncoord_d4(TMolecule& mol, TMatrix<double>& dist,
-                     TVector<double>& cn, double thr = 1600.0);
+extern int ncoord_d4(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  TVector<double>& cn,
+  double thr = 1600.0
+);
 
 
 /**
@@ -128,9 +140,13 @@ extern int ncoord_d4(TMolecule& mol, TMatrix<double>& dist,
  * @param thr Real-space cutoff (default: 1600.0).
  * @return Exit status.
 */
-extern int dncoord_d4(TMolecule& mol, TMatrix<double>& dist,
-                      TVector<double>& cn, TMatrix<double>& dcndr,
-                      double thr = 1600.0);
+extern int dncoord_d4(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  TVector<double>& cn,
+  TMatrix<double>& dcndr,
+  double thr = 1600.0
+);
 
 /**
  * Error function counting function for coordination number contributions.

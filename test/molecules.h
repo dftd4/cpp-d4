@@ -2,6 +2,7 @@
 #define MOLECULES_H
 
 // MB16_43: 01
+static const int mb16_43_01_charge{0};
 static const char mb16_43_01_atoms[16][3] {
   "Na", "H", "O", "H", "F", "H", "H", "O", "N", "H", "H", "Cl", "B",
   "B", "N", "Al",
@@ -26,6 +27,7 @@ static const double mb16_43_01_coord[16*3] {
 };
 
 // ROST61: m1
+static const int rost61_m1_charge{0};
 static const char rost61_m1_atoms[22][3] {
   "c", "c", "c", "h", "c", "c", "h", "h", "h", "h", "c", "c", "c", "h",
   "c", "c", "h", "h", "h", "h", "ti", "h",

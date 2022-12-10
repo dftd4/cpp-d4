@@ -30,19 +30,12 @@ test get_tests(std::string name) {
 
 
 int main(int argc, char *argv[]) {
-  int info;
-
   switch (get_tests(argv[1])) {
     default:
-      info = EXIT_SUCCESS;
-      break;
+      return EXIT_FAILURE;
     case ncoord:
-      info = test_ncoord(); 
-      break;
+      return test_ncoord(); 
     case disp:
-      info = test_disp(); 
-      break;
+      return test_disp(); 
   }
-
-  return info;
 }

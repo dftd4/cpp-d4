@@ -13,6 +13,7 @@ extern int test_energy(
   const int n,
   const char atoms[][3],
   const double coord[],
+  const int charge,
   const double ref_cn
 );
 

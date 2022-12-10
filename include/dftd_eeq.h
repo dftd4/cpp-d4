@@ -27,10 +27,12 @@
 
 namespace dftd {
 
-extern int eeq_chrgeq(TMolecule& mol, int& charge, TMatrix<double>& dist,
-                      TVector<double>& cn, TVector<double>& q, double& energy,
-                      TMatrix<double>& dcndr, TMatrix<double>& dqdr, 
-                      TMatrix<double>& gradient, bool lgrad = false,
-                      bool lverbose = false, bool lcpq = false);
+extern
+int eeq_chrgeq(const TMolecule& mol, const TMatrix<double>& dist,
+               const int& charge, const TVector<double>& cn, 
+               TVector<double>& q, double& energy,
+               TMatrix<double>& dcndr, TMatrix<double>& dqdr, 
+               TMatrix<double>& gradient, bool lgrad = false,
+               bool lverbose = false, bool lcpq = false);
 
 }

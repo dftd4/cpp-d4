@@ -145,7 +145,7 @@ static const double hlfosqrtpi = 1.0 / 1.77245385091;
 static const double cn_max = 8.0;
 
 
-int calc_distances(TMolecule& mol, TMatrix<double>& dist) {
+int calc_distances(const TMolecule& mol, TMatrix<double>& dist) {
   double rx = 0.0, ry = 0.0, rz = 0.0, tmp = 0.0;
   for (int i = 0; i != mol.NAtoms; i++) {
     dist(i, i) = 0.0;
@@ -164,8 +164,8 @@ int calc_distances(TMolecule& mol, TMatrix<double>& dist) {
 
 
 int get_ncoord_erf(
-  TMolecule& mol,
-  TMatrix<double>& dist,
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
   TVector<double>& cn,
   TMatrix<double>& dcndr,
   bool lgrad,
@@ -180,8 +180,8 @@ int get_ncoord_erf(
 
 
 int get_ncoord_d4(
-  TMolecule& mol,
-  TMatrix<double>& dist,
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
   TVector<double>& cn,
   TMatrix<double>& dcndr,
   bool lgrad,
@@ -193,8 +193,8 @@ int get_ncoord_d4(
   return ncoord_d4(mol, dist, cn, thr);
 };
 
-int ncoord_d4(TMolecule& mol, TMatrix<double>& dist, TVector<double>& cn,
-              double thr) {
+int ncoord_d4(const TMolecule& mol, const TMatrix<double>& dist,
+              TVector<double>& cn, double thr) {
   double r = 0.0, rcovij = 0.0, rr = 0.0;
   double den = 0.0;
   double countf = 0.0;
@@ -219,8 +219,8 @@ int ncoord_d4(TMolecule& mol, TMatrix<double>& dist, TVector<double>& cn,
 }
 
 
-int dncoord_d4(TMolecule& mol, TMatrix<double>& dist, TVector<double>& cn,
-               TMatrix<double>& dcndr, double thr) {
+int dncoord_d4(const TMolecule& mol, const TMatrix<double>& dist,
+               TVector<double>& cn, TMatrix<double>& dcndr, double thr) {
   double r = 0.0, rcovij = 0.0, rr = 0.0;
   double rx = 0.0, ry = 0.0, rz = 0.0;
   double countf = 0.0, dcountf = 0.0, den = 0.0;
@@ -262,8 +262,8 @@ int dncoord_d4(TMolecule& mol, TMatrix<double>& dist, TVector<double>& cn,
 }
 
 
-int ncoord_erf(TMolecule& mol, TMatrix<double>& dist, TVector<double>& cn,
-               double thr) {
+int ncoord_erf(const TMolecule& mol, const TMatrix<double>& dist,
+               TVector<double>& cn, double thr) {
   double r = 0.0, rcovij = 0.0, rr = 0.0;
   double countf = 0.0;
 
@@ -286,8 +286,8 @@ int ncoord_erf(TMolecule& mol, TMatrix<double>& dist, TVector<double>& cn,
 }
 
 
-int dncoord_erf(TMolecule& mol, TMatrix<double>& dist, TVector<double>& cn,
-                TMatrix<double>& dcndr, double thr) {
+int dncoord_erf(const TMolecule& mol, const TMatrix<double>& dist,
+                TVector<double>& cn, TMatrix<double>& dcndr, double thr) {
   double r = 0.0, rcovij = 0.0, rr = 0.0;
   double rx = 0.0, ry = 0.0, rz = 0.0;
   double countf = 0.0, dcountf = 0.0;

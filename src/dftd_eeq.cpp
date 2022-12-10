@@ -109,8 +109,9 @@ static const double sqrt2pi = std::sqrt(2.0 / pi);
 static const char _p_up = 'u', _p_lo = 'l';
 
 
-int eeq_chrgeq(TMolecule& mol, int& charge, TMatrix<double>& dist,
-               TVector<double>& cn, TVector<double>& q, double& energy,
+int eeq_chrgeq(const TMolecule& mol, const TMatrix<double>& dist,
+               const int& charge, const TVector<double>& cn, 
+               TVector<double>& q, double& energy,
                TMatrix<double>& dcndr, TMatrix<double>& dqdr, 
                TMatrix<double>& gradient, bool lgrad /*= false*/,
                bool lverbose /*= false*/, bool lcpq /*= false*/) {

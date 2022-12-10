@@ -37,28 +37,40 @@ class dparam {
   int alp;
 };
 
-extern int d4dim(TMolecule& mol);
+extern
+int d4dim(const TMolecule& mol);
 
-extern int d4(TMolecule& mol, int ndim, double wf, double g_a, double g_c,
-              TVector<double>& cn, TVector<double>& gw, TMatrix<double>& c6ref);
+extern
+int d4(const TMolecule& mol, int ndim, double wf, double g_a, double g_c,
+       const TVector<double>& cn, TVector<double>& gw, TMatrix<double>& c6ref);
 
-extern int edisp(TMolecule& mol, TMatrix<double>& dist, int ndim,
-                 TVector<double>& q, dparam& par, double g_a, double g_c,
-                 TVector<double>& gw, TMatrix<double>& c6ref, bool lmbd,
-                 double& energy);
+extern
+int edisp(const TMolecule& mol, const TMatrix<double>& dist, const dparam& par, 
+          int ndim, TVector<double>& q,double g_a, double g_c,
+          TVector<double>& gw, TMatrix<double>& c6ref, bool lmbd,
+          double& energy);
 
-extern int dispgrad(TMolecule& mol, TMatrix<double>& dist, int ndim,
-                    TVector<double>& q, TMatrix<double>& dqdr,
-                    TVector<double>& cn, TMatrix<double>& dcndr, dparam& par,
-                    double wf, double g_a, double g_c, TMatrix<double>& c6ref,
-                    bool lmbd, double& energy, TMatrix<double>& gradient);
+extern
+int dispgrad(const TMolecule& mol, const TMatrix<double>& dist,
+             const dparam& par, int ndim, const TVector<double>& q, 
+             TMatrix<double>& dqdr, TVector<double>& cn, 
+             TMatrix<double>& dcndr, double wf, double g_a, double g_c, 
+             TMatrix<double>& c6ref, bool lmbd, double& energy, 
+             TMatrix<double>& gradient);
 
-extern int apprabc(TMolecule& mol, TMatrix<double>& dist, int ndim,
-                   dparam& par, TVector<double>& c6ab, double& energy);
+extern
+int apprabc(const TMolecule& mol, const TMatrix<double>& dist,
+            const dparam& par, int ndim, TVector<double>& c6ab,
+            double& energy);
 
-extern int dabcappr(TMolecule& mol, TMatrix<double>& dist, int ndim,
-                    dparam& par, TVector<double>& gw, TVector<double>& dgw,
-                    TMatrix<double>& c6ref, TVector<double>& dc6dr,
-                    TVector<double>& dc6dcn, double& energy);
+extern
+int dabcappr(const TMolecule& mol, const TMatrix<double>& dist, 
+             const dparam& par, int ndim, TVector<double>& gw, 
+             TVector<double>& dgw, TMatrix<double>& c6ref, 
+             TVector<double>& dc6dr, TVector<double>& dc6dcn, double& energy);
+
+extern
+int DFTVDW_D4(const TMolecule &mol, const dparam &par, const int &charge,
+              double &energy, double *GRAD);
 
 }  // namespace dftd
