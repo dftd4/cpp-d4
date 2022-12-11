@@ -15,50 +15,72 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with cpp-d4.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-#include "dftd_readxyz.h"
-
 #include <algorithm>
-#include <fstream>
-#include <sstream>
+#include <cmath>
+#include <map>
 #include <string>
 
-#include "dftd_econv.h"
-#include "dftd_geometry.h"
+#include <dftd_geometry.h>
+#include <dftd_matrix.h>
 
-void read_xyzfile(const std::string& name, dftd::TMolecule& mol) {
-  std::ifstream geo;
-  std::stringstream buffer;
-  std::string line;
-  int n{0};
-  int at{0};
-  char sym[3]{"  "};
-  double x{0.0}, y{0.0}, z{0.0};
+#include "util.h"
 
-  geo.open(name);
-  if (!geo) exit(EXIT_FAILURE);
+using namespace dftd;
 
-  buffer << (std::getline(geo, line), line);
-  buffer >> n;
 
+int get_molecule(int n, const char atoms[][3], const double coord[], TMolecule& mol) {
+  ;
   mol.GetMemory(n);
-
-  std::getline(geo, line);  // skip comment line
-
   for (int i = 0; i != n; i++) {
-    geo >> sym >> x >> y >> z;
-    if (geo.fail()) {
-      std::exit(EXIT_FAILURE);
-    }
-    mol.xyz(i, 0) = x * aatoau;
-    mol.xyz(i, 1) = y * aatoau;
-    mol.xyz(i, 2) = z * aatoau;
-    at = element(sym);
-    mol.at(i) = at;
+    mol.xyz(i, 0) = coord[3*i];
+    mol.xyz(i, 1) = coord[3*i+1];
+    mol.xyz(i, 2) = coord[3*i+2];
+    mol.at(i) = element(atoms[i]);
   }
 
-  geo.close();
+  return EXIT_SUCCESS;
 }
+
+bool check(
+  double actual,
+  double expected,
+  double epsilon /*= 1e-12*/,
+  bool rel /*= false*/
+) {
+  double diff;
+
+  if (rel) {
+    diff = fabs(actual - expected) / expected;
+  } else {
+    diff = fabs(actual - expected);
+  }
+
+  if (diff > epsilon) {
+    return EXIT_FAILURE;
+  } 
+  return EXIT_SUCCESS;
+};
+
+bool check(
+  float actual,
+  float expected,
+  float epsilon /*= 1e-6*/,
+  bool rel /*= false*/
+) {
+  float diff;
+
+  if (rel) {
+    diff = fabs(actual - expected) / expected;
+  } else {
+    diff = fabs(actual - expected);
+  }
+
+  if (diff > epsilon) {
+    return EXIT_FAILURE;
+  } 
+  return EXIT_SUCCESS;
+};
+
 
 int element(const std::string& sym) {
   char elem[3]{"  "};

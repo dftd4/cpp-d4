@@ -15,12 +15,4 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with cpp-d4.  If not, see <https://www.gnu.org/licenses/>.
  */
-#pragma once
-
-#include <string>
-
-#include "dftd_dispersion.h"
-
-namespace dftd {
-extern void d4par(const std::string func, dftd::dparam &par, const bool lmbd);
-}
+#include "molecules.h"

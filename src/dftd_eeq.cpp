@@ -1,6 +1,6 @@
 /* This file is part of cpp-d4.
  *
- * Copyright (C) 2019-2021 Sebastian Ehlert
+ * Copyright (C) 2019 Sebastian Ehlert, Marvin Friede
  *
  * cpp-d4 is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by
@@ -108,10 +108,13 @@ static const double sqrtpi = std::sqrt(pi);
 static const double sqrt2pi = std::sqrt(2.0 / pi);
 static const char _p_up = 'u', _p_lo = 'l';
 
-int eeq_chrgeq(TMolecule& mol, int& charge, TMatrix<double>& dist,
-               TVector<double>& cn, TMatrix<double>& dcndr, TVector<double>& q,
-               TMatrix<double>& dqdr, double& energy, TMatrix<double>& gradient,
-               bool lverbose, bool lgrad, bool lcpq) {
+
+int eeq_chrgeq(const TMolecule& mol, const TMatrix<double>& dist,
+               const int& charge, const TVector<double>& cn, 
+               TVector<double>& q, double& energy,
+               TMatrix<double>& dcndr, TMatrix<double>& dqdr, 
+               TMatrix<double>& gradient, bool lgrad /*= false*/,
+               bool lverbose /*= false*/, bool lcpq /*= false*/) {
   double qtotal = 0.0;
   double es = 0.0;
   double gamij = 0.0, gamij2 = 0.0, arg = 0.0, arg2 = 0.0;
@@ -192,66 +195,72 @@ int eeq_chrgeq(TMolecule& mol, int& charge, TMatrix<double>& dist,
   energy += es;
   if (lverbose) printf("isotroptic electrostatic (IES) energy: %14.7f\n", es);
 
-  int ThreeN = 3 * mol.NAtoms;
-  TMatrix<double> dAmat;
-  dAmat.New(m, ThreeN);
-  TMatrix<double> dXvec;
-  dXvec.New(m, ThreeN);
-  TMatrix<double> Afac;
-  Afac.New(mol.NAtoms, 3);
-  for (int i = 0; i != mol.NAtoms; i++) {
-    Afac(i, 0) = 0.0;
-    Afac(i, 1) = 0.0;
-    Afac(i, 2) = 0.0;
-    dXvec(i, 3 * i) = dcndr(i, 3 * i) * Xfac(i);
-    dXvec(i, 3 * i + 1) = dcndr(i, 3 * i + 1) * Xfac(i);
-    dXvec(i, 3 * i + 2) = dcndr(i, 3 * i + 2) * Xfac(i);
-    for (int j = 0; j != i; j++) {
-      dXvec(i, 3 * j) = dcndr(j, 3 * i) * Xfac(i);
-      dXvec(i, 3 * j + 1) = dcndr(j, 3 * i + 1) * Xfac(i);
-      dXvec(i, 3 * j + 2) = dcndr(j, 3 * i + 2) * Xfac(i);
-      dXvec(j, 3 * i) = dcndr(i, 3 * j) * Xfac(j);
-      dXvec(j, 3 * i + 1) = dcndr(i, 3 * j + 1) * Xfac(j);
-      dXvec(j, 3 * i + 2) = dcndr(i, 3 * j + 2) * Xfac(j);
-      rx = mol.xyz(i, 0) - mol.xyz(j, 0);
-      ry = mol.xyz(i, 1) - mol.xyz(j, 1);
-      rz = mol.xyz(i, 2) - mol.xyz(j, 2);
-      r2 = pow(dist(i, j), 2);
-      gamij2 = 1.0 / (alpha(i) + alpha(j));  // squared
-      gamij = std::sqrt(gamij2);
-      arg2 = gamij2 * r2;
-      dtmp = 2.0 * gamij * std::exp(-arg2) / (sqrtpi * r2) - Amat(j, i) / r2;
-      Afac(i, 0) += dtmp * rx * q(j);
-      Afac(i, 1) += dtmp * ry * q(j);
-      Afac(i, 2) += dtmp * rz * q(j);
-      Afac(j, 0) -= dtmp * rx * q(i);
-      Afac(j, 1) -= dtmp * ry * q(i);
-      Afac(j, 2) -= dtmp * rz * q(i);
-      dAmat(j, 3 * i) = dtmp * rx * q(i);
-      dAmat(j, 3 * i + 1) = dtmp * ry * q(i);
-      dAmat(j, 3 * i + 2) = dtmp * rz * q(i);
-      dAmat(i, 3 * j) = -dtmp * rx * q(j);
-      dAmat(i, 3 * j + 1) = -dtmp * ry * q(j);
-      dAmat(i, 3 * j + 2) = -dtmp * rz * q(j);
-    }
-  }
-
+  // Gradient
   if (lgrad) {
+    int ThreeN = 3 * mol.NAtoms;
+    TMatrix<double> dAmat;
+    dAmat.New(m, ThreeN);
+    TMatrix<double> dXvec;
+    dXvec.New(m, ThreeN);
+    TMatrix<double> Afac;
+    Afac.New(mol.NAtoms, 3);
+    for (int i = 0; i != mol.NAtoms; i++) {
+      Afac(i, 0) = 0.0;
+      Afac(i, 1) = 0.0;
+      Afac(i, 2) = 0.0;
+      dXvec(i, 3 * i) = dcndr(i, 3 * i) * Xfac(i);
+      dXvec(i, 3 * i + 1) = dcndr(i, 3 * i + 1) * Xfac(i);
+      dXvec(i, 3 * i + 2) = dcndr(i, 3 * i + 2) * Xfac(i);
+      for (int j = 0; j != i; j++) {
+        dXvec(i, 3 * j) = dcndr(j, 3 * i) * Xfac(i);
+        dXvec(i, 3 * j + 1) = dcndr(j, 3 * i + 1) * Xfac(i);
+        dXvec(i, 3 * j + 2) = dcndr(j, 3 * i + 2) * Xfac(i);
+        dXvec(j, 3 * i) = dcndr(i, 3 * j) * Xfac(j);
+        dXvec(j, 3 * i + 1) = dcndr(i, 3 * j + 1) * Xfac(j);
+        dXvec(j, 3 * i + 2) = dcndr(i, 3 * j + 2) * Xfac(j);
+        rx = mol.xyz(i, 0) - mol.xyz(j, 0);
+        ry = mol.xyz(i, 1) - mol.xyz(j, 1);
+        rz = mol.xyz(i, 2) - mol.xyz(j, 2);
+        r2 = pow(dist(i, j), 2);
+        gamij2 = 1.0 / (alpha(i) + alpha(j));  // squared
+        gamij = std::sqrt(gamij2);
+        arg2 = gamij2 * r2;
+        dtmp = 2.0 * gamij * std::exp(-arg2) / (sqrtpi * r2) - Amat(j, i) / r2;
+        Afac(i, 0) += dtmp * rx * q(j);
+        Afac(i, 1) += dtmp * ry * q(j);
+        Afac(i, 2) += dtmp * rz * q(j);
+        Afac(j, 0) -= dtmp * rx * q(i);
+        Afac(j, 1) -= dtmp * ry * q(i);
+        Afac(j, 2) -= dtmp * rz * q(i);
+        dAmat(j, 3 * i) = dtmp * rx * q(i);
+        dAmat(j, 3 * i + 1) = dtmp * ry * q(i);
+        dAmat(j, 3 * i + 2) = dtmp * rz * q(i);
+        dAmat(i, 3 * j) = -dtmp * rx * q(j);
+        dAmat(i, 3 * j + 1) = -dtmp * ry * q(j);
+        dAmat(i, 3 * j + 2) = -dtmp * rz * q(j);
+      }
+    }
+
     BLAS_Add_Mat_x_Vec(gradient.p, dAmat.p, q.p, ThreeN, m, false, +1.0, 1.0);
     BLAS_Add_Mat_x_Vec(gradient.p, dXvec.p, q.p, ThreeN, m, false, -1.0, 1.0);
-  }
+  
+  
+    if (lcpq) {
+      for (int i = 0; i != mol.NAtoms; i++) {
+        dAmat(i, 3 * i) += Afac(i, 0);
+        dAmat(i, 3 * i + 1) += Afac(i, 1);
+        dAmat(i, 3 * i + 2) += Afac(i, 2);
+      }
 
-  if (lcpq) {
-    for (int i = 0; i != mol.NAtoms; i++) {
-      dAmat(i, 3 * i) += Afac(i, 0);
-      dAmat(i, 3 * i + 1) += Afac(i, 1);
-      dAmat(i, 3 * i + 2) += Afac(i, 2);
+      info = BLAS_Add_Mat_x_Mat(dqdr, Ainv, dAmat, false, false, -1.0);
+      if (!info == EXIT_SUCCESS) return info;
+      info = BLAS_Add_Mat_x_Mat(dqdr, Ainv, dXvec, false, false, +1.0);
+      if (!info == EXIT_SUCCESS) return info;
     }
 
-    info = BLAS_Add_Mat_x_Mat(dqdr, Ainv, dAmat, false, false, -1.0);
-    if (!info == EXIT_SUCCESS) return info;
-    info = BLAS_Add_Mat_x_Mat(dqdr, Ainv, dXvec, false, false, +1.0);
-    if (!info == EXIT_SUCCESS) return info;
+    dAmat.Delete();
+    dXvec.Delete();
+    Afac.Delete();
   }
 
   // free all memory
@@ -260,9 +269,6 @@ int eeq_chrgeq(TMolecule& mol, int& charge, TMatrix<double>& dist,
   Xvec.Delete();
   Xfac.Delete();
   alpha.Delete();
-  dAmat.Delete();
-  dXvec.Delete();
-  Afac.Delete();
 
   return EXIT_SUCCESS;
 }

@@ -1,6 +1,6 @@
 /* This file is part of cpp-d4.
  *
- * Copyright (C) 2019-2021 Sebastian Ehlert
+ * Copyright (C) 2019 Sebastian Ehlert, Marvin Friede
  *
  * cpp-d4 is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by
@@ -25,8 +25,10 @@
 #include <cmath>
 #include <iostream>
 
+#include "dftd_eeq.h"
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
+#include "dftd_ncoord.h"
 #include "dftd_parameters.h"
 
 namespace dftd {
@@ -101,14 +103,14 @@ inline double fdmprdr_bj(const int n, const double r, const double c) {
   return -n * pow(r, n - 1) * pow(fdmpr_bj(n, r, c), 2);
 }
 
-int d4dim(TMolecule& mol) {
+int d4dim(const TMolecule& mol) {
   int ndim = 0;
   for (int i = 0; i != mol.NAtoms; i++) ndim += refn[mol.at(i)];
   return ndim;
 }
 
-int d4(TMolecule& mol, int ndim, double wf, double g_a, double g_c, TVector<double>& cn,
-       TVector<double>& gw, TMatrix<double>& c6ref) {
+int d4(const TMolecule& mol, int ndim, double wf, double g_a, double g_c,
+       const TVector<double>& cn, TVector<double>& gw, TMatrix<double>& c6ref) {
   int iat = 0, jat = 0;
   double norm = 0.0, twf = 0.0, c6 = 0.0, maxcn = 0.0, tmp = 0.0;
 
@@ -168,9 +170,10 @@ int d4(TMolecule& mol, int ndim, double wf, double g_a, double g_c, TVector<doub
   return EXIT_SUCCESS;
 }
 
-int edisp(TMolecule& mol, TMatrix<double>& dist, int ndim, TVector<double>& q,
-          dparam& par, double g_a, double g_c, TVector<double>& gw,
-          TMatrix<double>& c6ref, bool lmbd, double& energy) {
+int edisp(const TMolecule& mol, const TMatrix<double>& dist, const dparam& par, 
+          int ndim, TVector<double>& q,double g_a, double g_c,
+          TVector<double>& gw, TMatrix<double>& c6ref, bool lmbd,
+          double& energy) {
   int iat = 0, jat = 0, ij = 0;
   int info = 0;
   double iz = 0.0, r = 0.0, r4r2ij = 0.0, cutoff = 0.0;
@@ -224,7 +227,7 @@ int edisp(TMolecule& mol, TMatrix<double>& dist, int ndim, TVector<double>& q,
   }
 
   if (lmbd) {
-    info = apprabc(mol, dist, ndim, par, c6ab, embd);
+    info = apprabc(mol, dist, par, ndim, c6ab, embd);
     if (!info == 0) return info;
   }
 
@@ -238,10 +241,11 @@ int edisp(TMolecule& mol, TMatrix<double>& dist, int ndim, TVector<double>& q,
   return EXIT_SUCCESS;
 }
 
-int dispgrad(TMolecule& mol, TMatrix<double>& dist, int ndim,
-             TVector<double>& q, TMatrix<double>& dqdr, TVector<double>& cn,
-             TMatrix<double>& dcndr, dparam& par, double wf, double g_a,
-             double g_c, TMatrix<double>& c6ref, bool lmbd, double& energy,
+int dispgrad(const TMolecule& mol, const TMatrix<double>& dist,
+             const dparam& par, int ndim, const TVector<double>& q, 
+             TMatrix<double>& dqdr, TVector<double>& cn, 
+             TMatrix<double>& dcndr, double wf, double g_a, double g_c, 
+             TMatrix<double>& c6ref, bool lmbd, double& energy, 
              TMatrix<double>& gradient) {
   int iat = 0, jat = 0, ij = 0;
   int info = 0;
@@ -369,7 +373,7 @@ int dispgrad(TMolecule& mol, TMatrix<double>& dist, int ndim,
     kk += refn[iat];
   }
 
-  info = dabcappr(mol, dist, ndim, par, gw, dgw, c6ref, dc6dr, dc6dcn, embd);
+  info = dabcappr(mol, dist, par, ndim, gw, dgw, c6ref, dc6dr, dc6dcn, embd);
   if (!info == 0) return info;
 
   energy += ed + embd;
@@ -415,8 +419,9 @@ int dispgrad(TMolecule& mol, TMatrix<double>& dist, int ndim,
   return EXIT_SUCCESS;
 }
 
-int apprabc(TMolecule& mol, TMatrix<double>& dist, int ndim, dparam& par,
-            TVector<double>& c6ab, double& energy) {
+int apprabc(const TMolecule& mol, const TMatrix<double>& dist,
+            const dparam& par, int ndim, TVector<double>& c6ab,
+            double& energy) {
   int iat = 0, jat = 0, kat = 0, ij = 0, ik = 0, jk = 0;
   double rij = 0.0, r2ij = 0.0, cij = 0.0, r4r2ij = 0.0;
   double rik = 0.0, r2ik = 0.0, cik = 0.0, r4r2ik = 0.0;
@@ -464,8 +469,9 @@ int apprabc(TMolecule& mol, TMatrix<double>& dist, int ndim, dparam& par,
   return EXIT_SUCCESS;
 }
 
-int dabcappr(TMolecule& mol, TMatrix<double>& dist, int ndim, dparam& par,
-             TVector<double>& gw, TVector<double>& dgw, TMatrix<double>& c6ref,
+int dabcappr(const TMolecule& mol, const TMatrix<double>& dist, 
+             const dparam& par, int ndim, TVector<double>& gw, 
+             TVector<double>& dgw, TMatrix<double>& c6ref, 
              TVector<double>& dc6dr, TVector<double>& dc6dcn, double& energy) {
   int iat = 0, jat = 0, kat = 0, ij = 0, ik = 0, jk = 0;
   double c6ij = 0.0, dic6ij = 0.0, djc6ij = 0.0, dtmp = 0.0, rij = 0.0,
@@ -584,6 +590,110 @@ int dabcappr(TMolecule& mol, TMatrix<double>& dist, int ndim, dparam& par,
   // free all memory
   c6ab.Delete();
   dc6ab.Delete();
+
+  return EXIT_SUCCESS;
+}
+
+int DFTVDW_D4(const TMolecule &mol, const dparam &par, const int &charge,
+              double &energy, double *GRAD) {
+  // setup variables
+  bool lverbose = false;
+  bool lmbd = true;
+  bool lgrad = !!GRAD;
+
+  int info = 0;
+  int ndim = 0;
+
+  // this are our method constants, they could be changed, but this usually
+  // breaks things
+  double wf = 6.0, g_a = 3.0, g_c = 2.0;
+
+  // distances
+  TMatrix<double> dist;
+  dist.New(mol.NAtoms, mol.NAtoms);
+  calc_distances(mol, dist);
+
+  // calculation dimension of D4
+  ndim = d4dim(mol);
+  
+
+  double es = 0.0;           // electrostatic energy
+  TVector<double> covcn;     // D4 coordination number
+  TVector<double> cn;        // EEQ cordination number
+  TVector<double> q;         // partial charges from EEQ model
+  TVector<double> gweights;  // Gaussian weights for C6 interpolation
+  TMatrix<double> c6ref;     // reference C6 coefficients
+  TMatrix<double> numg;      // derivative of dispersion energy
+
+  // get memory
+  c6ref.New(ndim, ndim);
+  covcn.New(mol.NAtoms);
+  cn.New(mol.NAtoms);
+  gweights.New(ndim);
+  q.New(mol.NAtoms + 1);
+
+
+  TMatrix<double> dcndr;     // derivative of erf-CN
+  TMatrix<double> dcovcndr;  // derivative of covalent D4
+  TMatrix<double> dqdr;      // derivative of partial charges
+  TMatrix<double> ges;       // derivative of electrostatic energy
+  TMatrix<double> gradient;  // derivative of dispersion energy
+  if (lgrad) {
+    dcndr.New(mol.NAtoms, 3 * mol.NAtoms);
+    dcovcndr.New(mol.NAtoms, 3 * mol.NAtoms);
+    dqdr.New(mol.NAtoms + 1, 3 * mol.NAtoms);
+    ges.New(mol.NAtoms, 3);
+    gradient.New(mol.NAtoms, 3);
+  } 
+  
+  // get the EEQ coordination number
+  info = get_ncoord_erf(mol, dist, cn, dcndr, lgrad);
+  if (!info == EXIT_SUCCESS) return info;
+
+  // calculate partial charges by EEQ model
+  info = eeq_chrgeq(
+    mol, dist, charge, cn, q, es, dcndr, dqdr, ges, lgrad, lverbose, false
+  );
+  if (!info == EXIT_SUCCESS) return info;
+
+  // get the D4 coordination number
+  info = get_ncoord_d4(mol, dist, covcn, dcovcndr, lgrad);
+  if (!info == EXIT_SUCCESS) return info;
+
+  // D4 weights and c6 references
+  info = d4(mol, ndim, wf, g_a, g_c, covcn, gweights, c6ref);
+  if (!info == EXIT_SUCCESS) return info;
+
+  if (!lgrad) {
+    info =
+        edisp(mol, dist, par, ndim, q, g_a, g_c, gweights, c6ref, lmbd, energy);
+    if (!info == EXIT_SUCCESS) return info;
+  } else {
+    info = dispgrad(mol, dist, par, ndim, q, dqdr, covcn, dcovcndr, wf, g_a,
+                    g_c, c6ref, lmbd, energy, gradient);
+    if (!info == EXIT_SUCCESS) return info;
+    // add to gradient
+    for (int i = 0, ij = 0; i != mol.NAtoms; i++) {
+      for (int j = 0; j != 3; j++, ij++) {
+        // printf("%14.8f", gradient(i,j));
+        GRAD[ij] += gradient(i, j);
+      }
+      // printf("\n");
+    }
+
+    dcndr.Delete();
+    dcovcndr.Delete();
+    dqdr.Delete();
+    ges.Delete();
+    gradient.Delete();
+  }
+
+  c6ref.Delete();
+  cn.Delete();
+  covcn.Delete();
+  dist.Delete();
+  gweights.Delete();
+  q.Delete();
 
   return EXIT_SUCCESS;
 }

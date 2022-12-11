@@ -1,6 +1,6 @@
 /* This file is part of cpp-d4.
  *
- * Copyright (C) 2019-2021 Sebastian Ehlert
+ * Copyright (C) 2019 Sebastian Ehlert, Marvin Friede
  *
  * cpp-d4 is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by
@@ -27,10 +27,12 @@
 
 namespace dftd {
 
-extern int eeq_chrgeq(TMolecule& mol, int& charge, TMatrix<double>& dist,
-                      TVector<double>& cn, TMatrix<double>& dcndr,
-                      TVector<double>& q, TMatrix<double>& dqdr, double& energy,
-                      TMatrix<double>& gradient, bool lverbose = false,
-                      bool lgrad = false, bool lcpq = false);
+extern
+int eeq_chrgeq(const TMolecule& mol, const TMatrix<double>& dist,
+               const int& charge, const TVector<double>& cn, 
+               TVector<double>& q, double& energy,
+               TMatrix<double>& dcndr, TMatrix<double>& dqdr, 
+               TMatrix<double>& gradient, bool lgrad = false,
+               bool lverbose = false, bool lcpq = false);
 
 }

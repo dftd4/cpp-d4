@@ -15,12 +15,44 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with cpp-d4.  If not, see <https://www.gnu.org/licenses/>.
  */
-#pragma once
+#include <algorithm>
+#include <cstdlib>
+#include <iostream>
+#include <map>
 
-#include <string>
+#include "test_disp.h"
+#include "test_ncoord.h"
 
-#include "dftd_dispersion.h"
 
-namespace dftd {
-extern void d4par(const std::string func, dftd::dparam &par, const bool lmbd);
+enum test {
+  invalid,
+  disp,
+  ncoord,
+};
+
+test get_tests(std::string name) {
+  static const std::map<std::string, test> testStrings {
+      {"disp", disp},
+      {"ncoord", ncoord},
+  };
+
+  std::string test = name;
+  transform(name.begin(), name.end(), test.begin(), ::tolower);
+  auto iter = testStrings.find(test);
+  if (iter != testStrings.end()) {
+    return iter->second;
+  }
+  return invalid;
+};
+
+
+int main(int argc, char *argv[]) {
+  switch (get_tests(argv[1])) {
+    default:
+      return EXIT_FAILURE;
+    case ncoord:
+      return test_ncoord(); 
+    case disp:
+      return test_disp(); 
+  }
 }

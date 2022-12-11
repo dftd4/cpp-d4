@@ -15,12 +15,25 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with cpp-d4.  If not, see <https://www.gnu.org/licenses/>.
  */
-#pragma once
+#ifndef TEST_DISP_H
+#define TEST_DISP_H
 
-#include <string>
+static const double mb16_43_01_ref_energy {
+  -2.5882588037023E-02
+};
 
-#include "dftd_dispersion.h"
+static const double rost61_m1_ref_energy {
+  -3.4287391104745E-02
+};
 
-namespace dftd {
-extern void d4par(const std::string func, dftd::dparam &par, const bool lmbd);
-}
+extern int test_energy(
+  const int n,
+  const char atoms[][3],
+  const double coord[],
+  const int charge,
+  const double ref_cn
+);
+
+extern int test_disp(void);
+
+#endif // TEST_DISP_H

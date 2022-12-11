@@ -1,6 +1,6 @@
 # This file is part of cpp-d4.
 #
-# Copyright (C) 2019-2021 Sebastian Ehlert
+# Copyright (C) 2019 Sebastian Ehlert, Marvin Friede
 #
 # cpp-d4 is free software: you can redistribute it and/or modify it under
 # the terms of the GNU Lesser General Public License as published by
@@ -77,3 +77,5 @@ executable(
   dependencies: cpp_d4_dep,
   install: true,
 )
+
+subdir('test')

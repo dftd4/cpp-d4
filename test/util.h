@@ -15,12 +15,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with cpp-d4.  If not, see <https://www.gnu.org/licenses/>.
  */
-#pragma once
+#ifndef UTIL_H
+#define UTIL_H
 
 #include <string>
+#include <dftd_geometry.h>
 
-#include "dftd_dispersion.h"
 
-namespace dftd {
-extern void d4par(const std::string func, dftd::dparam &par, const bool lmbd);
-}
+extern int get_molecule(int n, const char atoms[][3], const double coord[], dftd::TMolecule& mol);
+
+extern bool check(double actual, double expected, double epsilon = 1e-12, bool rel = false);
+extern bool check(float actual, float expected, float epsilon = 1e-6, bool rel = false);
+
+extern int element(const std::string& sym);
+
+#endif // UTIL_H

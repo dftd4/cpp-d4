@@ -1,6 +1,6 @@
 /* This file is part of cpp-d4.
  *
- * Copyright (C) 2019-2021 Sebastian Ehlert
+ * Copyright (C) 2019 Sebastian Ehlert, Marvin Friede
  *
  * cpp-d4 is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by
@@ -35,7 +35,27 @@ namespace dftd {
  * @param dist Distance matrix (inout).
  * @return Exit status.
 */
-extern int calc_distances(TMolecule& mol, TMatrix<double>& dist);
+extern int calc_distances(const TMolecule& mol, TMatrix<double>& dist);
+
+/**
+ * Wrapper for error function coordination number.
+ * 
+ * @param mol Molecule object.
+ * @param dist Distance matrix.
+ * @param cn Vector of coordination numbers.
+ * @param dcndr Derivative of coordination number.
+ * @param lgrad Flag for gradient computation.
+ * @param thr Real-space cutoff (default: 1600.0).
+ * @return Exit status.
+*/
+extern int get_ncoord_erf(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  TVector<double>& cn,
+  TMatrix<double>& dcndr,
+  bool lgrad = false,
+  double thr = 1600.0
+);
 
 /**
  * Calculate error function coordination number.
@@ -43,23 +63,16 @@ extern int calc_distances(TMolecule& mol, TMatrix<double>& dist);
  * @param mol Molecule object.
  * @param dist Distance matrix.
  * @param cn Vector of coordination numbers.
+ * @param dcndr Derivative of coordination number.
  * @param thr Real-space cutoff (default: 1600.0).
  * @return Exit status.
 */
-extern int ncoord_erf(TMolecule& mol, TMatrix<double>& dist,
-                      TVector<double>& cn, double thr = 1600.0);
-
-/**
- * Calculate covalent coordination number for DFT-D4.
- * 
- * @param mol Molecule object.
- * @param dist Distance matrix.
- * @param cn Vector of coordination numbers.
- * @param thr Real-space cutoff (default: 1600.0).
- * @return Exit status.
-*/
-extern int ncoord_d4(TMolecule& mol, TMatrix<double>& dist,
-                     TVector<double>& cn, double thr = 1600.0);
+extern int ncoord_erf(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  TVector<double>& cn,
+  double thr = 1600.0
+);
 
 /**
  * Calculate error function coordination number and derivative
@@ -72,9 +85,49 @@ extern int ncoord_d4(TMolecule& mol, TMatrix<double>& dist,
  * @param thr Real-space cutoff (default: 1600.0).
  * @return Exit status.
 */
-extern int dncoord_erf(TMolecule& mol, TMatrix<double>& dist,
-                       TVector<double>& cn, TMatrix<double>& dcndr,
-                       double thr = 1600.0);
+extern int dncoord_erf(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  TVector<double>& cn,
+  TMatrix<double>& dcndr,
+  double thr = 1600.0
+);
+
+
+/**
+ * Wrapper for error function coordination number for DFT-D4.
+ * 
+ * @param mol Molecule object.
+ * @param dist Distance matrix.
+ * @param cn Vector of coordination numbers.
+ * @param thr Real-space cutoff (default: 1600.0).
+ * @return Exit status.
+*/
+extern int get_ncoord_d4(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  TVector<double>& cn,
+  TMatrix<double>& dcndr,
+  bool lgrad = false,
+  double thr = 1600.0
+);
+
+/**
+ * Calculate covalent coordination number for DFT-D4.
+ * 
+ * @param mol Molecule object.
+ * @param dist Distance matrix.
+ * @param cn Vector of coordination numbers.
+ * @param thr Real-space cutoff (default: 1600.0).
+ * @return Exit status.
+*/
+extern int ncoord_d4(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  TVector<double>& cn,
+  double thr = 1600.0
+);
+
 
 /**
  * Calculate covalent coordination number and derivative
@@ -87,9 +140,13 @@ extern int dncoord_erf(TMolecule& mol, TMatrix<double>& dist,
  * @param thr Real-space cutoff (default: 1600.0).
  * @return Exit status.
 */
-extern int dncoord_d4(TMolecule& mol, TMatrix<double>& dist,
-                      TVector<double>& cn, TMatrix<double>& dcndr,
-                      double thr = 1600.0);
+extern int dncoord_d4(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  TVector<double>& cn,
+  TMatrix<double>& dcndr,
+  double thr = 1600.0
+);
 
 /**
  * Error function counting function for coordination number contributions.
