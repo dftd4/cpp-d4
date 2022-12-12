@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 
+#include "dftd_damping.h"
 #include "dftd_dispersion.h"
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
@@ -92,8 +93,9 @@ void help() {
   std::cout << R"(   Usage:
    cpp-d4 [options] <file>
 
-   <file> is a valid Turbomole coordinate file (coordinates in Bohr) or
-   in xmol format (coordinates in Ångström).
+   <file> is a valid xmol file (coordinates in Ångström).
+   (Turbomole coordinate file (coordinates in Bohr) not yet supported!)
+   
 
    Options:
 
@@ -120,14 +122,14 @@ int main(int argc, char **argv) {
   // check for complete command line
   // we need at least the program name and an input file
   if (argc < 2) {
-    // help();
+    help();
     exit(EXIT_FAILURE);
   }
   // setup the argparser from the commandline
   argparser args(argc, argv);
   // check for help flag first
   if (args.getflag("-h") || args.getflag("--help")) {
-    // help();
+    help();
     exit(EXIT_SUCCESS);
   }
   if (args.getflag("-v") || args.getflag("--verbose")) {
