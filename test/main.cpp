@@ -22,18 +22,21 @@
 
 #include "test_disp.h"
 #include "test_ncoord.h"
+#include "test_param.h"
 
 
 enum test {
   invalid,
   disp,
   ncoord,
+  param,
 };
 
 test get_tests(std::string name) {
   static const std::map<std::string, test> testStrings {
       {"disp", disp},
       {"ncoord", ncoord},
+      {"param", param},
   };
 
   std::string test = name;
@@ -53,6 +56,8 @@ int main(int argc, char *argv[]) {
     case ncoord:
       return test_ncoord(); 
     case disp:
-      return test_disp(); 
+      return test_disp();
+    case param:
+      return test_param(); 
   }
 }

@@ -29,7 +29,7 @@ using namespace dftd;
 
 int test_cn(
   const int n,
-  const char atoms[][3],
+  const char atoms[][4],
   const double coord[],
   const double ref_cn[]
 ) {

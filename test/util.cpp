@@ -28,7 +28,7 @@
 using namespace dftd;
 
 
-int get_molecule(int n, const char atoms[][3], const double coord[], TMolecule& mol) {
+int get_molecule(int n, const char atoms[][4], const double coord[], TMolecule& mol) {
   ;
   mol.GetMemory(n);
   for (int i = 0; i != n; i++) {
@@ -80,6 +80,14 @@ bool check(
   } 
   return EXIT_SUCCESS;
 };
+
+
+void print_fail(const char specifier[32], double obtained, double expected) {
+  printf("Failed for: '%s'\n", specifier);
+  printf("  - Expected   %.16f\n", expected);
+  printf("  - Obtained   %.16f\n", obtained);
+  printf("  - Diff (abs)  %.16f\n", fabs(expected - obtained));
+}
 
 
 int element(const std::string& sym) {

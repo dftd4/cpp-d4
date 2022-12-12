@@ -15,51 +15,63 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with cpp-d4.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <string>
+#include <cmath>
+
 #include <dftd_damping.h>
-#include <dftd_dispersion.h>
+#include <dftd_geometry.h>
+#include <dftd_parameters.h>
 
 #include "molecules.h"
-#include "test_disp.h"
+#include "test_param.h"
 #include "util.h"
 
 using namespace dftd;
 
 
-int test_energy( 
-  const int n,
-  const char atoms[][4],
-  const double coord[],
-  const int charge,
-  const double ref
+int test_dftd4_energy(
+  const TMolecule &mol,
+  const int &charge,
+  const dparam &par,
+  double &energy
 ) {
-  int info = 0;
-  bool lmbd = true;
-  double energy = 0.0;
-
-  // BP86 parameters
-  dparam par;
-  d4par("bp86", par, lmbd);
-
-  // assemble molecule
-  TMolecule mol;
-  info = get_molecule(n, atoms, coord, mol);
-  if (!info == EXIT_SUCCESS) return info;
+  int info;
 
   // dispersion main function
-  info = DFTVDW_D4(mol, par, charge, energy, nullptr);
-  if (!info == EXIT_SUCCESS) return info;
-
-  return check(energy, ref);
-};
-
-int test_disp() {
-  int info;
-  
-  info = test_energy(16, mb16_43_01_atoms, mb16_43_01_coord, mb16_43_01_charge, mb16_43_01_ref_energy);
-  if (!info == EXIT_SUCCESS) return info;
-
-  info = test_energy(22, rost61_m1_atoms, rost61_m1_coord, rost61_m1_charge, rost61_m1_ref_energy);
+  return DFTVDW_D4(mol, par, charge, energy, nullptr);
   if (!info == EXIT_SUCCESS) return info;
 
   return EXIT_SUCCESS;
 }
+
+int test_param() {
+  int info;
+  int charge;
+  double energy;
+  dparam par;
+
+  // assemble molecule
+  TMolecule mol;
+  info = get_molecule(upu23_0a_n, upu23_0a_atoms, upu23_0a_coord, mol);
+  if (!info == EXIT_SUCCESS) return info;
+  charge = upu23_0a_charge;
+
+  for (int i = 0; i < nfuncs; i++) {
+    std::string func = funcs[i];
+    d4par(func, par, true);
+
+    energy = 0.0;
+    info = DFTVDW_D4(mol, par, charge, energy, nullptr);
+    if (!info == EXIT_SUCCESS) return info;
+
+    if (check(energy, ref_energy[i]) == EXIT_FAILURE) {
+      print_fail(funcs[i], energy, ref_energy[i]);
+      printf("a1 = %.7f\n", par.a1);
+      return EXIT_FAILURE;
+    }
+
+  }
+ 
+
+  return EXIT_SUCCESS;
+};
