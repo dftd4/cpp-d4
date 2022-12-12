@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
   dftd::dparam par;  // damping parameter for DFT-D4 calculation
   dftd::TMolecule mol;
   int info;
-  double energy;
+  double energy{0.0};
   int charge;
 
   // check for complete command line
