@@ -171,11 +171,19 @@ int get_ncoord_erf(
   bool lgrad,
   double thr
 ) {
+  int info;
+
   if (lgrad) {
-    printf("asdasd");
-    return dncoord_erf(mol, dist, cn, dcndr, thr);
-  } 
-  return ncoord_erf(mol, dist, cn, thr);
+    info = dncoord_erf(mol, dist, cn, dcndr, thr);
+  } else {
+    info = ncoord_erf(mol, dist, cn, thr);
+  }
+  if (!info == EXIT_SUCCESS) return info;
+
+  info = cut_coordination_number(cn_max, cn, dcndr, lgrad);
+  if (!info == EXIT_SUCCESS) return info;
+
+  return EXIT_SUCCESS;
 };
 
 
@@ -270,6 +278,7 @@ int ncoord_erf(const TMolecule& mol, const TMatrix<double>& dist,
   for (int i = 0; i != mol.NAtoms; i++) {
     for (int j = 0; j != i; j++) {
       r = dist(i, j);
+      printf("%.16f\n", r);
       rcovij = rad[mol.at(i)] + rad[mol.at(j)];
       rr = r / rcovij;
       countf = erf_count(kn, rr);
@@ -278,10 +287,6 @@ int ncoord_erf(const TMolecule& mol, const TMatrix<double>& dist,
     }
   }
 
-  // Cutoff function for large coordination numbers
-  for (int i = 0; i != mol.NAtoms; i++) {
-    cn(i) = log(1.0 + exp(cn_max)) - log(1.0 + exp(cn_max - cn(i)));
-  }
   return EXIT_SUCCESS;
 }
 
@@ -322,11 +327,6 @@ int dncoord_erf(const TMolecule& mol, const TMatrix<double>& dist,
     }
   }
 
-  // Cutoff function for large coordination numbers
-  for (int i = 0; i != mol.NAtoms; i++) {
-    cn(i) = log(1.0 + exp(cn_max)) - log(1.0 + exp(cn_max - cn(i)));
-  }
-
   return EXIT_SUCCESS;
 }
 
@@ -339,5 +339,32 @@ double erf_count(double k, double rr) {
 double derf_count(double k, double rr) {
   return -hlfosqrtpi * k * std::exp(-pow(k * (rr - 1.0), 2));
 }
+
+
+int cut_coordination_number(
+  const double cn_max,
+  TVector<double>& cn,
+  TMatrix<double>& dcndr,
+  bool lgrad
+) {
+  if (lgrad) {
+    
+  }
+
+  for (int i = 0; i != cn.N; i++) {
+    cn(i) = log_cn_cut(cn_max, cn(i));
+  }
+
+  return EXIT_SUCCESS;
+};
+
+
+inline double log_cn_cut(const double cn_max, const double cn) {
+  return log(1.0 + exp(cn_max)) - log(1.0 + exp(cn_max - cn));
+};
+
+inline double dlog_cn_cut(const double cn_max, const double cn) {
+  return exp(cn_max) / (exp(cn_max) + exp(cn));
+};
 
 }  // namespace dftd

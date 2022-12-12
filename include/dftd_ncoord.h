@@ -166,4 +166,25 @@ extern double erf_count(double k, double rr);
  */
 extern double derf_count(double k, double rr);
 
+
+/**
+ * Cutoff function for large coordination numbers
+ * 
+ * @param cn_max Maximum CN (not strictly obeyed).
+ * @param cn On input coordination number, on output modified CN.
+ * @param dcndr On input derivative of CN w.r.t. cartesian coordinates,
+ * on output derivative of modified CN.
+ * @param lgrad Flag for gradient.
+ */
+extern int cut_coordination_number(
+  const double cn_max,
+  TVector<double>& cn,
+  TMatrix<double>& dcndr,
+  bool lgrad
+);
+
+extern inline double log_cn_cut(const double cn_max, const double cn);
+
+extern inline double dlog_cn_cut(const double cn_max, const double cn);
+
 };  // namespace dftd
