@@ -18,6 +18,7 @@
 tests = [
   'disp',
   'ncoord',
+  'param',
 ]
 
 test_srcs = files(

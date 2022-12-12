@@ -36,7 +36,10 @@ void read_xyzfile(const std::string& name, dftd::TMolecule& mol) {
   double x{0.0}, y{0.0}, z{0.0};
 
   geo.open(name);
-  if (!geo) exit(EXIT_FAILURE);
+  if (!geo) {
+    printf("Error: Cannot open file.");
+    exit(EXIT_FAILURE);
+  } 
 
   buffer << (std::getline(geo, line), line);
   buffer >> n;
@@ -48,7 +51,8 @@ void read_xyzfile(const std::string& name, dftd::TMolecule& mol) {
   for (int i = 0; i != n; i++) {
     geo >> sym >> x >> y >> z;
     if (geo.fail()) {
-      std::exit(EXIT_FAILURE);
+      printf("Error: Input file could not be read.");
+      exit(EXIT_FAILURE);
     }
     mol.xyz(i, 0) = x * aatoau;
     mol.xyz(i, 1) = y * aatoau;
