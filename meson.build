@@ -35,10 +35,11 @@ foreach lib: ['cblas', 'lapacke']
 endforeach
 
 srcs = files(
+  'src/dftd_cutoff.cpp',
+  'src/dftd_damping.cpp',
   'src/dftd_dispersion.cpp',
   'src/dftd_eeq.cpp',
   'src/dftd_ncoord.cpp',
-  'src/dftd_damping.cpp',
 )
 
 cpp_d4_inc = include_directories('include')
@@ -53,13 +54,14 @@ cpp_d4_lib = library(
 )
 
 install_headers(
+  'include/dftd_cutoff.h',
+  'include/dftd_damping.h',
   'include/dftd_dispersion.h',
   'include/dftd_eeq.h',
+  'include/dftd_geometry.h',
+  'include/dftd_matrix.h',
   'include/dftd_ncoord.h',
   'include/dftd_parameters.h',
-  'include/dftd_damping.h',
-  'include/dftd_matrix.h',
-  'include/dftd_geometry.h',
 )
 
 cpp_d4_dep = declare_dependency(

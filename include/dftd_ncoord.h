@@ -43,18 +43,18 @@ extern int calc_distances(const TMolecule& mol, TMatrix<double>& dist);
  * @param mol Molecule object.
  * @param dist Distance matrix.
  * @param cn Vector of coordination numbers.
+ * @param cutoff Real-space cutoff (default: @see {dftd_cutoff.h}).
  * @param dcndr Derivative of coordination number.
  * @param lgrad Flag for gradient computation.
- * @param thr Real-space cutoff (default: 1600.0).
  * @return Exit status.
 */
 extern int get_ncoord_erf(
   const TMolecule& mol,
   const TMatrix<double>& dist,
+  const double cutoff,
   TVector<double>& cn,
   TMatrix<double>& dcndr,
-  bool lgrad = false,
-  double thr = 1600.0
+  bool lgrad = false
 );
 
 /**
@@ -62,16 +62,15 @@ extern int get_ncoord_erf(
  * 
  * @param mol Molecule object.
  * @param dist Distance matrix.
+ * @param cutoff Real-space cutoff (default: @see {dftd_cutoff.h}).
  * @param cn Vector of coordination numbers.
- * @param dcndr Derivative of coordination number.
- * @param thr Real-space cutoff (default: 1600.0).
  * @return Exit status.
 */
 extern int ncoord_erf(
   const TMolecule& mol,
   const TMatrix<double>& dist,
-  TVector<double>& cn,
-  double thr = 1600.0
+  const double cutoff,
+  TVector<double>& cn
 );
 
 /**
@@ -80,17 +79,17 @@ extern int ncoord_erf(
  * 
  * @param mol Molecule object.
  * @param dist Distance matrix.
+ * @param cutoff Real-space cutoff (default: @see {dftd_cutoff.h}).
  * @param cn Vector of coordination numbers.
  * @param dcndr Derivative of coordination number.
- * @param thr Real-space cutoff (default: 1600.0).
  * @return Exit status.
 */
 extern int dncoord_erf(
   const TMolecule& mol,
   const TMatrix<double>& dist,
+  const double cutoff,
   TVector<double>& cn,
-  TMatrix<double>& dcndr,
-  double thr = 1600.0
+  TMatrix<double>& dcndr
 );
 
 
@@ -99,17 +98,17 @@ extern int dncoord_erf(
  * 
  * @param mol Molecule object.
  * @param dist Distance matrix.
+ * @param cutoff Real-space cutoff (default: @see {dftd_cutoff.h}).
  * @param cn Vector of coordination numbers.
- * @param thr Real-space cutoff (default: 1600.0).
  * @return Exit status.
 */
 extern int get_ncoord_d4(
   const TMolecule& mol,
   const TMatrix<double>& dist,
+  const double cutoff,
   TVector<double>& cn,
   TMatrix<double>& dcndr,
-  bool lgrad = false,
-  double thr = 1600.0
+  bool lgrad = false
 );
 
 /**
@@ -117,15 +116,15 @@ extern int get_ncoord_d4(
  * 
  * @param mol Molecule object.
  * @param dist Distance matrix.
+ * @param cutoff Real-space cutoff (default: @see {dftd_cutoff.h}).
  * @param cn Vector of coordination numbers.
- * @param thr Real-space cutoff (default: 1600.0).
  * @return Exit status.
 */
 extern int ncoord_d4(
   const TMolecule& mol,
   const TMatrix<double>& dist,
-  TVector<double>& cn,
-  double thr = 1600.0
+  const double cutoff,
+  TVector<double>& cn
 );
 
 
@@ -135,17 +134,17 @@ extern int ncoord_d4(
  * 
  * @param mol Molecule object.
  * @param dist Distance matrix.
+ * @param cutoff Real-space cutoff (default: @see {dftd_cutoff.h}).
  * @param cn Vector of coordination numbers.
  * @param dcndr Derivative of coordination number.
- * @param thr Real-space cutoff (default: 1600.0).
  * @return Exit status.
 */
 extern int dncoord_d4(
   const TMolecule& mol,
   const TMatrix<double>& dist,
+  const double cutoff,
   TVector<double>& cn,
-  TMatrix<double>& dcndr,
-  double thr = 1600.0
+  TMatrix<double>& dcndr
 );
 
 /**
@@ -161,14 +160,14 @@ extern double erf_count(double k, double rr);
  * Derivative of the counting function w.r.t. the distance.
  * 
  * @param k Steepness of the counting function.
- * @param rr Cutoff radius.
+ * @param rr TCutoff radius.
  * @return Derivative of the counting function.
  */
 extern double derf_count(double k, double rr);
 
 
 /**
- * Cutoff function for large coordination numbers
+ * TCutoff function for large coordination numbers
  * 
  * @param cn_max Maximum CN (not strictly obeyed).
  * @param cn On input coordination number, on output modified CN.

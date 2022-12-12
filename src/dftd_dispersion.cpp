@@ -170,10 +170,11 @@ int d4(const TMolecule& mol, int ndim, double wf, double g_a, double g_c,
   return EXIT_SUCCESS;
 }
 
-int edisp(const TMolecule& mol, const TMatrix<double>& dist, const dparam& par, 
-          int ndim, TVector<double>& q,double g_a, double g_c,
-          TVector<double>& gw, TMatrix<double>& c6ref, bool lmbd,
-          double& energy) {
+int edisp(const TMolecule& mol, const TMatrix<double>& dist,
+          const double cutoff_disp2, const double cutoff_disp3,
+          const dparam& par, int ndim, TVector<double>& q,
+          double g_a, double g_c, TVector<double>& gw,
+          TMatrix<double>& c6ref, bool lmbd, double& energy) {
   int iat = 0, jat = 0, ij = 0;
   int info = 0;
   double iz = 0.0, r = 0.0, r4r2ij = 0.0, cutoff = 0.0;
@@ -201,13 +202,15 @@ int edisp(const TMolecule& mol, const TMatrix<double>& dist, const dparam& par,
   for (int i = 0, kk = 0; i != mol.NAtoms; i++) {
     iat = mol.at(i);
     for (int j = 0, ll = 0; j != i; j++) {
-      ij = j + i * (i + 1) / 2;
       jat = mol.at(j);
       r = dist(i, j);
+      if (r > cutoff_disp2) continue;
+      
       r4r2ij = 3.0 * r4r2[iat] * r4r2[jat];
       cutoff = par.a1 * sqrt(r4r2ij) + par.a2;
       r6 = fdmpr_bj(6, r, cutoff);
       r8 = fdmpr_bj(8, r, cutoff);
+
       r10 = fdmpr_bj(10, r, cutoff);
       c6ij_ns = 0.0;
       c6ij = 0.0;
@@ -217,6 +220,7 @@ int edisp(const TMolecule& mol, const TMatrix<double>& dist, const dparam& par,
           c6ij += zetavec(k) * zetavec(l) * c6ref(k, l);
         }
       }
+      ij = j + i * (i + 1) / 2;
       c6ab(ij) = c6ij_ns;
       ed -= c6ij * (par.s6 * r6 + par.s8 * r4r2ij * r8 +
                     par.s10 * 49.0 / 40.0 * pow(r4r2ij, 2) * r10);
@@ -227,7 +231,7 @@ int edisp(const TMolecule& mol, const TMatrix<double>& dist, const dparam& par,
   }
 
   if (lmbd) {
-    info = apprabc(mol, dist, par, ndim, c6ab, embd);
+    info = apprabc(mol, dist, cutoff_disp3, par, ndim, c6ab, embd);
     if (!info == 0) return info;
   }
 
@@ -242,6 +246,7 @@ int edisp(const TMolecule& mol, const TMatrix<double>& dist, const dparam& par,
 }
 
 int dispgrad(const TMolecule& mol, const TMatrix<double>& dist,
+             const double cutoff_disp2, const double cutoff_disp3,
              const dparam& par, int ndim, const TVector<double>& q, 
              TMatrix<double>& dqdr, TVector<double>& cn, 
              TMatrix<double>& dcndr, double wf, double g_a, double g_c, 
@@ -326,9 +331,11 @@ int dispgrad(const TMolecule& mol, const TMatrix<double>& dist,
   for (int i = 0, kk = 0; i != mol.NAtoms; i++) {
     iat = mol.at(i);
     for (int j = 0, ll = 0; j != i; j++) {
-      ij = j + i * (i + 1) / 2;
-      jat = mol.at(j);
       r = dist(i, j);
+      if (r > cutoff_disp2) continue;
+      
+      jat = mol.at(j);
+      ij = j + i * (i + 1) / 2;
 
       r4r2ij = 3.0 * r4r2[iat] * r4r2[jat];
       cutoff = par.a1 * sqrt(r4r2ij) + par.a2;
@@ -373,16 +380,19 @@ int dispgrad(const TMolecule& mol, const TMatrix<double>& dist,
     kk += refn[iat];
   }
 
-  info = dabcappr(mol, dist, par, ndim, gw, dgw, c6ref, dc6dr, dc6dcn, embd);
-  if (!info == 0) return info;
+  info = dabcappr(
+    mol, dist, cutoff_disp3, par, ndim, gw, dgw, c6ref, dc6dr, dc6dcn, embd
+  );
+  if (!info == EXIT_SUCCESS) return info;
 
   energy += ed + embd;
 
   for (int i = 0; i != mol.NAtoms; i++) {
     iat = mol.at(i);
     for (int j = 0; j != i; j++) {
-      ij = j + i * (i + 1) / 2;
       r = dist(i, j);
+      if (r > cutoff_disp2) continue;
+
       x = (mol.xyz(j, 0) - mol.xyz(i, 0)) / r;
       y = (mol.xyz(j, 1) - mol.xyz(i, 1)) / r;
       z = (mol.xyz(j, 2) - mol.xyz(i, 2)) / r;
@@ -420,8 +430,8 @@ int dispgrad(const TMolecule& mol, const TMatrix<double>& dist,
 }
 
 int apprabc(const TMolecule& mol, const TMatrix<double>& dist,
-            const dparam& par, int ndim, TVector<double>& c6ab,
-            double& energy) {
+            const double cutoff, const dparam& par, int ndim,
+            TVector<double>& c6ab, double& energy) {
   int iat = 0, jat = 0, kat = 0, ij = 0, ik = 0, jk = 0;
   double rij = 0.0, r2ij = 0.0, cij = 0.0, r4r2ij = 0.0;
   double rik = 0.0, r2ik = 0.0, cik = 0.0, r4r2ik = 0.0;
@@ -432,21 +442,28 @@ int apprabc(const TMolecule& mol, const TMatrix<double>& dist,
   for (int i = 0; i != mol.NAtoms; i++) {
     iat = mol.at(i);
     for (int j = 0; j != i; j++) {
-      ij = j + i * (i + 1) / 2;
-      jat = mol.at(j);
       rij = dist(i, j);
+      if (rij > cutoff) continue; 
+
+      jat = mol.at(j);
+      ij = j + i * (i + 1) / 2;
+
       r2ij = pow(rij, 2);
       r4r2ij = 3.0 * r4r2[iat] * r4r2[jat];
       cij = par.a1 * sqrt(r4r2ij) + par.a2;
       for (int k = 0; k != j; k++) {
+        rik = dist(i, k);
+        if (rik > cutoff) continue; 
+        rjk = dist(j, k);
+        if (rjk > cutoff) continue; 
+
+        kat = mol.at(k);
         ik = k + i * (i + 1) / 2;
         jk = k + j * (j + 1) / 2;
-        kat = mol.at(k);
-        rik = dist(i, k);
+        
         r2ik = pow(rik, 2);
         r4r2ik = 3.0 * r4r2[iat] * r4r2[kat];
         cik = par.a1 * sqrt(r4r2ik) + par.a2;
-        rjk = dist(j, k);
         r2jk = pow(rjk, 2);
         r4r2jk = 3.0 * r4r2[jat] * r4r2[kat];
         cjk = par.a1 * sqrt(r4r2jk) + par.a2;
@@ -470,8 +487,8 @@ int apprabc(const TMolecule& mol, const TMatrix<double>& dist,
 }
 
 int dabcappr(const TMolecule& mol, const TMatrix<double>& dist, 
-             const dparam& par, int ndim, TVector<double>& gw, 
-             TVector<double>& dgw, TMatrix<double>& c6ref, 
+             const double cutoff, const dparam& par, int ndim,
+             TVector<double>& gw, TVector<double>& dgw, TMatrix<double>& c6ref, 
              TVector<double>& dc6dr, TVector<double>& dc6dcn, double& energy) {
   int iat = 0, jat = 0, kat = 0, ij = 0, ik = 0, jk = 0;
   double c6ij = 0.0, dic6ij = 0.0, djc6ij = 0.0, dtmp = 0.0, rij = 0.0,
@@ -516,16 +533,25 @@ int dabcappr(const TMolecule& mol, const TMatrix<double>& dist,
   for (int i = 0; i != mol.NAtoms; i++) {
     iat = mol.at(i);
     for (int j = 0; j != i; j++) {
-      ij = j + i * (i + 1) / 2;
-      jat = mol.at(j);
       rij = dist(i, j);
+      if (rij > cutoff) continue; 
+      
+      jat = mol.at(j);
+      ij = j + i * (i + 1) / 2;
+
       r2ij = pow(rij, 2);
       r4r2ij = 3.0 * r4r2[iat] * r4r2[jat];
       cij = par.a1 * sqrt(r4r2ij) + par.a2;
       for (int k = 0; k != j; k++) {
+        rik = dist(i, k);
+        if (rik > cutoff) continue; 
+        rjk = dist(j, k);
+        if (rjk > cutoff) continue;
+
+        kat = mol.at(k);
         ik = k + i * (i + 1) / 2;
         jk = k + j * (j + 1) / 2;
-        kat = mol.at(k);
+
         rik = dist(i, k);
         r2ik = pow(rik, 2);
         r4r2ik = 3.0 * r4r2[iat] * r4r2[kat];
@@ -594,8 +620,9 @@ int dabcappr(const TMolecule& mol, const TMatrix<double>& dist,
   return EXIT_SUCCESS;
 }
 
-int DFTVDW_D4(const TMolecule &mol, const dparam &par, const int &charge,
-              double &energy, double *GRAD) {
+
+int get_dispersion(const TMolecule &mol, const dparam &par, const int &charge,
+                   TCutoff cutoff, double &energy, double *GRAD) {
   // setup variables
   bool lverbose = false;
   bool lmbd = true;
@@ -644,10 +671,10 @@ int DFTVDW_D4(const TMolecule &mol, const dparam &par, const int &charge,
     dqdr.New(mol.NAtoms + 1, 3 * mol.NAtoms);
     ges.New(mol.NAtoms, 3);
     gradient.New(mol.NAtoms, 3);
-  } 
-  
+  }
+
   // get the EEQ coordination number
-  info = get_ncoord_erf(mol, dist, cn, dcndr, lgrad);
+  info = get_ncoord_erf(mol, dist, cutoff.cn_eeq, cn, dcndr, lgrad);
   if (!info == EXIT_SUCCESS) return info;
 
   // calculate partial charges by EEQ model
@@ -657,7 +684,7 @@ int DFTVDW_D4(const TMolecule &mol, const dparam &par, const int &charge,
   if (!info == EXIT_SUCCESS) return info;
 
   // get the D4 coordination number
-  info = get_ncoord_d4(mol, dist, covcn, dcovcndr, lgrad);
+  info = get_ncoord_d4(mol, dist, cutoff.cn, covcn, dcovcndr, lgrad);
   if (!info == EXIT_SUCCESS) return info;
 
   // D4 weights and c6 references
@@ -665,12 +692,16 @@ int DFTVDW_D4(const TMolecule &mol, const dparam &par, const int &charge,
   if (!info == EXIT_SUCCESS) return info;
 
   if (!lgrad) {
-    info =
-        edisp(mol, dist, par, ndim, q, g_a, g_c, gweights, c6ref, lmbd, energy);
+    info = edisp(
+      mol, dist, cutoff.disp2, cutoff.disp3, par, ndim, q, g_a, g_c,
+      gweights, c6ref, lmbd, energy
+    );
     if (!info == EXIT_SUCCESS) return info;
   } else {
-    info = dispgrad(mol, dist, par, ndim, q, dqdr, covcn, dcovcndr, wf, g_a,
-                    g_c, c6ref, lmbd, energy, gradient);
+    info = dispgrad(
+      mol, dist, cutoff.disp2, cutoff.disp3, par, ndim, q, dqdr, covcn,
+      dcovcndr, wf, g_a, g_c, c6ref, lmbd, energy, gradient
+    );
     if (!info == EXIT_SUCCESS) return info;
     // add to gradient
     for (int i = 0, ij = 0; i != mol.NAtoms; i++) {

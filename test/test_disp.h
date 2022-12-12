@@ -28,10 +28,10 @@ static const double rost61_m1_ref_energy {
 
 extern int test_energy(
   const int n,
-  const char atoms[][3],
+  const char atoms[][4],
   const double coord[],
   const int charge,
-  const double ref_cn
+  const double ref
 );
 
 extern int test_disp(void);

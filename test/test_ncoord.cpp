@@ -15,9 +15,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with cpp-d4.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include <dftd_ncoord.h>
+#include <dftd_cutoff.h>
 #include <dftd_geometry.h>
 #include <dftd_matrix.h>
+#include <dftd_ncoord.h>
 #include <dftd_readxyz.h>
 
 #include "molecules.h"
@@ -52,11 +53,11 @@ int test_cn(
   dist.New(n, n);
   calc_distances(mol, dist);
 
-  // erf-CN
+  // erf-CN without cutoff
   TVector<double> cn;
   TMatrix<double> dcndr; // empty because no gradient needed
   cn.New(n);
-  info = get_ncoord_d4(mol, dist, cn, dcndr, false);
+  info = get_ncoord_d4(mol, dist, 9999.9, cn, dcndr, false);
   if (!info == EXIT_SUCCESS) return info;
 
   // compare to ref
@@ -72,10 +73,14 @@ int test_cn(
 int test_ncoord() {
   int info;
   
-  info = test_cn(16, mb16_43_01_atoms, mb16_43_01_coord, mb16_43_01_ref_cn);
+  info = test_cn(
+    mb16_43_01_n, mb16_43_01_atoms, mb16_43_01_coord, mb16_43_01_ref_cn
+  );
   if (!info == EXIT_SUCCESS) return info;
 
-  info = test_cn(22, rost61_m1_atoms, rost61_m1_coord, rost61_m1_ref_cn);
+  info = test_cn(
+    rost61_m1_n, rost61_m1_atoms, rost61_m1_coord, rost61_m1_ref_cn
+  );
   if (!info == EXIT_SUCCESS) return info;
 
   return EXIT_SUCCESS;
