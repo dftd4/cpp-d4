@@ -278,6 +278,7 @@ int ncoord_erf(const TMolecule& mol, const TMatrix<double>& dist,
   for (int i = 0; i != mol.NAtoms; i++) {
     for (int j = 0; j != i; j++) {
       r = dist(i, j);
+      printf("%.16f\n", r);
       rcovij = rad[mol.at(i)] + rad[mol.at(j)];
       rr = r / rcovij;
       countf = erf_count(kn, rr);
