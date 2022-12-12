@@ -30,34 +30,6 @@ class TCutoff {
     explicit TCutoff();
 
     /**
-     * @brief Set the cutoff for the two-body dispersion term.
-     * 
-     * @param val New value for two-body dispersion cutoff.
-     */
-    void set_disp2(double val);
-
-    /**
-     * @brief Set the cutoff for the three-body dispersion term.
-     * 
-     * @param val New value for three-body dispersion cutoff.
-     */
-    void set_disp3(double val);
-
-    /**
-     * @brief Set the cutoff for the DFT-D4 coordination number.
-     * 
-     * @param val New value for DFT-D4 coordination number cutoff.
-     */
-    void set_cn(double val);
-
-    /**
-     * @brief Set the cutoff for the EEQ coordination number.
-     * 
-     * @param val New value for EEQ coordination number cutoff.
-     */
-    void set_cn_eeq(double val);
-
-    /**
      * @brief Set all cutoffs.
      * 
      * @param new_cutoff New value for all cutoffs (int/double).

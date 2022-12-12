@@ -61,9 +61,7 @@ int test_param() {
   int info;
   TCutoff cutoff;
 
-  cutoff.set_disp2(60.0);
-  cutoff.set_disp3(15.0);
-  cutoff.set_cn(30.0);
+  cutoff.disp3 = 15.0;
   info = test_rational_damping(ref, cutoff);
   if (!info == EXIT_SUCCESS) return info;
 

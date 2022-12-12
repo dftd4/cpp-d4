@@ -40,32 +40,16 @@ TCutoff::TCutoff() {
 };
 
 void TCutoff::set_all(int new_cutoff) {
-  disp2 = (double)new_cutoff;
-  disp3 = (double)new_cutoff;
-  cn = (double)new_cutoff;
-  cn_eeq = (double)new_cutoff;
+  disp2 = static_cast<double>(new_cutoff);
+  disp3 = static_cast<double>(new_cutoff);
+  cn = static_cast<double>(new_cutoff);
+  cn_eeq = static_cast<double>(new_cutoff);
 };
 void TCutoff::set_all(double new_cutoff) {
   disp2 = new_cutoff;
   disp3 = new_cutoff;
   cn = new_cutoff;
   cn_eeq = new_cutoff;
-};
-
-void TCutoff::set_disp2(double val) {
-  disp2 = val;
-};
-
-void TCutoff::set_disp3(double val) {
-  disp3 = val;
-};
-
-void TCutoff::set_cn(double val) {
-  cn = val;
-};
-
-void TCutoff::set_cn_eeq(double val) {
-  cn_eeq = val;
 };
 
 }; // namespace dftd
