@@ -30,18 +30,10 @@ class TCutoff {
     explicit TCutoff();
 
     /**
-     * @brief Set all cutoffs.
-     * 
-     * @param new_cutoff New value for all cutoffs (int/double).
+     * @brief Disable cutoffs by setting them to a large value.
      */
-    void set_all(int new_cutoff);
+    void disable(void);
 
-    /**
-     * @brief Set all cutoffs to the given value.
-     * 
-     * @param new_cutoff New value for all cutoffs (int/double).
-     */
-    void set_all(double new_cutoff);
 };
 
 }; // namespace dftd

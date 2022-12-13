@@ -39,13 +39,8 @@ TCutoff::TCutoff() {
   cn_eeq = cn_eeq_default;
 };
 
-void TCutoff::set_all(int new_cutoff) {
-  disp2 = static_cast<double>(new_cutoff);
-  disp3 = static_cast<double>(new_cutoff);
-  cn = static_cast<double>(new_cutoff);
-  cn_eeq = static_cast<double>(new_cutoff);
-};
-void TCutoff::set_all(double new_cutoff) {
+void TCutoff::disable() {
+  const double new_cutoff = 999999999;
   disp2 = new_cutoff;
   disp3 = new_cutoff;
   cn = new_cutoff;

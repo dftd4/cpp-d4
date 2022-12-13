@@ -47,7 +47,7 @@ int test_energy(
   if (!info == EXIT_SUCCESS) return info;
 
   TCutoff cutoff;
-  cutoff.set_all(9999); // do not use cutoffs
+  cutoff.disable(); // do not use cutoffs
 
   // dispersion main function
   info = get_dispersion(mol, par, charge, cutoff, energy, nullptr);

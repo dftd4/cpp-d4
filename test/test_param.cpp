@@ -65,7 +65,7 @@ int test_param() {
   info = test_rational_damping(ref, cutoff);
   if (!info == EXIT_SUCCESS) return info;
 
-  cutoff.set_all(9999); // do not use cutoffs
+  cutoff.disable(); // do not use cutoffs
   info = test_rational_damping(ref_no_cutoff, cutoff);
   if (!info == EXIT_SUCCESS) return info;
  
