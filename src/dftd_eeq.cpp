@@ -17,16 +17,16 @@
  */
 
 /**
- * Electronegativity equilibration (EEQ) model for DFT-D4
+ * Electronegativity equilibration (EEQ) model for DFT-D4.
+ * This implementation contains only the essential parts for DFT-D4.
  */
-
-#include "dftd_eeq.h"
-
 #include <cmath>
 
 #include "dftd_cblas.h"
+#include "dftd_eeq.h"
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
+#include "dftd_ncoord.h"
 
 // wrap everything in the dftd namespace to keep it nicely confined
 namespace dftd {
@@ -109,167 +109,277 @@ static const double sqrt2pi = std::sqrt(2.0 / pi);
 static const char _p_up = 'u', _p_lo = 'l';
 
 
-int eeq_chrgeq(const TMolecule& mol, const TMatrix<double>& dist,
-               const int& charge, const TVector<double>& cn, 
-               TVector<double>& q, double& energy,
-               TMatrix<double>& dcndr, TMatrix<double>& dqdr, 
-               TMatrix<double>& gradient, bool lgrad /*= false*/,
-               bool lverbose /*= false*/, bool lcpq /*= false*/) {
-  double qtotal = 0.0;
-  double es = 0.0;
-  double gamij = 0.0, gamij2 = 0.0, arg = 0.0, arg2 = 0.0;
-  double tmp = 0.0, dtmp = 0.0;
-  double rx = 0.0, ry = 0.0, rz = 0.0, r = 0.0, r2 = 0.0;
-  int info = 0;
-  // lapack_int* ipiv;
+int get_charges(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  const int charge,
+  const double cutoff,
+  TVector<double>& q,
+  TMatrix<double>& dqdr,
+  bool lgrad
+) {
+  int info{0};
+  bool lverbose{false};
 
-  int m = mol.NAtoms + 1;
-  int mm = m - 1;
-  TMatrix<double> Amat;
-  Amat.New(m, m);
-  TVector<double> Xvec;
-  Xvec.New(m);
-  TVector<double> Xfac;
-  Xfac.New(m);
-  TVector<double> alpha;
-  alpha.New(mol.NAtoms);
+  TVector<double> cn;        // EEQ cordination number
+  TMatrix<double> dcndr;     // Derivative of EEQ-CN
 
-  for (int i = 0; i != mol.NAtoms; i++) {
-    tmp = kappa[mol.at(i)] / std::sqrt(cn(i) + small);
-    Xvec(i) = -xi[mol.at(i)] + tmp * cn(i);
-    Xfac(i) = 0.5 * tmp;
-    alpha(i) = pow(alp[mol.at(i)], 2);
+  cn.New(mol.NAtoms);
+  if (lgrad) dcndr.New(mol.NAtoms, 3 * mol.NAtoms);
+
+  // get the EEQ coordination number
+  info = get_ncoord_erf(mol, dist, cutoff, cn, dcndr, lgrad);
+  if (!info == EXIT_SUCCESS) return info;
+
+  // corresponds to model%solve in Fortran
+  info = eeq_chrgeq(mol, dist, charge, cn, q, dcndr, dqdr, lgrad, lverbose);
+  if (!info == EXIT_SUCCESS) return info;
+
+  dcndr.Delete();
+  cn.Delete();
+
+  return EXIT_SUCCESS;
+};
+
+int get_vrhs(
+  const TMolecule& mol,
+  const int& charge,
+  const TVector<double>& cn,
+  TVector<double>& Xvec,
+  TVector<double>& dXvec,
+  bool lgrad
+) {
+  double tmp{0.0};
+  int izp;
+
+  if (lgrad) {
+    for (int i = 0; i != mol.NAtoms; i++) {
+      izp = mol.at(i);
+      tmp = kappa[izp] / std::sqrt(cn(i) + small);
+      Xvec(i) = -xi[izp] + tmp * cn(i);
+      dXvec(i) = 0.5*tmp;
+    }
+    dXvec(mol.NAtoms) = 0.0;
+  } else {
+    for (int i = 0; i != mol.NAtoms; i++) {
+      izp = mol.at(i);
+      tmp = kappa[izp] / std::sqrt(cn(i) + small);
+      Xvec(i) = -xi[izp] + tmp * cn(i);
+    }
   }
-  Xvec(mm) = charge;
+  
+  Xvec(mol.NAtoms) = charge;
+
+  return EXIT_SUCCESS;
+};
+
+int get_amat_0d(
+  const TMolecule& mol,
+  const TMatrix<double> &dist,
+  TMatrix<double>& Amat
+) {
+  double gamij = 0.0;
+  int izp, jzp;
+  double alphai, alphaj;
+  double tmp, r;
 
   for (int i = 0; i != mol.NAtoms; i++) {
+    izp = mol.at(i);
+    alphai = pow(alp[izp], 2);
     for (int j = 0; j != i; j++) {
+      jzp = mol.at(j);
+      alphaj = pow(alp[jzp], 2);
+
       r = dist(i, j);
-      gamij = 1.0 / std::sqrt(alpha(i) + alpha(j));
-      arg = gamij * r;
-      tmp = std::erf(arg) / r;
+      gamij = 1.0 / std::sqrt(alphai + alphaj);
+      tmp = std::erf(gamij * r) / r;
       Amat(i, j) = tmp;
       Amat(j, i) = tmp;
     }
     gamij = gam[mol.at(i)];
-    Amat(i, i) = gamij + sqrt2pi / std::sqrt(alpha(i));
-    Amat(i, mm) = 1.0;
-    Amat(mm, i) = 1.0;
+    Amat(i, i) = gamij + sqrt2pi / alp[izp];
+    Amat(i, mol.NAtoms) = 1.0;
+    Amat(mol.NAtoms, i) = 1.0;
   }
-  Amat(mm, mm) = 0.0;
+  Amat(mol.NAtoms, mol.NAtoms) = 0.0;
+
+  return EXIT_SUCCESS;
+};
+
+
+int get_damat_0d(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  const TVector<double>& q,
+  const TMatrix<double>& Amat,
+  TMatrix<double>& dAmat,
+  TMatrix<double>& atrace
+) {
+  double alphai, alphaj;
+  double rx, ry, rz, r2;
+  double arg, gam, dtmp;
+  double dgx, dgy, dgz;
+
+  for (int i = 0; i != mol.NAtoms; i++) {
+    alphai = pow(alp[mol.at(i)], 2);
+
+    for (int j = 0; j != i; j++) {
+      alphaj = pow(alp[mol.at(j)], 2);
+
+      rx = mol.xyz(i, 0) - mol.xyz(j, 0);
+      ry = mol.xyz(i, 1) - mol.xyz(j, 1);
+      rz = mol.xyz(i, 2) - mol.xyz(j, 2);
+      r2 = pow(dist(i, j), 2);
+
+      gam = 1.0 / std::sqrt((alphai + alphaj));
+      arg = gam*gam * r2;
+      dtmp = 2.0 * gam * std::exp(-arg) / (sqrtpi * r2) - Amat(j, i) / r2;
+      dgx = dtmp * rx;
+      dgy = dtmp * ry;
+      dgz = dtmp * rz;
+      
+      atrace(i, 0) += dgx * q(j);
+      atrace(i, 1) += dgy * q(j);
+      atrace(i, 2) += dgz * q(j);
+      atrace(j, 0) -= dgx * q(i);
+      atrace(j, 1) -= dgy * q(i);
+      atrace(j, 2) -= dgz * q(i);
+      
+      dAmat(3*i, j) = dgx * q(i);
+      dAmat(3*i + 1, j) = dgy * q(i);
+      dAmat(3*i + 2, j) = dgz * q(i);
+      dAmat(3*j, i) = -dgx * q(j);
+      dAmat(3*j + 1, i) = -dgy * q(j);
+      dAmat(3*j + 2, i) = -dgz * q(j);
+    }
+  }
+
+  return EXIT_SUCCESS;
+};
+
+int eeq_chrgeq(const TMolecule& mol, const TMatrix<double>& dist,
+               const int& charge, const TVector<double>& cn, 
+               TVector<double>& qvec, TMatrix<double>& dcndr,
+               TMatrix<double>& dqdr, bool lgrad /*= false*/,
+               bool lverbose /*= false*/) {
+  double qtotal = 0.0;
+  int info = 0;
+  int m = mol.NAtoms + 1;
+  int mm = mol.NAtoms;
+
+  TMatrix<double> Amat;   // Coulomb matrix
+  TVector<double> xvec;   // x (chi) vector
+  Amat.New(m, m);
+  xvec.New(m);
+
+  TVector<double> dxdcn;  // Derivative of chi vector w.r.t. CN
+  if (lgrad) {
+    dxdcn.New(m);
+  }
+
+  info = get_vrhs(mol, charge, cn, xvec, dxdcn, lgrad);
+  if (!info == EXIT_SUCCESS) return info;
+
+  info = get_amat_0d(mol, dist, Amat);
+  if (!info == EXIT_SUCCESS) return info;
+
+  TVector<double> vrhs;
+  vrhs.New(m);
 
   TMatrix<double> Ainv;
   Ainv.New(m, m);
   Ainv.CopyMat(Amat);
 
-  Ainv.CopyMat(Amat);
+  // solve: A Q = X (Eq.4) -> Q = Ainv X
   info = BLAS_InvertMatrix(Ainv);
   if (!info == EXIT_SUCCESS) return info;
-  info = BLAS_Add_Mat_x_Vec(q, Ainv, Xvec, false, 1.0);
+  info = BLAS_Add_Mat_x_Vec(vrhs, Ainv, xvec, false, 1.0);
+  if (!info == EXIT_SUCCESS) return info;
 
+  // remove charge constraint (make vector smaller by one)
+  for (int i = 0; i != mm; i++) {
+    qvec(i) = vrhs(i);
+  }
+
+  // check total charge and additional printout
   qtotal = 0.0;
-  for (int i = 0; i != mol.NAtoms; i++) {
-    qtotal += q(i);
+  for (int i = 0; i != qvec.N; i++) {
+    qtotal += qvec(i);
   }
 
   if (fabs(qtotal - charge) > 1.0e-8) {
-    printf("Charge constraint error: %14.8f vs. %14d\n", qtotal, charge);
+    printf("DFT-D4: EEQ charge constraint error: %14.8f vs. %14d\n", qtotal, charge);
   }
 
   if (lverbose) {
     printf("    #   sym             EN              q            Aii\n");
     for (int i = 0; i != mol.NAtoms; i++) {
-      printf("%5d %5d %14.8f %14.8f %14.8f\n", i, mol.at(i), -Xvec(i), q(i),
+      printf("%5d %5d %14.8f %14.8f %14.8f\n", i, mol.at(i), -xvec(i), qvec(i),
              Amat(i, i));
     }
   }
 
-  TVector<double> scratch;
-  scratch.New(m);
-  for (int i = 0; i != m; i++) scratch(i) = -Xvec(i);
+  // Electrostatic energy (E = q * (0.5 * Amat * q + (-Xvec)) )
+  // -> not required for D4
+  // TVector<double> scratch;
+  // scratch.New(m);
+  // for (int i = 0; i != m; i++) scratch(i) = -xvec(i);
 
-  info = BLAS_Add_Mat_x_Vec(scratch, Amat, q, false, 0.5);
-  if (!info == EXIT_SUCCESS) return info;
-  es = BLAS_Vec_x_Vec(scratch, q);
-  scratch.Delete();
-  energy += es;
-  if (lverbose) printf("isotroptic electrostatic (IES) energy: %14.7f\n", es);
+  // info = BLAS_Add_Mat_x_Vec(scratch, Amat, vrhs, false, 0.5);
+  // if (!info == EXIT_SUCCESS) return info;
+  // es = BLAS_Vec_x_Vec(scratch, vrhs);
+  // scratch.Delete();
+  // energy += es; // pass energy as argument of function
+  // if (lverbose) printf("isotroptic electrostatic (IES) energy: %14.7f\n", es);
 
-  // Gradient
+  // Gradient (note that the corresponding gradient flag in Fortran is `cpq`)
   if (lgrad) {
     int ThreeN = 3 * mol.NAtoms;
+
     TMatrix<double> dAmat;
-    dAmat.New(m, ThreeN);
-    TMatrix<double> dXvec;
-    dXvec.New(m, ThreeN);
-    TMatrix<double> Afac;
-    Afac.New(mol.NAtoms, 3);
+    dAmat.New(ThreeN, m);
+    TMatrix<double> atrace;
+    atrace.New(m, 3);
+
+    info = get_damat_0d(mol, dist, vrhs, Amat, dAmat, atrace);
+    if (!info == EXIT_SUCCESS) return info;
+
     for (int i = 0; i != mol.NAtoms; i++) {
-      Afac(i, 0) = 0.0;
-      Afac(i, 1) = 0.0;
-      Afac(i, 2) = 0.0;
-      dXvec(i, 3 * i) = dcndr(i, 3 * i) * Xfac(i);
-      dXvec(i, 3 * i + 1) = dcndr(i, 3 * i + 1) * Xfac(i);
-      dXvec(i, 3 * i + 2) = dcndr(i, 3 * i + 2) * Xfac(i);
-      for (int j = 0; j != i; j++) {
-        dXvec(i, 3 * j) = dcndr(j, 3 * i) * Xfac(i);
-        dXvec(i, 3 * j + 1) = dcndr(j, 3 * i + 1) * Xfac(i);
-        dXvec(i, 3 * j + 2) = dcndr(j, 3 * i + 2) * Xfac(i);
-        dXvec(j, 3 * i) = dcndr(i, 3 * j) * Xfac(j);
-        dXvec(j, 3 * i + 1) = dcndr(i, 3 * j + 1) * Xfac(j);
-        dXvec(j, 3 * i + 2) = dcndr(i, 3 * j + 2) * Xfac(j);
-        rx = mol.xyz(i, 0) - mol.xyz(j, 0);
-        ry = mol.xyz(i, 1) - mol.xyz(j, 1);
-        rz = mol.xyz(i, 2) - mol.xyz(j, 2);
-        r2 = pow(dist(i, j), 2);
-        gamij2 = 1.0 / (alpha(i) + alpha(j));  // squared
-        gamij = std::sqrt(gamij2);
-        arg2 = gamij2 * r2;
-        dtmp = 2.0 * gamij * std::exp(-arg2) / (sqrtpi * r2) - Amat(j, i) / r2;
-        Afac(i, 0) += dtmp * rx * q(j);
-        Afac(i, 1) += dtmp * ry * q(j);
-        Afac(i, 2) += dtmp * rz * q(j);
-        Afac(j, 0) -= dtmp * rx * q(i);
-        Afac(j, 1) -= dtmp * ry * q(i);
-        Afac(j, 2) -= dtmp * rz * q(i);
-        dAmat(j, 3 * i) = dtmp * rx * q(i);
-        dAmat(j, 3 * i + 1) = dtmp * ry * q(i);
-        dAmat(j, 3 * i + 2) = dtmp * rz * q(i);
-        dAmat(i, 3 * j) = -dtmp * rx * q(j);
-        dAmat(i, 3 * j + 1) = -dtmp * ry * q(j);
-        dAmat(i, 3 * j + 2) = -dtmp * rz * q(j);
+      dAmat(3*i, i) += atrace(i, 0);
+      dAmat(3*i + 1, i) += atrace(i, 1);
+      dAmat(3*i + 2, i) += atrace(i, 2);
+
+      for (int j = 0; j != mol.NAtoms; j++) {
+        dAmat(3*j, i) -= dcndr(j, 3*i) * dxdcn(i);
+        dAmat(3*j + 1, i) -= dcndr(j, 3*i + 1) * dxdcn(i);
+        dAmat(3*j + 2, i) -= dcndr(j, 3*i + 2) * dxdcn(i);
       }
     }
 
-    BLAS_Add_Mat_x_Vec(gradient.p, dAmat.p, q.p, ThreeN, m, false, +1.0, 1.0);
-    BLAS_Add_Mat_x_Vec(gradient.p, dXvec.p, q.p, ThreeN, m, false, -1.0, 1.0);
-  
-  
-    if (lcpq) {
-      for (int i = 0; i != mol.NAtoms; i++) {
-        dAmat(i, 3 * i) += Afac(i, 0);
-        dAmat(i, 3 * i + 1) += Afac(i, 1);
-        dAmat(i, 3 * i + 2) += Afac(i, 2);
-      }
+    // we do not need these gradient-related matrices anymore
+    atrace.Delete();
+    dxdcn.Delete();
 
-      info = BLAS_Add_Mat_x_Mat(dqdr, Ainv, dAmat, false, false, -1.0);
-      if (!info == EXIT_SUCCESS) return info;
-      info = BLAS_Add_Mat_x_Mat(dqdr, Ainv, dXvec, false, false, +1.0);
-      if (!info == EXIT_SUCCESS) return info;
+    // Ainv with last column removed
+    TMatrix<double> A;
+    A.New(Ainv.rows, Ainv.cols - 1);
+    for (int i = 0; i < Ainv.rows; i++) {
+      for (int j = 0; j < Ainv.cols - 1; j++) {
+        A(i, j) = Ainv(i, j);
+      }
     }
 
+    info = BLAS_Add_Mat_x_Mat(dqdr, dAmat, A, false, false, -1.0);
+    if (!info == EXIT_SUCCESS) return info;
+    
     dAmat.Delete();
-    dXvec.Delete();
-    Afac.Delete();
   }
 
   // free all memory
   Ainv.Delete();
   Amat.Delete();
-  Xvec.Delete();
-  Xfac.Delete();
-  alpha.Delete();
-
+  xvec.Delete();
+  
   return EXIT_SUCCESS;
 }
 
