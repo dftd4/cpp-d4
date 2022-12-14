@@ -141,7 +141,7 @@ static const double kn = 7.5;
 static const double k4 = 4.10451;
 static const double k5 = 19.08857;
 static const double k6 = 2 * pow(11.28174, 2);
-static const double hlfosqrtpi = 1.0 / 1.77245385091;
+static const double hlfosqrtpi = 1.0 / 1.7724538509055159;
 
 // Maximum CN (not strictly obeyed)
 static const double cn_max = 8.0;
@@ -323,15 +323,18 @@ int dncoord_erf(const TMolecule& mol, const TMatrix<double>& dist,
       dcndr(j, 3 * j) += dcountf * rx;
       dcndr(j, 3 * j + 1) += dcountf * ry;
       dcndr(j, 3 * j + 2) += dcountf * rz;
-      dcndr(j, 3 * i) = dcountf * rx;
-      dcndr(j, 3 * i + 1) = dcountf * ry;
-      dcndr(j, 3 * i + 2) = dcountf * rz;
-      dcndr(i, 3 * j) = -dcountf * rx;
-      dcndr(i, 3 * j + 1) = -dcountf * ry;
-      dcndr(i, 3 * j + 2) = -dcountf * rz;
-      dcndr(i, 3 * i) += -dcountf * rx;
-      dcndr(i, 3 * i + 1) += -dcountf * ry;
-      dcndr(i, 3 * i + 2) += -dcountf * rz;
+
+      dcndr(j, 3 * i) += dcountf * rx;
+      dcndr(j, 3 * i + 1) += dcountf * ry;
+      dcndr(j, 3 * i + 2) += dcountf * rz;
+
+      dcndr(i, 3 * j) -= dcountf * rx;
+      dcndr(i, 3 * j + 1) -= dcountf * ry;
+      dcndr(i, 3 * j + 2) -= dcountf * rz;
+
+      dcndr(i, 3 * i) -= dcountf * rx;
+      dcndr(i, 3 * i + 1) -= dcountf * ry;
+      dcndr(i, 3 * i + 2) -= dcountf * rz;
     }
   }
 
@@ -345,7 +348,7 @@ double erf_count(double k, double rr) {
 
 
 double derf_count(double k, double rr) {
-  return -hlfosqrtpi * k * std::exp(-pow(k * (rr - 1.0), 2));
+  return -k * hlfosqrtpi * std::exp(-pow(k * (rr - 1.0), 2));
 }
 
 
@@ -356,7 +359,15 @@ int cut_coordination_number(
   bool lgrad
 ) {
   if (lgrad) {
-    // TODO
+    double dcnpdcn;
+    for (int i = 0; i != cn.N; i++) {
+      dcnpdcn = dlog_cn_cut(cn_max, cn(i));
+      for (int j = 0; j != cn.N; j++) { 
+        dcndr(j, 3 * i) *= dcnpdcn;
+        dcndr(j, 3 * i + 1) *= dcnpdcn;
+        dcndr(j, 3 * i + 2) *= dcnpdcn;
+      }
+    }
   }
 
   for (int i = 0; i != cn.N; i++) {
