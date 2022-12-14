@@ -20,6 +20,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <iostream>
 
 namespace dftd {
 
@@ -183,6 +184,21 @@ class TMatrix {
     mem = (long int)rows * (long int)cols * ElementSize;
     if (mem == 0) return;
     std::memcpy(p, m.p, mem);
+  }
+
+  void Print(char name[] = "unknown") {
+    printf("Matrix printed: %s (%d, %d)\n\n", name, rows, cols);
+
+    for (int i = 0; i < rows; i++) {
+      for (int j = 0; j < cols; j++) {
+        printf("%+14.9e", p[i * cols + j]);
+        if (j == cols - 1) {
+          printf("\n");
+        } else {
+          printf(" ");
+        }
+      }
+    }
   }
 
   inline T& operator()(int i, int j) { return p[i * cols + j]; }
