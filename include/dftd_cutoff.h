@@ -19,6 +19,19 @@
 
 namespace dftd {
 
+// Real space cutoff for CN within D4
+static const double cn_default = 30.0;
+
+// Real space cutoff for CN within EEQ
+static const double cn_eeq_default = 25.0;
+
+// Two-body interaction cutoff
+static const double disp2_default = 60.0;
+
+// Three-body interaction cutoff
+static const double disp3_default = 40.0;
+
+
 // Collection of real space cutoffs.
 class TCutoff {
   public:
@@ -27,13 +40,12 @@ class TCutoff {
     double cn;
     double cn_eeq;
 
-    explicit TCutoff();
-
-    /**
-     * @brief Disable cutoffs by setting them to a large value.
-     */
-    void disable(void);
-
+    explicit TCutoff(
+      double cut_disp2 = disp2_default,
+      double cut_disp3 = disp3_default,
+      double cut_cn = cn_default,
+      double cut_cn_eeq = cn_eeq_default
+    );
 };
 
-}; // namespace dftd
+} // namespace dftd

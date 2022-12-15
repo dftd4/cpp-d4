@@ -84,4 +84,4 @@ int test_ncoord() {
   if (!info == EXIT_SUCCESS) return info;
 
   return EXIT_SUCCESS;
-};
+}

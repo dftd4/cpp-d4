@@ -15,8 +15,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with cpp-d4.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include <string>
 #include <cmath>
+#include <limits>
+#include <string>
 
 #include <dftd_cutoff.h>
 #include <dftd_damping.h>
@@ -55,20 +56,22 @@ int test_rational_damping(const double ref[], TCutoff cutoff) {
       return EXIT_FAILURE;
     }
   }
-};
+
+  return EXIT_SUCCESS;
+}
 
 int test_param() {
   int info;
-  TCutoff cutoff;
 
-  cutoff.disp3 = 15.0;
+  TCutoff cutoff = TCutoff(disp2_default, 15.0);
   info = test_rational_damping(ref, cutoff);
   if (!info == EXIT_SUCCESS) return info;
 
-  cutoff.disable(); // do not use cutoffs
-  info = test_rational_damping(ref_no_cutoff, cutoff);
+  // do not use cutoffs
+  double huge = std::numeric_limits<double>::max();
+  TCutoff no_cutoff = TCutoff(huge, huge, huge, huge);
+  info = test_rational_damping(ref_no_cutoff, no_cutoff);
   if (!info == EXIT_SUCCESS) return info;
- 
 
   return EXIT_SUCCESS;
-};
+}
