@@ -26,7 +26,7 @@
 
 #include "dftd_dispersion.h"
 
-namespace dftd {
+namespace dftd4 {
 
 /**
  * @brief Collect the D4 parameters.
@@ -38,7 +38,7 @@ namespace dftd {
  */
 extern int d4par(
   const std::string func,
-  dftd::dparam &par,
+  dftd4::dparam &par,
   const bool latm = true
 );
 

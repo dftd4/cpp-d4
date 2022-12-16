@@ -26,7 +26,7 @@
 #include "dftd_econv.h"
 #include "dftd_geometry.h"
 
-void read_xyzfile(const std::string& name, dftd::TMolecule& mol) {
+void read_xyzfile(const std::string& name, dftd4::TMolecule& mol) {
   std::ifstream geo;
   std::stringstream buffer;
   std::string line;

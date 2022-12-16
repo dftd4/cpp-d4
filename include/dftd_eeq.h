@@ -25,7 +25,7 @@
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
 
-namespace dftd {
+namespace dftd4 {
 
 extern int get_charges(
   const TMolecule& mol,

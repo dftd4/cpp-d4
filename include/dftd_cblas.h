@@ -24,7 +24,7 @@ extern "C" {
 #include "lapacke.h"
 }
 
-namespace dftd {
+namespace dftd4 {
 
 inline int BLAS_Add_Mat_x_Vec(TVector<double>& C, TMatrix<double>& A,
                               TVector<double>& V, bool Transpose,
@@ -167,4 +167,4 @@ inline int BLAS_InvertMatrix(TMatrix<double>& a) {
   return EXIT_SUCCESS;
 };
 
-}  // namespace dftd
+}  // namespace dftd4

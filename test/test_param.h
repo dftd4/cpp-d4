@@ -22,7 +22,7 @@
 #include <dftd_geometry.h>
 #include <dftd_dispersion.h>
 
-using namespace dftd;
+using namespace dftd4;
 
 extern int test_param(void);
 extern int test_rational_damping(const double ref[], TCutoff cutoff);

@@ -17,7 +17,7 @@
  */
 #include "dftd_cutoff.h"
 
-namespace dftd {
+namespace dftd4 {
 
 TCutoff::TCutoff(
   double cut_disp2/* = disp2_default*/,

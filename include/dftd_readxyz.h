@@ -21,6 +21,6 @@
 
 #include "dftd_geometry.h"
 
-extern void read_xyzfile(const std::string&, dftd::TMolecule&);
+extern void read_xyzfile(const std::string&, dftd4::TMolecule&);
 
 extern int element(const std::string&);

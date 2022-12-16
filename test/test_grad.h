@@ -21,9 +21,9 @@
 #include "dftd_dispersion.h"
 #include "molecules.h"
 
-using namespace dftd;
+using namespace dftd4;
 
-extern int test_numgrad(TMolecule &mol, const int charge, const dparam &par);
+extern int test_numgrad(const TMolInfo &dat, TMolecule &mol, const dparam &par);
 extern int is_trans_invar(const TMolecule &mol, double gradient[]);
 
 extern int test_bp86d4atm_water(void);

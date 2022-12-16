@@ -25,7 +25,7 @@
 #include "test_ncoord.h"
 #include "util.h"
 
-using namespace dftd;
+using namespace dftd4;
 
 
 int test_cn(

@@ -21,7 +21,7 @@
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
 
-namespace dftd {
+namespace dftd4 {
 
 extern inline double trapzd(const double a[23], const double b[23]);
 
@@ -31,6 +31,8 @@ extern inline double zeta(const double a, const double c, const double qref,
                    const double qmod);
 extern inline double dzeta(const double a, const double c, const double qref,
                     const double qmod);
+
+extern int get_max_ref(const TMolecule &mol, int &mref);
 
 extern int weight_references(
   const TMolecule& mol,
@@ -57,4 +59,4 @@ extern int set_refalpha_eeq(const TMolecule& mol, TMatrix<double>& alpha);
 
 extern bool is_exceptional(double val);
 
-} // namespace dftd
+} // namespace dftd4

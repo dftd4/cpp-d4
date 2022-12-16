@@ -31,7 +31,7 @@
 #include "dftd_ncoord.h"
 #include "dftd_parameters.h"
 
-namespace dftd {
+namespace dftd4 {
 
 inline double fdmpr_bj(const int n, const double r, const double c) {
   return 1.0 / (pow(r, n) + pow(c, n));
@@ -486,8 +486,14 @@ int get_atm_dispersion_derivs(
 }
 
 
-int get_dispersion(const TMolecule &mol, const dparam &par, const int &charge,
-                   TCutoff cutoff, double &energy, double *GRAD) {
+int DFTVDW_D4(
+  const TMolInfo &Dat,
+  const TMolecule &mol,
+  const dparam &par,
+  TCutoff cutoff,
+  double &energy,
+  double *GRAD
+) {
   // setup variables
   bool lmbd = (par.s9 != 0.0);
   bool lgrad = !!GRAD;
@@ -495,7 +501,7 @@ int get_dispersion(const TMolecule &mol, const dparam &par, const int &charge,
 
   // distances
   TMatrix<double> dist;
-  dist.New(mol.NAtoms, mol.NAtoms);
+  dist.NewMat(mol.NAtoms, mol.NAtoms);
   calc_distances(mol, dist);
 
   TVector<double> cn;        // D4 coordination number
@@ -504,16 +510,16 @@ int get_dispersion(const TMolecule &mol, const dparam &par, const int &charge,
   TMatrix<double> dqdr;      // derivative of partial charges
   TVector<double> gradient;  // derivative of dispersion energy
 
-  cn.New(mol.NAtoms);
-  q.New(mol.NAtoms);
+  cn.NewVec(mol.NAtoms);
+  q.NewVec(mol.NAtoms);
   if (lgrad) {
-    dcndr.New(3 * mol.NAtoms, mol.NAtoms);
-    dqdr.New(3 * mol.NAtoms, mol.NAtoms);
-    gradient.New(3 * mol.NAtoms);
+    dcndr.NewMat(3 * mol.NAtoms, mol.NAtoms);
+    dqdr.NewMat(3 * mol.NAtoms, mol.NAtoms);
+    gradient.NewVec(3 * mol.NAtoms);
   }
 
-  // get charges from EEQ model
-  info = get_charges(mol, dist, charge, cutoff.cn_eeq, q, dqdr, lgrad);
+  // calculate partial charges from EEQ model
+  info = get_charges(mol, dist, Dat.Charge, cutoff.cn_eeq, q, dqdr, lgrad);
   if (!info == EXIT_SUCCESS) return info;
 
   // get the D4 coordination number
@@ -522,19 +528,17 @@ int get_dispersion(const TMolecule &mol, const dparam &par, const int &charge,
 
 
   // maximum number of reference systems
-  int mref = refn[mol.at(0)];
-  for (int i = 1; i != mol.NAtoms; i++) {
-    int val = refn[mol.at(i)];
-    if (val > mref) mref = val;
-  }
+  int mref{0};
+  info = get_max_ref(mol, mref); 
+  if (!info == EXIT_SUCCESS) return info;
 
   TMatrix<double> gwvec;
   TMatrix<double> dgwdcn;
   TMatrix<double> dgwdq;
-  gwvec.New(mref, mol.NAtoms);
+  gwvec.NewMat(mref, mol.NAtoms);
   if (lgrad) {
-    dgwdcn.New(mref, mol.NAtoms);
-    dgwdq.New(mref, mol.NAtoms);    
+    dgwdcn.NewMat(mref, mol.NAtoms);
+    dgwdq.NewMat(mref, mol.NAtoms);    
   }
   info = weight_references(mol, cn, q, gwvec, dgwdcn, dgwdq, lgrad);
   if (!info == EXIT_SUCCESS) return info;
@@ -542,10 +546,10 @@ int get_dispersion(const TMolecule &mol, const dparam &par, const int &charge,
   TMatrix<double> c6;
   TMatrix<double> dc6dcn;
   TMatrix<double> dc6dq;
-  c6.New(mol.NAtoms, mol.NAtoms);
+  c6.NewMat(mol.NAtoms, mol.NAtoms);
   if (lgrad) {
-    dc6dcn.New(mol.NAtoms, mol.NAtoms);
-    dc6dq.New(mol.NAtoms, mol.NAtoms);
+    dc6dcn.NewMat(mol.NAtoms, mol.NAtoms);
+    dc6dq.NewMat(mol.NAtoms, mol.NAtoms);
   }
 
   info = get_atomic_c6(mol, gwvec, dgwdcn, dgwdq, c6, dc6dcn, dc6dq, lgrad);
@@ -558,10 +562,10 @@ int get_dispersion(const TMolecule &mol, const dparam &par, const int &charge,
   TVector<double> dEdcn;
   TVector<double> dEdq;
   TVector<double> energies;
-  energies.New(mol.NAtoms);
+  energies.NewVec(mol.NAtoms);
   if (lgrad) {
-    dEdcn.New(mol.NAtoms);
-    dEdq.New(mol.NAtoms);    
+    dEdcn.NewVec(mol.NAtoms);
+    dEdq.NewVec(mol.NAtoms);    
   }
 
   info = get_dispersion2(
@@ -588,10 +592,10 @@ int get_dispersion(const TMolecule &mol, const dparam &par, const int &charge,
     }
 
     // calculate weight references
-    gwvec.New(mref, mol.NAtoms);
+    gwvec.NewMat(mref, mol.NAtoms);
     if (lgrad) {
-      dgwdcn.New(mref, mol.NAtoms);
-      dgwdq.New(mref, mol.NAtoms);    
+      dgwdcn.NewMat(mref, mol.NAtoms);
+      dgwdq.NewMat(mref, mol.NAtoms);    
     }
     info = weight_references(mol, cn, q, gwvec, dgwdcn, dgwdq, lgrad);
     if (!info == EXIT_SUCCESS) return info;
@@ -600,10 +604,10 @@ int get_dispersion(const TMolecule &mol, const dparam &par, const int &charge,
     q.Delete();
 
     // calculate reference C6 coefficients
-    c6.New(mol.NAtoms, mol.NAtoms);
+    c6.NewMat(mol.NAtoms, mol.NAtoms);
     if (lgrad) {
-      dc6dcn.New(mol.NAtoms, mol.NAtoms);
-      dc6dq.New(mol.NAtoms, mol.NAtoms);
+      dc6dcn.NewMat(mol.NAtoms, mol.NAtoms);
+      dc6dq.NewMat(mol.NAtoms, mol.NAtoms);
     }
     info = get_atomic_c6(mol, gwvec, dgwdcn, dgwdq, c6, dc6dcn, dc6dq, lgrad);
     if (!info == EXIT_SUCCESS) return info;
@@ -657,4 +661,4 @@ int get_dispersion(const TMolecule &mol, const dparam &par, const int &charge,
   return EXIT_SUCCESS;
 }
 
-}  // namespace dftd
+}  // namespace dftd4

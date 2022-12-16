@@ -24,7 +24,7 @@
 #include "dftd_model.h"
 #include "dftd_parameters.h"
 
-namespace dftd {
+namespace dftd4 {
 
 // Parameters
 const double wf = 6.0;
@@ -94,6 +94,17 @@ inline double dzeta(const double a, const double c, const double qref,
   }
 }
 
+int get_max_ref(const TMolecule &mol, int &mref) {
+  mref = refn[mol.at(0)];
+  for (int i = 1; i != mol.NAtoms; i++) {
+    int val = refn[mol.at(i)];
+    if (val > mref) mref = val;
+  }
+
+  if (mref == 0.0) return EXIT_FAILURE;
+  return EXIT_SUCCESS;
+}
+
 int weight_references(
   const TMolecule& mol,
   const TVector<double>& cn,
@@ -103,9 +114,8 @@ int weight_references(
   TMatrix<double>& dgwdq,
   bool lgrad /*= false*/
 ) {
-  int info{0};
-  int iat = 0, jat = 0, izp = 0, jzp = 0;
-  double gw = 0.0, twf = 0.0, c6 = 0.0, maxcn = 0.0, tmp = 0.0;
+  int izp{0};
+  double gw{0.0}, twf{0.0}, maxcn{0.0};
   double norm{0.0}, dnorm{0.0};
   double zi{0.0}, gi{0.0};
   double expw{0.0}, dexpw{0.0}, gwk{0.0}, dgwk{0.0};
@@ -207,18 +217,16 @@ int get_atomic_c6(
   TMatrix<double>& dc6dq,
   bool lgrad /*= false*/
 ) {
-  int iat{0}, izp{0}, jzp{0}, info{0};
-  double iz{0.0}, refc6{0.0}, dc6{0.0};
+  int izp{0}, jzp{0}, info{0};
+  double refc6{0.0}, dc6{0.0};
 
-  // find maximum number of references
-  int mref = refn[mol.at(0)];
-  for (int i = 1; i != mol.NAtoms; i++) {
-    int val = refn[mol.at(i)];
-    if (val > mref) mref = val;
-  }
+  // maximum number of reference systems
+  int mref{0};
+  info = get_max_ref(mol, mref); 
+  if (!info == EXIT_SUCCESS) return info;
 
   TMatrix<double> alpha;
-  alpha.New(mol.NAtoms, 23*mref);
+  alpha.NewMat(mol.NAtoms, 23*mref);
   info = set_refalpha_eeq(mol, alpha);
   if (!info == EXIT_SUCCESS) return info;
 
@@ -307,4 +315,4 @@ bool is_exceptional(double val) {
   return std::isnan(val) || (fabs(val) > std::numeric_limits<double>::max());
 }
 
-} // namespace dftd
+} // namespace dftd4

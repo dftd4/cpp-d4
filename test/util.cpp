@@ -25,7 +25,7 @@
 
 #include "util.h"
 
-using namespace dftd;
+using namespace dftd4;
 
 
 int get_molecule(int n, const char atoms[][4], const double coord[], TMolecule& mol) {

@@ -20,7 +20,7 @@
 
 #include "dftd_matrix.h"
 
-namespace dftd {
+namespace dftd4 {
 // Input of the molecular geometry
 class TMolecule {
  public:
@@ -44,4 +44,13 @@ class TMolecule {
   }
 };
 
-}  // namespace dftd
+class TMolInfo {
+  public:
+    int Charge;
+
+    TMolInfo(int c = 0) {
+      Charge = c;
+    }
+};
+
+}  // namespace dftd4

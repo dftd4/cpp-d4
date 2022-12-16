@@ -22,7 +22,7 @@
 #include "dftd_damping.h"
 #include "dftd_dispersion.h"
 
-namespace dftd {
+namespace dftd4 {
 
 enum dfunc {
   none = 0,
@@ -1536,7 +1536,7 @@ dparam get_d4eeqbjmbd_2019_parameter(dfunc num) {
 
 int d4par(
   const std::string func,
-  dftd::dparam &par,
+  dftd4::dparam &par,
   const bool latm/* = true*/
 ) {
   auto num = get_dfunc(func);
@@ -1548,4 +1548,4 @@ int d4par(
   return EXIT_SUCCESS;
 }
 
-}  // namespace dftd
+}  // namespace dftd4

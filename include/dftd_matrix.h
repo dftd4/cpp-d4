@@ -22,7 +22,7 @@
 #include <cstring>
 #include <iostream>
 
-namespace dftd {
+namespace dftd4 {
 
 // Define a vector
 template <class T>
@@ -40,7 +40,7 @@ class TVector {
   ~TVector() {
     if (p != 0) Delete();
   }
-  void New(int VectorLength) {
+  void NewVector(int VectorLength) {
     if (VectorLength < 0) {
       std::exit(EXIT_FAILURE);
     }
@@ -60,6 +60,11 @@ class TVector {
       Init();
     }
   }
+
+  // alias for NewVector
+  void New(int VectorLength) { return NewVector(VectorLength); }
+  void NewVec(int VectorLength) { return NewVector(VectorLength); }
+
   void Delete(void) {
     if (p != 0 && N != 0) {
       delete[] p;
@@ -116,7 +121,8 @@ class TMatrix {
     if (p != 0) Delete();
   }
 
-  void New(int r, int c) {
+
+  void NewMatrix(int r, int c) {
     if (r < 0 || c < 0) std::exit(EXIT_FAILURE);
     if (p != 0 && r == rows && c == cols) {
       Init();
@@ -135,7 +141,11 @@ class TMatrix {
     return;
   }
 
-  void New(const TMatrix& v) { New(v.rows, v.cols); }
+  void NewMatrix(const TMatrix& v) { NewMatrix(v.rows, v.cols); }
+
+  // alias for NewMatrix
+  void New(int r, int c) { return NewMatrix(r, c); }
+  void NewMat(int r, int c) { return NewMatrix(r, c); }
 
   void Delete(void) {
     if (p != 0 && rows * cols != 0) {
@@ -172,7 +182,7 @@ class TMatrix {
         // for non-square matrix, we need an additional copy
         TMatrix<T> temp;
         temp.CopyMat(*this);
-        New(cols, rows);
+        NewMatrix(cols, rows);
         for (i = 0; i < rows; i++) {
           for (j = 0; j < cols; j++) {
             p[i * cols + j] = temp.p[j * cols + i];
@@ -214,4 +224,4 @@ class TMatrix {
   inline T* operator[](int i) { return p + i * cols; }
 };
 
-}  // namespace dftd
+}  // namespace dftd4

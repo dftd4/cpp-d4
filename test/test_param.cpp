@@ -28,7 +28,7 @@
 #include "test_param.h"
 #include "util.h"
 
-using namespace dftd;
+using namespace dftd4;
 
 int test_rational_damping(const double ref[], TCutoff cutoff) {
   int info;
@@ -37,18 +37,17 @@ int test_rational_damping(const double ref[], TCutoff cutoff) {
   dparam par;
 
   // assemble molecule
+  TMolInfo dat = TMolInfo(upu23_0a_charge);
   TMolecule mol;
   info = get_molecule(upu23_0a_n, upu23_0a_atoms, upu23_0a_coord, mol);
   if (!info == EXIT_SUCCESS) return info;
-  charge = upu23_0a_charge;
-
 
   for (int i = 0; i < nfuncs; i++) {
     std::string func = funcs[i];
     d4par(func, par, true);
 
     energy = 0.0;
-    info = get_dispersion(mol, par, charge, cutoff, energy, nullptr);
+    info = DFTVDW_D4(dat, mol, par, cutoff, energy, nullptr);
     if (!info == EXIT_SUCCESS) return info;
 
     if (check(energy, ref[i]) == EXIT_FAILURE) {

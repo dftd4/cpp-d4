@@ -25,11 +25,7 @@
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
 
-namespace dftd {
-
-extern inline double fdmpr_bj(const int n, const double r, const double c);
-extern inline double fdmprdr_bj(const int n, const double r, const double c);
-
+namespace dftd4 {
 
 class dparam {
  public:
@@ -41,6 +37,26 @@ class dparam {
   double a2;
   int alp;
 };
+
+/**
+ * @brief Wrapper to handle the evaluation of dispersion energy and derivatives.
+ * 
+ * @param Dat Molecular information (only for consistency with ORCA).
+ * @param mol Molecular geometry.
+ * @param par DFT-D4 parameters.
+ * @param cutoff Real-space cutoffs for CN and dispersion.
+ * @param energy Dispersion energy.
+ * @param GRAD Dispersion gradient.
+ * @return Exit status.
+ */
+extern int DFTVDW_D4(
+  const TMolInfo &Dat,
+  const TMolecule &mol,
+  const dparam &par,
+  TCutoff cutoff,
+  double &energy,
+  double *GRAD
+);
 
 // Generic wrappers for two- and three-body dispersion
 
@@ -150,19 +166,7 @@ extern int get_atm_dispersion_derivs(
 
 extern double triple_scale(int ii, int jj, int kk);
 
-/**
- * @brief Wrapper to handle the evaluation of dispersion energy and derivatives.
- * 
- * @param mol Molecular geometry.
- * @param par DFT-D4 parameters.
- * @param charge Charge of the molecule.
- * @param cutoff Real-space cutoffs for CN and dispersion.
- * @param energy Dispersion energy.
- * @param GRAD Dispersion gradient.
- * @return Exit status.
- */
-extern
-int get_dispersion(const TMolecule &mol, const dparam &par, const int &charge,
-                   TCutoff cutoff, double &energy, double *GRAD);
+extern inline double fdmpr_bj(const int n, const double r, const double c);
+extern inline double fdmprdr_bj(const int n, const double r, const double c);
 
-}  // namespace dftd
+}  // namespace dftd4
