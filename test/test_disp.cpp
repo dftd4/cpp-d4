@@ -62,6 +62,9 @@ int test_energy(
 
 int test_disp() {
   int info;
+
+  info = test_energy(water_n, water_atoms, water_coord, water_charge, water_ref_energy);
+  if (!info == EXIT_SUCCESS) return info;
   
   info = test_energy(16, mb16_43_01_atoms, mb16_43_01_coord, mb16_43_01_charge, mb16_43_01_ref_energy);
   if (!info == EXIT_SUCCESS) return info;

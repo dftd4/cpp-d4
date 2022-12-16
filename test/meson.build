@@ -17,6 +17,7 @@
 
 tests = [
   'disp',
+  'grad',
   'ncoord',
   'param',
 ]

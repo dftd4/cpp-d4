@@ -15,29 +15,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with cpp-d4.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef TEST_DISP_H
-#define TEST_DISP_H
+#ifndef TEST_GRAD_H
+#define TEST_GRAD_H
 
-static const double water_ref_energy {
-  -2.3162148786098E-04
-};
+#include "dftd_dispersion.h"
+#include "molecules.h"
 
-static const double mb16_43_01_ref_energy {
-  -2.5882588037023E-02
-};
+using namespace dftd;
 
-static const double rost61_m1_ref_energy {
-  -3.4287391104745E-02
-};
+extern int test_numgrad(TMolecule &mol, const int charge, const dparam &par);
+extern int is_trans_invar(const TMolecule &mol, double gradient[]);
 
-extern int test_energy(
-  const int n,
-  const char atoms[][4],
-  const double coord[],
-  const int charge,
-  const double ref
-);
+extern int test_bp86d4atm_water(void);
+extern int test_pbed4_mb01(void);
+extern int test_tpss0d4mbd_rost61m1(void);
 
-extern int test_disp(void);
+extern int test_grad(void);
 
-#endif // TEST_DISP_H
+#endif // TEST_GRAD_H
