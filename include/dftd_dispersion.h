@@ -27,6 +27,10 @@
 
 namespace dftd {
 
+extern inline double fdmpr_bj(const int n, const double r, const double c);
+extern inline double fdmprdr_bj(const int n, const double r, const double c);
+
+
 class dparam {
  public:
   double s6;
@@ -38,39 +42,113 @@ class dparam {
   int alp;
 };
 
-extern
-int d4dim(const TMolecule& mol);
+// Generic wrappers for two- and three-body dispersion
 
-extern
-int d4(const TMolecule& mol, int ndim, double wf, double g_a, double g_c,
-       const TVector<double>& cn, TVector<double>& gw, TMatrix<double>& c6ref);
+extern int get_dispersion2(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  const double cutoff,
+  const dparam& par,
+  const TMatrix<double>& c6,
+  const TMatrix<double>& dc6dcn,
+  const TMatrix<double>& dc6dq,
+  TVector<double>& energy,
+  TVector<double>& dEdcn,
+  TVector<double>& dEdq,
+  TVector<double>& gradient,
+  bool lgrad = false
+);
 
-extern
-int edisp(const TMolecule& mol, const TMatrix<double>& dist,
-          const double cutoff_disp2, const double cutoff_disp3,
-          const dparam& par, int ndim, TVector<double>& q,
-          double g_a, double g_c, TVector<double>& gw,
-          TMatrix<double>& c6ref, bool lmbd, double& energy);
+extern int get_dispersion3(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  const double cutoff,
+  const dparam& par,
+  const TMatrix<double>& c6,
+  const TMatrix<double>& dc6dcn,
+  const TMatrix<double>& dc6dq,
+  TVector<double>& energy,
+  TVector<double>& dEdcn,
+  TVector<double>& dEdq,
+  TVector<double>& gradient,
+  bool lgrad = false
+);
 
-extern
-int dispgrad(const TMolecule& mol, const TMatrix<double>& dist,
-             const double cutoff_disp2, const double cutoff_disp3,
-             const dparam& par, int ndim, const TVector<double>& q, 
-             TMatrix<double>& dqdr, TVector<double>& cn, 
-             TMatrix<double>& dcndr, double wf, double g_a, double g_c, 
-             TMatrix<double>& c6ref, bool lmbd, double& energy, 
-             TMatrix<double>& gradient);
+// Two-body dispersion
 
-extern
-int apprabc(const TMolecule& mol, const TMatrix<double>& dist,
-            const double cutoff, const dparam& par, int ndim,
-            TVector<double>& c6ab, double& energy);
+extern int get_dispersion2_energy(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  const double cutoff,
+  const dparam& par,
+  const TMatrix<double>& c6,
+  TVector<double>& energy
+);
 
-extern
-int dabcappr(const TMolecule& mol, const TMatrix<double>& dist, 
-             const double cutoff, const dparam& par, int ndim,
-             TVector<double>& gw, TVector<double>& dgw, TMatrix<double>& c6ref, 
-             TVector<double>& dc6dr, TVector<double>& dc6dcn, double& energy);
+extern int get_dispersion2_derivs(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  const double cutoff,
+  const dparam& par,
+  const TMatrix<double>& c6,
+  const TMatrix<double>& dc6dcn,
+  const TMatrix<double>& dc6dq,
+  TVector<double>& energy,
+  TVector<double>& dEdcn,
+  TVector<double>& dEdq,
+  TVector<double>& gradient
+);
+
+// Three-body (ATM) dispersion
+
+extern int get_atm_dispersion(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  const double cutoff,
+  const double s9,
+  const double a1,
+  const double a2,
+  const double alp,
+  const TMatrix<double>& c6,
+  const TMatrix<double>& dc6dcn,
+  const TMatrix<double>& dc6dq,
+  TVector<double>& energy,
+  TVector<double>& dEdcn,
+  TVector<double>& dEdq,
+  TVector<double>& gradient,
+  bool lgrad = false
+); 
+
+extern int get_atm_dispersion_energy(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  const double cutoff,
+  const double s9,
+  const double a1,
+  const double a2,
+  const double alp,
+  const TMatrix<double>& c6,
+  TVector<double>& energy
+);
+
+extern int get_atm_dispersion_derivs(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  const double cutoff,
+  const double s9,
+  const double a1,
+  const double a2,
+  const double alp,
+  const TMatrix<double>& c6,
+  const TMatrix<double>& dc6dcn,
+  const TMatrix<double>& dc6dq,
+  TVector<double>& energy,
+  TVector<double>& dEdcn,
+  TVector<double>& dEdq,
+  TVector<double>& gradient
+);
+
+extern double triple_scale(int ii, int jj, int kk);
 
 /**
  * @brief Wrapper to handle the evaluation of dispersion energy and derivatives.

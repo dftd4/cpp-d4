@@ -84,6 +84,14 @@ class TVector {
     }
   }
 
+  void Print(char name[]) {
+    printf("Vector printed: %s (%d)\n", name, N);
+    for (int i = 0; i < N; i++) {
+        printf("%+23.15e\n", p[i]);
+    }
+    printf("\n");
+  }
+
   inline T& operator()(int i) { return p[i]; }
   inline const T& operator()(int i) const { return p[i]; }
   inline T& operator[](int i) { return p[i]; }
@@ -187,11 +195,10 @@ class TMatrix {
   }
 
   void Print(char name[] = "unknown") {
-    printf("Matrix printed: %s (%d, %d)\n\n", name, rows, cols);
-
+    printf("Matrix printed: %s (%d, %d)\n", name, rows, cols);
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < cols; j++) {
-        printf("%+14.9e", p[i * cols + j]);
+        printf("%+23.15e", p[i * cols + j]);
         if (j == cols - 1) {
           printf("\n");
         } else {
@@ -199,6 +206,7 @@ class TMatrix {
         }
       }
     }
+    printf("\n");
   }
 
   inline T& operator()(int i, int j) { return p[i * cols + j]; }

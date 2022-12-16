@@ -29,19 +29,19 @@ namespace dftd {
 inline int BLAS_Add_Mat_x_Vec(TVector<double>& C, TMatrix<double>& A,
                               TVector<double>& V, bool Transpose,
                               double alpha) {
-  if (A.rows == A.cols) {
+  if (A.rows == C.N && A.cols == V.N) {
     if (Transpose) {
       cblas_dgemv(CblasRowMajor, CblasTrans, A.rows, A.cols, alpha, A.p,
                   A.cols, V.p, 1, 1.0, C.p, 1);
-      return 0;
+      return EXIT_SUCCESS;
     } else {
       cblas_dgemv(CblasRowMajor, CblasNoTrans, A.rows, A.cols, alpha, A.p,
                   A.cols, V.p, 1, 1.0, C.p, 1);
-      return 0;
+      return EXIT_SUCCESS;
     };
   };
 
-  return 0;
+  return EXIT_FAILURE;
 };
 
 inline void BLAS_Add_Mat_x_Vec(double* C, const double* A, const double* B,

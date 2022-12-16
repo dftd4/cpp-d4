@@ -405,41 +405,36 @@ dfunc get_dfunc(std::string name) {
 
 dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
   dparam par;
-  double s6{0.0}, s8{0.0}, s10{0.0}, s9{1.0}, a1{0.0}, a2{0.0};
+  double s6{1.0}, s8{0.0}, s10{0.0}, s9{1.0}, a1{0.0}, a2{0.0};
   int alp{16};
   switch (num) {
     default:
       break;
     case am05: // (SAW211021)
-      s6 = 1.0000;
       s8 = 1.71885838;
       a1 = 0.47901431;
       a2 = 5.96771581;
       break;
       // Fitset: MD= -0.28899 MAD= 0.52215 RMSD= 0.93584
     case b1b95:
-      s6 = 1.0000;
       s8 = 1.27701162;
       a1 = 0.40554715;
       a2 = 4.63323074;
       break;
       // Fitset: MD= 0.22852 MAD= 0.35189 RMSD= 0.46982
     case b1lyp:
-      s6 = 1.0000;
       s8 = 1.98553711;
       a1 = 0.39309040;
       a2 = 4.55465145;
       break;
       // Fitset: MD= -0.04797 MAD= 0.25597 RMSD= 0.38778
     case b1p:
-      s6 = 1.0000;
       s8 = 3.36115015;
       a1 = 0.48665293;
       a2 = 5.05219572;
       break;
       // Fitset: MD= -0.01406 MAD= 0.27441 RMSD= 0.47328
     case b1pw:
-      s6 = 1.0000;
       s8 = 3.02227550;
       a1 = 0.47396846;
       a2 = 4.49845309;
@@ -460,70 +455,60 @@ dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
       break;
       // Fitset: MD= -0.03761 MAD= 0.18247 RMSD= 0.27109
     case b3lyp:
-      s6 = 1.0000;
       s8 = 2.02929367;
       a1 = 0.40868035;
       a2 = 4.53807137;
       break;
       // Fitset: MD= -0.05892 MAD= 0.26117 RMSD= 0.40531
     case b3p:
-      s6 = 1.0000;
       s8 = 3.08822155;
       a1 = 0.47324238;
       a2 = 4.98682134;
       break;
       // Fitset: MD= -0.02970 MAD= 0.26962 RMSD= 0.46761
     case b3pw:
-      s6 = 1.0000;
       s8 = 2.88364295;
       a1 = 0.46990860;
       a2 = 4.51641422;
       break;
       // Fitset: MD= 0.06643 MAD= 0.29151 RMSD= 0.45541
     case b97:
-      s6 = 1.0000;
       s8 = 0.87854260;
       a1 = 0.29319126;
       a2 = 4.51647719;
       break;
       // Fitset: MD= -0.13017 MAD= 0.24778 RMSD= 0.36116
     case bhlyp:
-      s6 = 1.0000;
       s8 = 1.65281646;
       a1 = 0.27263660;
       a2 = 5.48634586;
       break;
       // Fitset: MD= -0.15832 MAD= 0.34132 RMSD= 0.57342
     case blyp:
-      s6 = 1.0000;
       s8 = 2.34076671;
       a1 = 0.44488865;
       a2 = 4.09330090;
       break;
       // Fitset: MD= 0.04801 MAD= 0.28161 RMSD= 0.38321
     case bpbe:
-      s6 = 1.0000;
       s8 = 3.64405246;
       a1 = 0.52905620;
       a2 = 4.11311891;
       break;
       // Fitset: MD= 0.19316 MAD= 0.41912 RMSD= 0.60452
     case bp:
-      s6 = 1.0000;
       s8 = 3.35497927;
       a1 = 0.43645861;
       a2 = 4.92406854;
       break;
       // Fitset: MD= 0.08252 MAD= 0.32681 RMSD= 0.47063
     case bpw:
-      s6 = 1.0000;
       s8 = 3.24571506;
       a1 = 0.50050454;
       a2 = 4.12346483;
       break;
       // Fitset: MD= 0.20607 MAD= 0.41941 RMSD= 0.59589
     case camb3lyp:
-      s6 = 1.0000;
       s8 = 1.66041301;
       a1 = 0.40267156;
       a2 = 5.17432195;
@@ -630,14 +615,12 @@ dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
       break;
       // Fitset: MD= -0.08974 MAD= 0.32285 RMSD= 0.43146
     case glyp:
-      s6 = 1.0000;
       s8 = 4.23798924;
       a1 = 0.38426465;
       a2 = 4.38412863;
       break;
       // Fitset: MD= 0.63466 MAD= 0.89568 RMSD= 1.11309
     case hf:
-      s6 = 1.0000;
       s8 = 1.61679827;
       a1 = 0.44959224;
       a2 = 3.35743605;
@@ -674,49 +657,42 @@ dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
       a2 = 5.59662251;
       break;
     case lb94:
-      s6 = 1.0000;
       s8 = 2.59538499;
       a1 = 0.42088944;
       a2 = 3.28193223;
       break;
       // Fitset: MD= 0.31701 MAD= 0.53196 RMSD= 0.74553
     case lcblyp:
-      s6 = 1.0000;
       s8 = 1.60344180;
       a1 = 0.45769839;
       a2 = 7.86924893;
       break;
       // Fitset: MD= -0.39724 MAD= 0.72327 RMSD= 1.18218
     case lh07ssvwn:
-      s6 = 1.0000;
       s8 = 3.16675531;
       a1 = 0.35965552;
       a2 = 4.31947614;
       break;
       // Fitset: MD= 0.32224 MAD= 0.59006 RMSD= 0.86272
     case lh07tsvwn:
-      s6 = 1.0000;
       s8 = 2.09333001;
       a1 = 0.35025189;
       a2 = 4.34166515;
       break;
       // Fitset: MD= 0.24243 MAD= 0.43497 RMSD= 0.61671
     case lh12ctssifpw92:
-      s6 = 1.0000;
       s8 = 2.68467610;
       a1 = 0.34190416;
       a2 = 3.91039666;
       break;
       // Fitset: MD= 0.55106 MAD= 0.80783 RMSD= 1.11048
     case lh12ctssirpw92:
-      s6 = 1.0000;
       s8 = 2.48973402;
       a1 = 0.34026075;
       a2 = 3.96948081;
       break;
       // Fitset: MD= 0.47785 MAD= 0.71188 RMSD= 0.98422
     case lh14tcalpbe:
-      s6 = 1.0000;
       s8 = 1.28130770;
       a1 = 0.38822021;
       a2 = 4.92501211;
@@ -729,42 +705,36 @@ dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
       a2 = 4.635;
       break;
     case m06:
-      s6 = 1.0000;
       s8 = 0.16366729;
       a1 = 0.53456413;
       a2 = 6.06192174;
       break;
       // Fitset: MD= 0.01788 MAD= 0.24914 RMSD= 0.38604
     case m06l:
-      s6 = 1.0000;
       s8 = 0.59493760;
       a1 = 0.71422359;
       a2 = 6.35314182;
       break;
       // Fitset: MD= 0.08395 MAD= 0.24888 RMSD= 0.34879
     case(mn12sx): // (SAW211021)
-      s6 = 1.0000;
       s8 = 0.85964873;
       a1 = 0.62662681;
       a2 = 5.62088906;
       break;
       // Fitset: MD= 0.16131 MAD= 0.34142 RMSD= 0.47113
     case mpw1b95:
-      s6 = 1.0000;
       s8 = 0.50093024;
       a1 = 0.41585097;
       a2 = 4.99154869;
       break;
       // Fitset: MD= 0.00585 MAD= 0.15695 RMSD= 0.21297
     case mpw1lyp:
-      s6 = 1.0000;
       s8 = 1.15591153;
       a1 = 0.25603493;
       a2 = 5.32083895;
       break;
       // Fitset: MD= -0.26979 MAD= 0.41542 RMSD= 0.60678
     case mpw1pw:
-      s6 = 1.0000;
       s8 = 1.80841716;
       a1 = 0.42961819;
       a2 = 4.68892341;
@@ -778,42 +748,36 @@ dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
       break;
       // Fitset: MD= -0.18921 MAD= 0.30115 RMSD= 0.44049
     case mpwb1k:
-      s6 = 1.0000;
       s8 = 0.57338313;
       a1 = 0.44687975;
       a2 = 5.21266777;
       break;
       // Fitset: MD= -0.00870 MAD= 0.17226 RMSD= 0.23614
     case mpwlyp:
-      s6 = 1.0000;
       s8 = 1.25842942;
       a1 = 0.25773894;
       a2 = 5.02319542;
       break;
       // Fitset: MD= -0.24426 MAD= 0.39145 RMSD= 0.54503
     case mpwpw:
-      s6 = 1.0000;
       s8 = 1.82596836;
       a1 = 0.34526745;
       a2 = 4.84620734;
       break;
       // Fitset: MD= -0.06278 MAD= 0.27913 RMSD= 0.43988
     case o3lyp:
-      s6 = 1.0000;
       s8 = 1.75762508;
       a1 = 0.10348980;
       a2 = 6.16233282;
       break;
       // Fitset: MD= -0.19268 MAD= 0.38577 RMSD= 0.62168
     case olyp:
-      s6 = 1.0000;
       s8 = 2.74836820;
       a1 = 0.60184498;
       a2 = 2.53292167;
       break;
       // Fitset: MD= 0.12352 MAD= 0.37113 RMSD= 0.58291
     case opbe:
-      s6 = 1.0000;
       s8 = 3.06917417;
       a1 = 0.68267534;
       a2 = 2.22849018;
@@ -827,7 +791,6 @@ dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
       break;
       // Fitset: MD= -0.04260 MAD= 0.21186 RMSD= 0.34045
     case pbe0:
-      s6 = 1.0000;
       s8 = 1.20065498;
       a1 = 0.40085597;
       a2 = 5.02928789;
@@ -841,49 +804,42 @@ dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
       break;
       // Fitset: MD= -0.13857 MAD= 0.27919 RMSD= 0.47256
     case pbe:
-      s6 = 1.0000;
       s8 = 0.95948085;
       a1 = 0.38574991;
       a2 = 4.80688534;
       break;
       // Fitset: MD= -0.20544 MAD= 0.33635 RMSD= 0.51168
     case(pbesol): // (SAW211021)
-      s6 = 1.0000;
       s8 = 1.71885698;
       a1 = 0.47901421;
       a2 = 5.96771589;
       break;
       // Fitset: MD= -0.28899 MAD= 0.52215 RMSD= 0.93584
     case pw1pw:
-      s6 = 1.0000;
       s8 = 0.96850170;
       a1 = 0.42427511;
       a2 = 5.02060636;
       break;
       // Fitset: MD= -0.27325 MAD= 0.42206 RMSD= 0.64119
     case pw6b95:
-      s6 = 1.0000;
       s8 = -0.31926054;
       a1 = 0.04142919;
       a2 = 5.84655608;
       break;
       // Fitset: MD= -0.04767 MAD= 0.14330 RMSD= 0.18958
     case pw86pbe:
-      s6 = 1.0000;
       s8 = 1.21362856;
       a1 = 0.40510366;
       a2 = 4.66737724;
       break;
       // Fitset: MD= -0.11505 MAD= 0.24691 RMSD= 0.38101
     case pw91:
-      s6 = 1.0000;
       s8 = 0.77283111;
       a1 = 0.39581542;
       a2 = 4.93405761;
       break;
       // Fitset: MD= -0.33019 MAD= 0.48611 RMSD= 0.68110
     case pwp1:
-      s6 = 1.0000;
       s8 = 0.60492565;
       a1 = 0.46855837;
       a2 = 5.76921413;
@@ -897,7 +853,6 @@ dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
       break;
       // Fitset: MD= 0.02143 MAD= 0.13040 RMSD= 0.17599
     case pwp:
-      s6 = 1.0000;
       s8 = 0.32801227;
       a1 = 0.35874687;
       a2 = 6.05861168;
@@ -928,7 +883,6 @@ dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
       a2 = 3.60000000;
       break;
     case revpbe0:
-      s6 = 1.0000;
       s8 = 1.57185414;
       a1 = 0.38705966;
       a2 = 4.11028876;
@@ -942,68 +896,58 @@ dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
       break;
       // Fitset: MD= -0.01089 MAD= 0.20910 RMSD= 0.33564
     case revpbe38:
-      s6 = 1.0000;
       s8 = 1.66597472;
       a1 = 0.39476833;
       a2 = 4.39026628;
       break;
       // Fitset: MD= -0.01326 MAD= 0.22598 RMSD= 0.36210
     case revpbe:
-      s6 = 1.0000;
       s8 = 1.74676530;
       a1 = 0.53634900;
       a2 = 3.07261485;
       break;
       // Fitset: MD= 0.05649 MAD= 0.25212 RMSD= 0.40863
     case revtpss0:
-      s6 = 1.0000;
       s8 = 1.54664499;
       a1 = 0.45890964;
       a2 = 4.78426405;
       break;
       // Fitset: MD= -0.05298 MAD= 0.19965 RMSD= 0.32081
     case revtpss:
-      s6 = 1.0000;
       s8 = 1.53089454;
       a1 = 0.44880597;
       a2 = 4.64042317;
       break;
       // Fitset: MD= -0.01904 MAD= 0.19568 RMSD= 0.29618
     case revtpssh:
-      s6 = 1.0000;
       s8 = 1.52740307;
       a1 = 0.45161957;
       a2 = 4.70779483;
       break;
       // Fitset: MD= -0.03731 MAD= 0.19133 RMSD= 0.29091
     case rpbe:
-      s6 = 1.0000;
       s8 = 1.31183787;
       a1 = 0.46169493;
       a2 = 3.15711757;
       break;
       // Fitset: MD= -0.07156 MAD= 0.26348 RMSD= 0.38671
     case rpw86pbe:
-      s6 = 1.0000;
       s8 = 1.12624034;
       a1 = 0.38151218;
       a2 = 4.75480472;
       break;
       // Fitset: MD= -0.12740 MAD= 0.26294 RMSD= 0.40614
     case scan:
-      s6 = 1.0000;
       s8 = 1.46126056;
       a1 = 0.62930855;
       a2 = 6.31284039;
       break;
     case(rscan): // (10.1063/5.0041008)
-      s6 = 1.0000; 
       s8 = 0.87728975;
       a1 = 0.49116966;
       a2 = 5.75859346;
       break;
    case(r2scan): // (10.1063/5.0041008)
-      s6 = 1.0000;
       s8 = 0.60187490;
       a1 = 0.51559235;
       a2 = 5.77342911;
@@ -1028,42 +972,36 @@ dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
       break;
       // Fitset: MD= -0.13170 MAD= 0.28640 RMSD= 0.51183
     case tpss0:
-      s6 = 1.0000;
       s8 = 1.62438102;
       a1 = 0.40329022;
       a2 = 4.80537871;
       break;
       // Fitset: MD= -0.09569 MAD= 0.26733 RMSD= 0.44767
     case tpss:
-      s6 = 1.0000;
       s8 = 1.76596355;
       a1 = 0.42822303;
       a2 = 4.54257102;
       break;
       // Fitset: MD= -0.09296 MAD= 0.27505 RMSD= 0.42537
     case tpssh:
-      s6 = 1.0000;
       s8 = 1.85897750;
       a1 = 0.44286966;
       a2 = 4.60230534;
       break;
       // Fitset: MD=  0.02238 MAD= 0.16042 RMSD= 0.33519
     case b97d: // (SAW201029)
-      s6 = 1.0000;
       s8 = 1.69460052;
       a1 = 0.28904684;
       a2 = 4.13407323;
       break;
       // Fitset: MD= -0.09858 MAD= 0.26757 RMSD= 0.42380
     case wb97: // (SAW190103)
-      s6 = 1.0000;
       s8 = 6.55792598;
       a1 = 0.76666802;
       a2 = 8.36027334;
       break;
       // Fitset: MD= -0.12779 MAD= 0.36152 RMSD= 0.49991
     case wb97x: // (SAW190103)
-      s6 = 1.0000;
       s8 = -0.07519516;
       a1 = 0.45094893;
       a2 = 6.78425255;
@@ -1072,7 +1010,6 @@ dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
       // S66x8: MD= 0.06 MAD= 0.16 RMSD= 0.21
       // NCI10: MD= 0.08 MAD= 0.15 RMSD= 0.25
     case b97m: // (10.1002/jcc.26411)
-      s6 = 1.0000;
       s8 = 0.6633;
       a1 = 0.4288;
       a2 = 3.9935;
@@ -1081,21 +1018,18 @@ dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
       // S66x8: MD= 0.09 MAD= 0.17 RMSD= 0.22
       // NCI10: MD= 0.09 MAD= 0.15 RMSD= 0.32
     case wb97m: // (10.1002/jcc.26411)
-      s6 = 1.0000;
       s8 = 0.7761;
       a1 = 0.7514;
       a2 = 2.7099;
       break;
       // Fitset: MD= -0.20216 MAD= 0.34696 RMSD= 0.53641
     case x3lyp:
-      s6 = 1.0000;
       s8 = 1.54701429;
       a1 = 0.20318443;
       a2 = 5.61852648;
       break;
       // Fitset: MD= -0.15607 MAD= 0.31342 RMSD= 0.49546
     case xlyp:
-      s6 = 1.0000;
       s8 = 1.62972054;
       a1 = 0.11268673;
       a2 = 5.40786417;
@@ -1116,41 +1050,36 @@ dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
 
 dparam get_d4eeqbjmbd_2019_parameter(dfunc num) {
   dparam par;
-  double s6{0.0}, s8{0.0}, s10{0.0}, s9{1.0}, a1{0.0}, a2{0.0};
+  double s6{1.0}, s8{0.0}, s10{0.0}, s9{1.0}, a1{0.0}, a2{0.0};
   int alp{16};
   switch (num) {
     default:
       break;
     case b1b95:
-      s6 = 1.0000;
       s8 = 1.19549420;
       a1 = 0.39241474;
       a2 = 4.60397611;
       break;
       // Fitset: MD= 0.21329 MAD= 0.33289 RMSD= 0.44693
     case b1lyp:
-      s6 = 1.0000;
       s8 = 1.94609514;
       a1 = 0.38643351;
       a2 = 4.54135968;
       break;
       // Fitset: MD= -0.06493 MAD= 0.25607 RMSD= 0.39776
     case b1p:
-      s6 = 1.0000;
       s8 = 3.38693011;
       a1 = 0.48478615;
       a2 = 5.04361224;
       break;
       // Fitset: MD= -0.02348 MAD= 0.27543 RMSD= 0.48014
     case b1pw:
-      s6 = 1.0000;
       s8 = 2.98402204;
       a1 = 0.46862950;
       a2 = 4.48637849;
       break;
       // Fitset: MD= 0.09181 MAD= 0.31824 RMSD= 0.48100
     case b2gpplyp:
-      s6 = 1.0000;
       s8 = 1.00494214;
       a1 = 0.42447353;
       a2 = 5.19461329;
@@ -1164,70 +1093,60 @@ dparam get_d4eeqbjmbd_2019_parameter(dfunc num) {
       break;
       // Fitset: MD= -0.05031 MAD= 0.18506 RMSD= 0.28010
     case b3lyp:
-      s6 = 1.0000;
       s8 = 2.00246246;
       a1 = 0.40276191;
       a2 = 4.52778320;
       break;
       // Fitset: MD= -0.07554 MAD= 0.26205 RMSD= 0.41586
     case b3p:
-      s6 = 1.0000;
       s8 = 3.14456298;
       a1 = 0.47187947;
       a2 = 4.98624258;
       break;
       // Fitset: MD= -0.04085 MAD= 0.27080 RMSD= 0.47542
     case b3pw:
-      s6 = 1.0000;
       s8 = 2.85656268;
       a1 = 0.46491801;
       a2 = 4.50601452;
       break;
       // Fitset: MD= 0.05302 MAD= 0.28885 RMSD= 0.45409
     case b97:
-      s6 = 1.0000;
       s8 = 0.81171211;
       a1 = 0.28461283;
       a2 = 4.48691468;
       break;
       // Fitset: MD= -0.15506 MAD= 0.26269 RMSD= 0.38008
     case bhlyp:
-      s6 = 1.0000;
       s8 = 1.68082973;
       a1 = 0.26835837;
       a2 = 5.48847218;
       break;
       // Fitset: MD= -0.17297 MAD= 0.34819 RMSD= 0.58920
     case blyp:
-      s6 = 1.0000;
       s8 = 2.33971306;
       a1 = 0.44733688;
       a2 = 4.06583931;
       break;
       // Fitset: MD= 0.02464 MAD= 0.27084 RMSD= 0.37647
     case bpbe:
-      s6 = 1.0000;
       s8 = 3.65322996;
       a1 = 0.49933501;
       a2 = 4.24294852;
       break;
       // Fitset: MD= 0.18169 MAD= 0.41723 RMSD= 0.60190
     case bp:
-      s6 = 1.0000;
       s8 = 3.33728176;
       a1 = 0.43220330;
       a2 = 4.91443061;
       break;
       // Fitset: MD= 0.07108 MAD= 0.32331 RMSD= 0.46959
     case bpw:
-      s6 = 1.0000;
       s8 = 3.23137432;
       a1 = 0.49955226;
       a2 = 4.10411084;
       break;
       // Fitset: MD= 0.18835 MAD= 0.41014 RMSD= 0.58149
     case camb3lyp:
-      s6 = 1.0000;
       s8 = 1.74407961;
       a1 = 0.40137870;
       a2 = 5.18731225;
@@ -1304,98 +1223,84 @@ dparam get_d4eeqbjmbd_2019_parameter(dfunc num) {
       break;
       // Fitset: MD= -0.08917 MAD= 0.32295 RMSD= 0.43170
     case glyp:
-      s6 = 1.0000;
       s8 = 3.83861584;
       a1 = 0.36343954;
       a2 = 4.32875183;
       break;
       // Fitset: MD= 0.63864 MAD= 0.89437 RMSD= 1.11594
     case hf:
-      s6 = 1.0000;
       s8 = 1.46001146;
       a1 = 0.43186901;
       a2 = 3.34116014;
       break;
       // Fitset: MD= -0.05320 MAD= 0.34504 RMSD= 0.50301
     case lb94:
-      s6 = 1.0000;
       s8 = 2.36461524;
       a1 = 0.41518379;
       a2 = 3.19365471;
       break;
       // Fitset: MD= 0.28794 MAD= 0.49917 RMSD= 0.70755
     case lcblyp:
-      s6 = 1.0000;
       s8 = 2.40109962;
       a1 = 0.47867438;
       a2 = 8.01038424;
       break;
       // Fitset: MD= -0.39664 MAD= 0.72492 RMSD= 1.18496
     case lh07ssvwn:
-      s6 = 1.0000;
       s8 = 2.92498406;
       a1 = 0.34173988;
       a2 = 4.28404951;
       break;
       // Fitset: MD= 0.31275 MAD= 0.58894 RMSD= 0.85534
     case lh07tsvwn:
-      s6 = 1.0000;
       s8 = 1.95389300;
       a1 = 0.33511515;
       a2 = 4.31853958;
       break;
       // Fitset: MD= 0.22401 MAD= 0.42077 RMSD= 0.59849
     case lh12ctssifpw92:
-      s6 = 1.0000;
       s8 = 2.41356607;
       a1 = 0.31391316;
       a2 = 3.88935769;
       break;
       // Fitset: MD= 0.53322 MAD= 0.78975 RMSD= 1.08954
     case lh12ctssirpw92:
-      s6 = 1.0000;
       s8 = 2.24917162;
       a1 = 0.31446575;
       a2 = 3.95070925;
       break;
       // Fitset: MD= 0.45858 MAD= 0.69302 RMSD= 0.96196
     case lh14tcalpbe:
-      s6 = 1.0000;
       s8 = 1.27677253;
       a1 = 0.38128670;
       a2 = 4.91698883;
       break;
       // Fitset: MD= -0.03475 MAD= 0.22645 RMSD= 0.36554
     case m06:
-      s6 = 1.0000;
       s8 = 0.22948274;
       a1 = 0.52927285;
       a2 = 6.06516782;
       break;
       // Fitset: MD= 0.01376 MAD= 0.24790 RMSD= 0.38566
     case m06l:
-      s6 = 1.0000;
       s8 = 0.40077779;
       a1 = 0.69611405;
       a2 = 6.29092087;
       break;
       // Fitset: MD= 0.08204 MAD= 0.24719 RMSD= 0.34728
     case mpw1b95:
-      s6 = 1.0000;
       s8 = 0.53791835;
       a1 = 0.41016913;
       a2 = 4.99284176;
       break;
       // Fitset: MD= -0.00740 MAD= 0.15464 RMSD= 0.20903
     case mpw1lyp:
-      s6 = 1.0000;
       s8 = 1.19986100;
       a1 = 0.25502469;
       a2 = 5.32301304;
       break;
       // Fitset: MD= -0.28762 MAD= 0.43446 RMSD= 0.62777
     case mpw1pw:
-      s6 = 1.0000;
       s8 = 1.80656973;
       a1 = 0.42456967;
       a2 = 4.68132317;
@@ -1409,42 +1314,36 @@ dparam get_d4eeqbjmbd_2019_parameter(dfunc num) {
       break;
       // Fitset: MD= -0.20058 MAD= 0.31617 RMSD= 0.45768
     case mpwb1k:
-      s6 = 1.0000;
       s8 = 0.62221146;
       a1 = 0.44216745;
       a2 = 5.21324659;
       break;
       // Fitset: MD= -0.01872 MAD= 0.17358 RMSD= 0.23758
     case mpwlyp:
-      s6 = 1.0000;
       s8 = 1.18243337;
       a1 = 0.38968985;
       a2 = 4.30835285;
       break;
       // Fitset: MD= -0.27161 MAD= 0.42078 RMSD= 0.58498
     case mpwpw:
-      s6 = 1.0000;
       s8 = 1.79674014;
       a1 = 0.33870479;
       a2 = 4.83442213;
       break;
       // Fitset: MD= -0.07933 MAD= 0.28408 RMSD= 0.44655
     case o3lyp:
-      s6 = 1.0000;
       s8 = 1.77793802;
       a1 = 0.09961745;
       a2 = 6.16089304;
       break;
       // Fitset: MD= -0.20876 MAD= 0.39753 RMSD= 0.63678
     case olyp:
-      s6 = 1.0000;
       s8 = 2.58717041;
       a1 = 0.59759271;
       a2 = 2.48760353;
       break;
       // Fitset: MD= 0.09561 MAD= 0.37723 RMSD= 0.57321
     case opbe:
-      s6 = 1.0000;
       s8 = 2.93544102;
       a1 = 0.67903933;
       a2 = 2.19810071;
@@ -1458,7 +1357,6 @@ dparam get_d4eeqbjmbd_2019_parameter(dfunc num) {
       break;
       // Fitset: MD= -0.04530 MAD= 0.21377 RMSD= 0.34234
     case pbe0:
-      s6 = 1.0000;
       s8 = 1.26829475;
       a1 = 0.39907098;
       a2 = 5.03951304;
@@ -1472,42 +1370,36 @@ dparam get_d4eeqbjmbd_2019_parameter(dfunc num) {
       break;
       // Fitset: MD= -0.15041 MAD= 0.29062 RMSD= 0.48405
     case pbe:
-      s6 = 1.0000;
       s8 = 0.99924614;
       a1 = 0.38142528;
       a2 = 4.81839284;
       break;
       // Fitset: MD= -0.22162 MAD= 0.35068 RMSD= 0.52976
     case pw1pw:
-      s6 = 1.0000;
       s8 = 1.09759050;
       a1 = 0.42759830;
       a2 = 5.04559572;
       break;
       // Fitset: MD= -0.28594 MAD= 0.43822 RMSD= 0.65926
     case pw6b95:
-      s6 = 1.0000;
       s8 = -0.31629935;
       a1 = 0.03999357;
       a2 = 5.83690254;
       break;
       // Fitset: MD= -0.07192 MAD= 0.15341 RMSD= 0.20230
     case pw86pbe:
-      s6 = 1.0000;
       s8 = 1.22842987;
       a1 = 0.39998824;
       a2 = 4.66739111;
       break;
       // Fitset: MD= -0.13164 MAD= 0.25352 RMSD= 0.39362
     case pw91:
-      s6 = 1.0000;
       s8 = 0.81406882;
       a1 = 0.34094706;
       a2 = 5.18568823;
       break;
       // Fitset: MD= -0.34117 MAD= 0.49844 RMSD= 0.69615
     case pwp1:
-      s6 = 1.0000;
       s8 = 0.95936222;
       a1 = 0.48552982;
       a2 = 5.84956411;
@@ -1521,14 +1413,12 @@ dparam get_d4eeqbjmbd_2019_parameter(dfunc num) {
       break;
       // Fitset: MD= -0.01702 MAD= 0.10667 RMSD= 0.14619
     case pwp:
-      s6 = 1.0000;
       s8 = 0.66056055;
       a1 = 0.37768052;
       a2 = 6.14787138;
       break;
       // Fitset: MD= -0.42973 MAD= 0.63830 RMSD= 0.93118
     case revpbe0:
-      s6 = 1.0000;
       s8 = 1.47198256;
       a1 = 0.37471756;
       a2 = 4.08904369;
@@ -1542,105 +1432,90 @@ dparam get_d4eeqbjmbd_2019_parameter(dfunc num) {
       break;
       // Fitset: MD= -0.02829 MAD= 0.21126 RMSD= 0.33843
     case revpbe38:
-      s6 = 1.0000;
       s8 = 1.60423529;
       a1 = 0.38938475;
       a2 = 4.35557832;
       break;
       // Fitset: MD= -0.03169 MAD= 0.22643 RMSD= 0.36450
     case revpbe:
-      s6 = 1.0000;
       s8 = 1.62543693;
       a1 = 0.54031831;
       a2 = 2.97965648;
       break;
       // Fitset: MD= 0.02784 MAD= 0.24691 RMSD= 0.39242
     case revtpss0:
-      s6 = 1.0000;
       s8 = 1.55321888;
       a1 = 0.45355319;
       a2 = 4.77588598;
       break;
       // Fitset: MD= -0.06532 MAD= 0.20465 RMSD= 0.32888
     case revtpss:
-      s6 = 1.0000;
       s8 = 1.51858035;
       a1 = 0.44243222;
       a2 = 4.62881620;
       break;
       // Fitset: MD= -0.03308 MAD= 0.19729 RMSD= 0.29587
     case revtpssh:
-      s6 = 1.0000;
       s8 = 1.52542064;
       a1 = 0.44570207;
       a2 = 4.69883717;
       break;
       // Fitset: MD= -0.05069 MAD= 0.19530 RMSD= 0.29596
     case rpbe:
-      s6 = 1.0000;
       s8 = 1.11793696;
       a1 = 0.44632488;
       a2 = 3.08890917;
       break;
       // Fitset: MD= -0.10098 MAD= 0.27012 RMSD= 0.39113
     case rpw86pbe:
-      s6 = 1.0000;
       s8 = 1.13795871;
       a1 = 0.37636536;
       a2 = 4.75236384;
       break;
       // Fitset: MD= -0.14431 MAD= 0.26983 RMSD= 0.41992
     case scan:
-      s6 = 1.0000;
       s8 = 1.75408315;
       a1 = 0.63571334;
       a2 = 6.35690748;
       break;
       // Fitset: MD= -0.13418 MAD= 0.28800 RMSD= 0.51482
     case tpss0:
-      s6 = 1.0000;
       s8 = 1.66752698;
       a1 = 0.40074746;
       a2 = 4.80927196;
       break;
       // Fitset: MD= -0.11178 MAD= 0.27563 RMSD= 0.45972
     case tpss:
-      s6 = 1.0000;
       s8 = 1.91130849;
       a1 = 0.43332851;
       a2 = 4.56986797;
       break;
       // Fitset: MD= -0.11454 MAD= 0.28494 RMSD= 0.43743
     case tpssh:
-      s6 = 1.0000;
       s8 = 1.88783525;
       a1 = 0.43968167;
       a2 = 4.60342700;
       break;
       // Fitset: MD= -0.11391 MAD= 0.27497 RMSD= 0.43539
     case wb97:
-      s6 = 1.0000;
       s8 = 7.11022468;
       a1 = 0.76423345;
       a2 = 8.44559334;
       break;
       // Fitset: MD= -0.12818 MAD= 0.36163 RMSD= 0.50023
     case wb97x:
-      s6 = 1.0000;
       s8 = 0.38815338;
       a1 = 0.47448629;
       a2 = 6.91367384;
       break;
       // Fitset: MD= -0.20303 MAD= 0.34880 RMSD= 0.54190
     case x3lyp:
-      s6 = 1.0000;
       s8 = 1.55067492;
       a1 = 0.19818545;
       a2 = 5.61262748;
       break;
       // Fitset: MD= -0.17267 MAD= 0.32089 RMSD= 0.51125
     case xlyp:
-      s6 = 1.0000;
       s8 = 1.51577878;
       a1 = 0.10026585;
       a2 = 5.37506460;
@@ -1659,13 +1534,18 @@ dparam get_d4eeqbjmbd_2019_parameter(dfunc num) {
   return par;
 }
 
-void d4par(const std::string func, dparam& par, const bool lmbd) {
+int d4par(
+  const std::string func,
+  dftd::dparam &par,
+  const bool latm/* = true*/
+) {
   auto num = get_dfunc(func);
-  if (lmbd) {
+  if (latm) {
     par = get_d4eeqbjatm_2019_parameter(num);
   } else {
     par = get_d4eeqbjmbd_2019_parameter(num);
   }
-  return;
+  return EXIT_SUCCESS;
 }
+
 }  // namespace dftd

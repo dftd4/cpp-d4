@@ -256,18 +256,18 @@ int dncoord_d4(const TMolecule& mol, const TMatrix<double>& dist,
       cn(j) += countf;
 
       dcountf = den * derf_count(kn, rr) / rcovij;
-      dcndr(j, 3 * j) += dcountf * rx;
-      dcndr(j, 3 * j + 1) += dcountf * ry;
-      dcndr(j, 3 * j + 2) += dcountf * rz;
-      dcndr(j, 3 * i) = dcountf * rx;
-      dcndr(j, 3 * i + 1) = dcountf * ry;
-      dcndr(j, 3 * i + 2) = dcountf * rz;
-      dcndr(i, 3 * j) = -dcountf * rx;
-      dcndr(i, 3 * j + 1) = -dcountf * ry;
-      dcndr(i, 3 * j + 2) = -dcountf * rz;
-      dcndr(i, 3 * i) += -dcountf * rx;
-      dcndr(i, 3 * i + 1) += -dcountf * ry;
-      dcndr(i, 3 * i + 2) += -dcountf * rz;
+      dcndr(3*j, j) += dcountf * rx;
+      dcndr(3 * j + 1, j) += dcountf * ry;
+      dcndr(3 * j + 2, j) += dcountf * rz;
+      dcndr(3 * j, i) = dcountf * rx;
+      dcndr(3 * j + 1, i) = dcountf * ry;
+      dcndr(3 * j + 2, i) = dcountf * rz;
+      dcndr(3 * i, j) = -dcountf * rx;
+      dcndr(3 * i + 1, j) = -dcountf * ry;
+      dcndr(3 * i + 2, j) = -dcountf * rz;
+      dcndr(3 * i, i) += -dcountf * rx;
+      dcndr(3 * i + 1, i) += -dcountf * ry;
+      dcndr(3 * i + 2, i) += -dcountf * rz;
     }
   }
   return EXIT_SUCCESS;

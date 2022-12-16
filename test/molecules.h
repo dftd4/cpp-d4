@@ -19,6 +19,19 @@
 #define MOLECULES_H
 
 
+// Water
+static const int water_n{3};
+static const int water_charge{0};
+static const char water_atoms[water_n][4] {
+  "O", "H", "H",
+};
+static const double water_coord[water_n*3] {
+   +0.00000000000000, +0.00000000000000, -0.74288549752983,
+   -1.43472674945442, +0.00000000000000, +0.37144274876492,
+   +1.43472674945442, +0.00000000000000, +0.37144274876492,
+};
+
+
 // MB16_43: 01
 static const int mb16_43_01_n{16};
 static const int mb16_43_01_charge{0};
