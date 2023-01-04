@@ -15,25 +15,37 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with cpp-d4.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef TEST_DISP_H
-#define TEST_DISP_H
+#pragma once
 
-static const double mb16_43_01_ref_energy {
-  -2.5882588037023E-02
+namespace dftd {
+
+// Real space cutoff for CN within D4
+static const double cn_default = 30.0;
+
+// Real space cutoff for CN within EEQ
+static const double cn_eeq_default = 25.0;
+
+// Two-body interaction cutoff
+static const double disp2_default = 60.0;
+
+// Three-body interaction cutoff
+static const double disp3_default = 40.0;
+
+
+// Collection of real space cutoffs.
+class TCutoff {
+  public:
+    double disp2;
+    double disp3;
+    double cn;
+    double cn_eeq;
+
+    explicit TCutoff(
+      double cut_disp2 = disp2_default,
+      double cut_disp3 = disp3_default,
+      double cut_cn = cn_default,
+      double cut_cn_eeq = cn_eeq_default
+    );
 };
 
-static const double rost61_m1_ref_energy {
-  -3.4287391104745E-02
-};
-
-extern int test_energy(
-  const int n,
-  const char atoms[][4],
-  const double coord[],
-  const int charge,
-  const double ref
-);
-
-extern int test_disp(void);
-
-#endif // TEST_DISP_H
+} // namespace dftd

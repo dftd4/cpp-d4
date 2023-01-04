@@ -142,8 +142,9 @@ static const double k4 = 4.10451;
 static const double k5 = 19.08857;
 static const double k6 = 2 * pow(11.28174, 2);
 static const double hlfosqrtpi = 1.0 / 1.77245385091;
-static const double cn_max = 8.0;
 
+// Maximum CN (not strictly obeyed)
+static const double cn_max = 8.0;
 
 int calc_distances(const TMolecule& mol, TMatrix<double>& dist) {
   double rx = 0.0, ry = 0.0, rz = 0.0, tmp = 0.0;
@@ -166,17 +167,17 @@ int calc_distances(const TMolecule& mol, TMatrix<double>& dist) {
 int get_ncoord_erf(
   const TMolecule& mol,
   const TMatrix<double>& dist,
+  const double cutoff,
   TVector<double>& cn,
   TMatrix<double>& dcndr,
-  bool lgrad,
-  double thr
+  bool lgrad
 ) {
   int info;
 
   if (lgrad) {
-    info = dncoord_erf(mol, dist, cn, dcndr, thr);
+    info = dncoord_erf(mol, dist, cutoff, cn, dcndr);
   } else {
-    info = ncoord_erf(mol, dist, cn, thr);
+    info = ncoord_erf(mol, dist, cutoff, cn);
   }
   if (!info == EXIT_SUCCESS) return info;
 
@@ -190,19 +191,19 @@ int get_ncoord_erf(
 int get_ncoord_d4(
   const TMolecule& mol,
   const TMatrix<double>& dist,
+  const double cutoff,
   TVector<double>& cn,
   TMatrix<double>& dcndr,
-  bool lgrad,
-  double thr
+  bool lgrad
 ) {
   if (lgrad) {
-    return dncoord_d4(mol, dist, cn, dcndr, thr);
+    return dncoord_d4(mol, dist, cutoff, cn, dcndr);
   } 
-  return ncoord_d4(mol, dist, cn, thr);
+  return ncoord_d4(mol, dist, cutoff, cn);
 };
 
 int ncoord_d4(const TMolecule& mol, const TMatrix<double>& dist,
-              TVector<double>& cn, double thr) {
+              const double cutoff, TVector<double>& cn) {
   double r = 0.0, rcovij = 0.0, rr = 0.0;
   double den = 0.0;
   double countf = 0.0;
@@ -211,9 +212,10 @@ int ncoord_d4(const TMolecule& mol, const TMatrix<double>& dist,
   for (int i = 0; i != mol.NAtoms; i++) {
     izp = mol.at(i);
     for (int j = 0; j != i; j++) {
-      jzp = mol.at(j);
-
       r = dist(i, j);
+      if (r > cutoff) continue;
+
+      jzp = mol.at(j);
       rcovij = rad[izp] + rad[jzp];
       rr = r / rcovij;
       den = k4 * std::exp(-pow((fabs(en[izp] - en[jzp]) + k5), 2) / k6);
@@ -228,7 +230,8 @@ int ncoord_d4(const TMolecule& mol, const TMatrix<double>& dist,
 
 
 int dncoord_d4(const TMolecule& mol, const TMatrix<double>& dist,
-               TVector<double>& cn, TMatrix<double>& dcndr, double thr) {
+               const double cutoff, TVector<double>& cn,
+               TMatrix<double>& dcndr) {
   double r = 0.0, rcovij = 0.0, rr = 0.0;
   double rx = 0.0, ry = 0.0, rz = 0.0;
   double countf = 0.0, dcountf = 0.0, den = 0.0;
@@ -238,8 +241,9 @@ int dncoord_d4(const TMolecule& mol, const TMatrix<double>& dist,
     izp = mol.at(i);
     for (int j = 0; j != i; j++) {
       jzp = mol.at(j);
-
       r = dist(i, j);
+      if (r > cutoff) continue;
+
       rx = (mol.xyz(j, 0) - mol.xyz(i, 0)) / r;
       ry = (mol.xyz(j, 1) - mol.xyz(i, 1)) / r;
       rz = (mol.xyz(j, 2) - mol.xyz(i, 2)) / r;
@@ -271,13 +275,15 @@ int dncoord_d4(const TMolecule& mol, const TMatrix<double>& dist,
 
 
 int ncoord_erf(const TMolecule& mol, const TMatrix<double>& dist,
-               TVector<double>& cn, double thr) {
+               const double cutoff, TVector<double>& cn) {
   double r = 0.0, rcovij = 0.0, rr = 0.0;
   double countf = 0.0;
 
   for (int i = 0; i != mol.NAtoms; i++) {
     for (int j = 0; j != i; j++) {
       r = dist(i, j);
+      if (r > cutoff) continue;
+
       rcovij = rad[mol.at(i)] + rad[mol.at(j)];
       rr = r / rcovij;
       countf = erf_count(kn, rr);
@@ -291,7 +297,8 @@ int ncoord_erf(const TMolecule& mol, const TMatrix<double>& dist,
 
 
 int dncoord_erf(const TMolecule& mol, const TMatrix<double>& dist,
-                TVector<double>& cn, TMatrix<double>& dcndr, double thr) {
+                const double cutoff, TVector<double>& cn,
+                TMatrix<double>& dcndr) {
   double r = 0.0, rcovij = 0.0, rr = 0.0;
   double rx = 0.0, ry = 0.0, rz = 0.0;
   double countf = 0.0, dcountf = 0.0;
@@ -299,6 +306,8 @@ int dncoord_erf(const TMolecule& mol, const TMatrix<double>& dist,
   for (int i = 0; i != mol.NAtoms; i++) {
     for (int j = 0; j != i; j++) {
       r = dist(i, j);
+      if (r > cutoff) continue;
+
       rx = (mol.xyz(j, 0) - mol.xyz(i, 0)) / r;
       ry = (mol.xyz(j, 1) - mol.xyz(i, 1)) / r;
       rz = (mol.xyz(j, 2) - mol.xyz(i, 2)) / r;

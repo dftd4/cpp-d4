@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with cpp-d4.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <dftd_cutoff.h>
 #include <dftd_damping.h>
 #include <dftd_dispersion.h>
 
@@ -45,12 +46,19 @@ int test_energy(
   info = get_molecule(n, atoms, coord, mol);
   if (!info == EXIT_SUCCESS) return info;
 
+  TCutoff cutoff;
+
   // dispersion main function
-  info = DFTVDW_D4(mol, par, charge, energy, nullptr);
+  info = get_dispersion(mol, par, charge, cutoff, energy, nullptr);
   if (!info == EXIT_SUCCESS) return info;
 
-  return check(energy, ref);
-};
+  if (check(energy, ref) == EXIT_FAILURE) {
+    print_fail("BP86-D4-ATM", energy, ref);
+    return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
+}
 
 int test_disp() {
   int info;

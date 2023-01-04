@@ -15,13 +15,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with cpp-d4.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-#include "dftd_damping.h"
-
 #include <algorithm>
 #include <map>
 #include <string>
 
+#include "dftd_damping.h"
 #include "dftd_dispersion.h"
 
 namespace dftd {
@@ -405,8 +403,8 @@ dfunc get_dfunc(std::string name) {
   return none;
 };
 
-dftd::dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
-  dftd::dparam par;
+dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
+  dparam par;
   double s6{0.0}, s8{0.0}, s10{0.0}, s9{1.0}, a1{0.0}, a2{0.0};
   int alp{16};
   switch (num) {
@@ -1116,8 +1114,8 @@ dftd::dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
   return par;
 }
 
-dftd::dparam get_d4eeqbjmbd_2019_parameter(dfunc num) {
-  dftd::dparam par;
+dparam get_d4eeqbjmbd_2019_parameter(dfunc num) {
+  dparam par;
   double s6{0.0}, s8{0.0}, s10{0.0}, s9{1.0}, a1{0.0}, a2{0.0};
   int alp{16};
   switch (num) {
@@ -1661,7 +1659,7 @@ dftd::dparam get_d4eeqbjmbd_2019_parameter(dfunc num) {
   return par;
 }
 
-void d4par(const std::string func, dftd::dparam& par, const bool lmbd) {
+void d4par(const std::string func, dparam& par, const bool lmbd) {
   auto num = get_dfunc(func);
   if (lmbd) {
     par = get_d4eeqbjatm_2019_parameter(num);

@@ -21,6 +21,7 @@
  */
 #pragma once
 
+#include "dftd_cutoff.h"
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
 
@@ -45,13 +46,15 @@ int d4(const TMolecule& mol, int ndim, double wf, double g_a, double g_c,
        const TVector<double>& cn, TVector<double>& gw, TMatrix<double>& c6ref);
 
 extern
-int edisp(const TMolecule& mol, const TMatrix<double>& dist, const dparam& par, 
-          int ndim, TVector<double>& q,double g_a, double g_c,
-          TVector<double>& gw, TMatrix<double>& c6ref, bool lmbd,
-          double& energy);
+int edisp(const TMolecule& mol, const TMatrix<double>& dist,
+          const double cutoff_disp2, const double cutoff_disp3,
+          const dparam& par, int ndim, TVector<double>& q,
+          double g_a, double g_c, TVector<double>& gw,
+          TMatrix<double>& c6ref, bool lmbd, double& energy);
 
 extern
 int dispgrad(const TMolecule& mol, const TMatrix<double>& dist,
+             const double cutoff_disp2, const double cutoff_disp3,
              const dparam& par, int ndim, const TVector<double>& q, 
              TMatrix<double>& dqdr, TVector<double>& cn, 
              TMatrix<double>& dcndr, double wf, double g_a, double g_c, 
@@ -60,17 +63,28 @@ int dispgrad(const TMolecule& mol, const TMatrix<double>& dist,
 
 extern
 int apprabc(const TMolecule& mol, const TMatrix<double>& dist,
-            const dparam& par, int ndim, TVector<double>& c6ab,
-            double& energy);
+            const double cutoff, const dparam& par, int ndim,
+            TVector<double>& c6ab, double& energy);
 
 extern
 int dabcappr(const TMolecule& mol, const TMatrix<double>& dist, 
-             const dparam& par, int ndim, TVector<double>& gw, 
-             TVector<double>& dgw, TMatrix<double>& c6ref, 
+             const double cutoff, const dparam& par, int ndim,
+             TVector<double>& gw, TVector<double>& dgw, TMatrix<double>& c6ref, 
              TVector<double>& dc6dr, TVector<double>& dc6dcn, double& energy);
 
+/**
+ * @brief Wrapper to handle the evaluation of dispersion energy and derivatives.
+ * 
+ * @param mol Molecular geometry.
+ * @param par DFT-D4 parameters.
+ * @param charge Charge of the molecule.
+ * @param cutoff Real-space cutoffs for CN and dispersion.
+ * @param energy Dispersion energy.
+ * @param GRAD Dispersion gradient.
+ * @return Exit status.
+ */
 extern
-int DFTVDW_D4(const TMolecule &mol, const dparam &par, const int &charge,
-              double &energy, double *GRAD);
+int get_dispersion(const TMolecule &mol, const dparam &par, const int &charge,
+                   TCutoff cutoff, double &energy, double *GRAD);
 
 }  // namespace dftd

@@ -20,12 +20,12 @@
 #include <string>
 #include <vector>
 
+#include "dftd_cutoff.h"
 #include "dftd_damping.h"
 #include "dftd_dispersion.h"
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
 #include "dftd_readxyz.h"
-
 
 
 class argparser {
@@ -70,7 +70,7 @@ void dftd4_citation() {
 }
 
 void gpl_license() {
-  std::cout << R"(   Copyright (C) 2019-2020 S. Ehlert
+  std::cout << R"(   Copyright (C) 2019 S. Ehlert, M. Friede
 
    This program is free software: you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public License
@@ -149,7 +149,10 @@ int main(int argc, char **argv) {
   // readin the geometry file
   read_xyzfile(fname, mol);
 
-  info = dftd::DFTVDW_D4(mol, par, charge, energy, nullptr);
+  // initialize default cutoffs
+  dftd::TCutoff cutoff;
+  
+  info = dftd::get_dispersion(mol, par, charge, cutoff, energy, nullptr);
   if (info != 0) return EXIT_FAILURE;
 
   std::cout << "Dispersion energy: " << energy << " Eh\n";
