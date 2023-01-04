@@ -32,7 +32,6 @@ using namespace dftd4;
 
 int test_rational_damping(const double ref[], TCutoff cutoff) {
   int info;
-  int charge;
   double energy;
   dparam par;
 
@@ -71,5 +70,6 @@ int test_param() {
   TCutoff no_cutoff = TCutoff(huge, huge, huge, huge);
   info = test_rational_damping(ref_no_cutoff, no_cutoff);
   if (!info == EXIT_SUCCESS) return info;
+
   return EXIT_SUCCESS;
 }
