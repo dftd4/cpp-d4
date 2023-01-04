@@ -49,7 +49,7 @@ class dparam {
  * @param GRAD Dispersion gradient.
  * @return Exit status.
  */
-extern int DFTVDW_D4(
+extern int get_dispersion(
   const TMolInfo &Dat,
   const TMolecule &mol,
   const dparam &par,

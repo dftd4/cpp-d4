@@ -50,7 +50,7 @@ int test_energy(
   TCutoff cutoff;
 
   // dispersion main function
-  info = DFTVDW_D4(dat, mol, par, cutoff, energy, nullptr);
+  info = get_dispersion(dat, mol, par, cutoff, energy, nullptr);
   if (!info == EXIT_SUCCESS) return info;
 
   if (check(energy, ref) == EXIT_FAILURE) {

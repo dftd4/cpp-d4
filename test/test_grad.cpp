@@ -44,10 +44,10 @@ int test_numgrad(const TMolInfo &dat, TMolecule &mol, const dparam &par) {
       el = 0.0;
 
       mol.xyz(i, c) += step;
-      DFTVDW_D4(dat, mol, par, cutoff, er, nullptr);
+      get_dispersion(dat, mol, par, cutoff, er, nullptr);
 
       mol.xyz(i, c) = mol.xyz(i, c) - 2*step;
-      DFTVDW_D4(dat, mol, par, cutoff, el, nullptr);
+      get_dispersion(dat, mol, par, cutoff, el, nullptr);
 
       mol.xyz(i, c) = mol.xyz(i, c) + step;
       numgrad(i, c) = 0.5 * (er - el) / step;
@@ -57,7 +57,7 @@ int test_numgrad(const TMolInfo &dat, TMolecule &mol, const dparam &par) {
   // analytical gradient
   double* d4grad = new double[3*mol.NAtoms];
   for (int i = 0; i < 3*mol.NAtoms; i++) d4grad[i] = 0.0;
-  info = DFTVDW_D4(dat, mol, par, cutoff, energy, d4grad);
+  info = get_dispersion(dat, mol, par, cutoff, energy, d4grad);
   if (!info == EXIT_SUCCESS) return info;
 
   // check translational invariance of analytical gradient
