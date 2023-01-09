@@ -25,14 +25,52 @@
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
 
-namespace dftd {
+namespace dftd4 {
 
-extern
-int eeq_chrgeq(const TMolecule& mol, const TMatrix<double>& dist,
-               const int& charge, const TVector<double>& cn, 
-               TVector<double>& q, double& energy,
-               TMatrix<double>& dcndr, TMatrix<double>& dqdr, 
-               TMatrix<double>& gradient, bool lgrad = false,
-               bool lverbose = false, bool lcpq = false);
+extern int get_charges(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  const int charge,
+  const double cutoff,
+  TVector<double>& q,
+  TMatrix<double>& dqdr,
+  bool lgrad
+);
+
+extern int get_vrhs(
+  const TMolecule& mol,
+  const int& charge,
+  const TVector<double>& cn,
+  TVector<double>& Xvec,
+  TVector<double>& dXvec,
+  bool lgrad
+);
+
+extern int get_amat_0d(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  TMatrix<double>& Amat
+);
+
+extern int get_damat_0d(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  const TVector<double>& q,
+  const TMatrix<double>& Amat,
+  TMatrix<double>& dAmat,
+  TMatrix<double>& atrace
+);
+
+extern int eeq_chrgeq(
+  const TMolecule& mol,
+  const TMatrix<double>& dist,
+  const int& charge,
+  const TVector<double>& cn,
+  TVector<double>& qvec,
+  TMatrix<double>& dcndr,
+  TMatrix<double>& dqdr, 
+  bool lgrad = false,
+  bool lverbose = false
+);
 
 }

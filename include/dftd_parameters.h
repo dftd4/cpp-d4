@@ -26,7 +26,7 @@
  */
 #pragma once
 
-namespace dftd
+namespace dftd4
 {
 
 static const double zeff[119] { 0,

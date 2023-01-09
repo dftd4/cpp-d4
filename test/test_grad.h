@@ -15,12 +15,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with cpp-d4.  If not, see <https://www.gnu.org/licenses/>.
  */
-#pragma once
+#ifndef TEST_GRAD_H
+#define TEST_GRAD_H
 
-#include <string>
+#include "dftd_dispersion.h"
+#include "molecules.h"
 
-#include "dftd_geometry.h"
+using namespace dftd4;
 
-extern void read_xyzfile(const std::string&, dftd4::TMolecule&);
+extern int test_numgrad(TMolecule &mol, const int charge, const dparam &par);
+extern int is_trans_invar(const TMolecule &mol, double gradient[]);
 
-extern int element(const std::string&);
+extern int test_bp86d4atm_water(void);
+extern int test_pbed4_mb01(void);
+extern int test_tpss0d4mbd_rost61m1(void);
+
+extern int test_grad(void);
+
+#endif // TEST_GRAD_H

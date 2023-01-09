@@ -15,12 +15,31 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with cpp-d4.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+/**
+ * Collection of damping parameters for D4-BJ-EEQ-ATM and D4-BJ-EEQ-MBD.
+ * @see https://github.com/dftd4/dftd4/blob/main/assets/parameters.toml
+ */
 #pragma once
 
 #include <string>
 
 #include "dftd_dispersion.h"
 
-namespace dftd {
-extern void d4par(const std::string func, dftd::dparam &par, const bool lmbd);
+namespace dftd4 {
+
+/**
+ * @brief Collect the D4 parameters.
+ * 
+ * @param func Name of the functional.
+ * @param par Parameter class containing the parameters for selected functional.
+ * @param latm Switch for D4-ATM (true) or D4-MBD (false) parameters
+ * @returns Exit status.
+ */
+extern int d4par(
+  const std::string func,
+  dftd4::dparam &par,
+  const bool latm = true
+);
+
 }

@@ -26,10 +26,10 @@
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
 
-namespace dftd {
+namespace dftd4 {
 
 /**
- * Calculate all distance pairs and store in matrix
+ * Calculate all distance pairs and store in matrix.
  * 
  * @param mol Molecule object.
  * @param dist Distance matrix (inout).
@@ -186,4 +186,4 @@ extern inline double log_cn_cut(const double cn_max, const double cn);
 
 extern inline double dlog_cn_cut(const double cn_max, const double cn);
 
-};  // namespace dftd
+};  // namespace dftd4

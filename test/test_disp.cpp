@@ -23,7 +23,7 @@
 #include "test_disp.h"
 #include "util.h"
 
-using namespace dftd;
+using namespace dftd4;
 
 
 int test_energy( 
@@ -33,13 +33,13 @@ int test_energy(
   const int charge,
   const double ref
 ) {
-  int info = 0;
-  bool lmbd = true;
-  double energy = 0.0;
+  int info{0};
+  bool latm{true};
+  double energy{0.0};
 
   // BP86 parameters
   dparam par;
-  d4par("bp86", par, lmbd);
+  d4par("bp86", par, latm);
 
   // assemble molecule
   TMolecule mol;
@@ -49,7 +49,7 @@ int test_energy(
   TCutoff cutoff;
 
   // dispersion main function
-  info = get_dispersion(mol, par, charge, cutoff, energy, nullptr);
+  info = get_dispersion(mol, charge, par, cutoff, energy, nullptr);
   if (!info == EXIT_SUCCESS) return info;
 
   if (check(energy, ref) == EXIT_FAILURE) {
@@ -62,11 +62,14 @@ int test_energy(
 
 int test_disp() {
   int info;
+
+  info = test_energy(water_n, water_atoms, water_coord, water_charge, water_ref_energy);
+  if (!info == EXIT_SUCCESS) return info;
   
-  info = test_energy(16, mb16_43_01_atoms, mb16_43_01_coord, mb16_43_01_charge, mb16_43_01_ref_energy);
+  info = test_energy(mb16_43_01_n, mb16_43_01_atoms, mb16_43_01_coord, mb16_43_01_charge, mb16_43_01_ref_energy);
   if (!info == EXIT_SUCCESS) return info;
 
-  info = test_energy(22, rost61_m1_atoms, rost61_m1_coord, rost61_m1_charge, rost61_m1_ref_energy);
+  info = test_energy(rost61_m1_n, rost61_m1_atoms, rost61_m1_coord, rost61_m1_charge, rost61_m1_ref_energy);
   if (!info == EXIT_SUCCESS) return info;
 
   return EXIT_SUCCESS;

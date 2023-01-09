@@ -113,11 +113,11 @@ int main(int argc, char **argv) {
   std::string func;
   bool lverbose{false};
   bool lmbd{true}, lgrad{false};
-  dftd::dparam par;  // damping parameter for DFT-D4 calculation
-  dftd::TMolecule mol;
-  int info;
+  dftd4::dparam par;  // damping parameter for DFT-D4 calculation
+  dftd4::TMolecule mol;
+  int info{0};
+  int charge{0};
   double energy{0.0};
-  int charge;
 
   // check for complete command line
   // we need at least the program name and an input file
@@ -140,7 +140,7 @@ int main(int argc, char **argv) {
   }
   if (args.getflag("--func")) {
     func = args.getopt("--func");
-    dftd::d4par(func, par, lmbd);
+    dftd4::d4par(func, par, lmbd);
   }
   // last argument is assumed to filename since
   // dftd4 [options] <file>
@@ -150,9 +150,12 @@ int main(int argc, char **argv) {
   read_xyzfile(fname, mol);
 
   // initialize default cutoffs
-  dftd::TCutoff cutoff;
+  dftd4::TCutoff cutoff;
+
+  // molecular information
+  dftd4::TMolInfo dat = dftd4::TMolInfo(charge);
   
-  info = dftd::get_dispersion(mol, par, charge, cutoff, energy, nullptr);
+  info = dftd4::get_dispersion(dat, mol, par, cutoff, energy, nullptr);
   if (info != 0) return EXIT_FAILURE;
 
   std::cout << "Dispersion energy: " << energy << " Eh\n";

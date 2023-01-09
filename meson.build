@@ -39,6 +39,7 @@ srcs = files(
   'src/dftd_damping.cpp',
   'src/dftd_dispersion.cpp',
   'src/dftd_eeq.cpp',
+  'src/dftd_model.cpp',
   'src/dftd_ncoord.cpp',
 )
 
@@ -60,6 +61,7 @@ install_headers(
   'include/dftd_eeq.h',
   'include/dftd_geometry.h',
   'include/dftd_matrix.h',
+  'include/dftd_model.h',
   'include/dftd_ncoord.h',
   'include/dftd_parameters.h',
 )

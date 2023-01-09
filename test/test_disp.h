@@ -18,6 +18,10 @@
 #ifndef TEST_DISP_H
 #define TEST_DISP_H
 
+static const double water_ref_energy {
+  -2.3162148786098E-04
+};
+
 static const double mb16_43_01_ref_energy {
   -2.5882588037023E-02
 };

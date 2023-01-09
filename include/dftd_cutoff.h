@@ -17,7 +17,7 @@
  */
 #pragma once
 
-namespace dftd {
+namespace dftd4 {
 
 // Real space cutoff for CN within D4
 static const double cn_default = 30.0;
@@ -48,4 +48,4 @@ class TCutoff {
     );
 };
 
-} // namespace dftd
+} // namespace dftd4
