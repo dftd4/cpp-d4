@@ -30,16 +30,13 @@ namespace dftd4 {
 
 /**
  * @brief Collect the D4 parameters.
- * 
+ *
  * @param func Name of the functional.
  * @param par Parameter class containing the parameters for selected functional.
- * @param latm Switch for D4-ATM (true) or D4-MBD (false) parameters
+ * @param latm Switch for D4-ATM (true) or D4-MBD (false) parameters.
  * @returns Exit status.
  */
-extern int d4par(
-  const std::string func,
-  dftd4::dparam &par,
-  const bool latm = true
-);
+extern int
+  d4par(const std::string func, dftd4::dparam &par, const bool latm = true);
 
-}
+} // namespace dftd4

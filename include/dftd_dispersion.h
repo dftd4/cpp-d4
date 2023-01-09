@@ -23,12 +23,11 @@
 
 #include "dftd_cutoff.h"
 #include "dftd_geometry.h"
-#include "dftd_matrix.h"
 
 namespace dftd4 {
 
 class dparam {
- public:
+    public:
   double s6;
   double s8;
   double s10;
@@ -40,7 +39,7 @@ class dparam {
 
 /**
  * @brief Wrapper to handle the evaluation of dispersion energy and derivatives.
- * 
+ *
  * @param mol Molecular geometry.
  * @param charge Molecular charge.
  * @param par DFT-D4 parameters.
@@ -58,115 +57,4 @@ extern int get_dispersion(
   double *GRAD
 );
 
-// Generic wrappers for two- and three-body dispersion
-
-extern int get_dispersion2(
-  const TMolecule& mol,
-  const TMatrix<double>& dist,
-  const double cutoff,
-  const dparam& par,
-  const TMatrix<double>& c6,
-  const TMatrix<double>& dc6dcn,
-  const TMatrix<double>& dc6dq,
-  TVector<double>& energy,
-  TVector<double>& dEdcn,
-  TVector<double>& dEdq,
-  TVector<double>& gradient,
-  bool lgrad = false
-);
-
-extern int get_dispersion3(
-  const TMolecule& mol,
-  const TMatrix<double>& dist,
-  const double cutoff,
-  const dparam& par,
-  const TMatrix<double>& c6,
-  const TMatrix<double>& dc6dcn,
-  const TMatrix<double>& dc6dq,
-  TVector<double>& energy,
-  TVector<double>& dEdcn,
-  TVector<double>& dEdq,
-  TVector<double>& gradient,
-  bool lgrad = false
-);
-
-// Two-body dispersion
-
-extern int get_dispersion2_energy(
-  const TMolecule& mol,
-  const TMatrix<double>& dist,
-  const double cutoff,
-  const dparam& par,
-  const TMatrix<double>& c6,
-  TVector<double>& energy
-);
-
-extern int get_dispersion2_derivs(
-  const TMolecule& mol,
-  const TMatrix<double>& dist,
-  const double cutoff,
-  const dparam& par,
-  const TMatrix<double>& c6,
-  const TMatrix<double>& dc6dcn,
-  const TMatrix<double>& dc6dq,
-  TVector<double>& energy,
-  TVector<double>& dEdcn,
-  TVector<double>& dEdq,
-  TVector<double>& gradient
-);
-
-// Three-body (ATM) dispersion
-
-extern int get_atm_dispersion(
-  const TMolecule& mol,
-  const TMatrix<double>& dist,
-  const double cutoff,
-  const double s9,
-  const double a1,
-  const double a2,
-  const double alp,
-  const TMatrix<double>& c6,
-  const TMatrix<double>& dc6dcn,
-  const TMatrix<double>& dc6dq,
-  TVector<double>& energy,
-  TVector<double>& dEdcn,
-  TVector<double>& dEdq,
-  TVector<double>& gradient,
-  bool lgrad = false
-); 
-
-extern int get_atm_dispersion_energy(
-  const TMolecule& mol,
-  const TMatrix<double>& dist,
-  const double cutoff,
-  const double s9,
-  const double a1,
-  const double a2,
-  const double alp,
-  const TMatrix<double>& c6,
-  TVector<double>& energy
-);
-
-extern int get_atm_dispersion_derivs(
-  const TMolecule& mol,
-  const TMatrix<double>& dist,
-  const double cutoff,
-  const double s9,
-  const double a1,
-  const double a2,
-  const double alp,
-  const TMatrix<double>& c6,
-  const TMatrix<double>& dc6dcn,
-  const TMatrix<double>& dc6dq,
-  TVector<double>& energy,
-  TVector<double>& dEdcn,
-  TVector<double>& dEdq,
-  TVector<double>& gradient
-);
-
-extern double triple_scale(int ii, int jj, int kk);
-
-extern inline double fdmpr_bj(const int n, const double r, const double c);
-extern inline double fdmprdr_bj(const int n, const double r, const double c);
-
-}  // namespace dftd4
+} // namespace dftd4

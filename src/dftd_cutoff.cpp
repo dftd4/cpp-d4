@@ -20,10 +20,10 @@
 namespace dftd4 {
 
 TCutoff::TCutoff(
-  double cut_disp2/* = disp2_default*/,
-  double cut_disp3/* = disp3_default*/,
-  double cut_cn/* = cn_default*/,
-  double cut_cn_eeq/* = cn_eeq_default*/   
+  double cut_disp2 /* = disp2_default*/,
+  double cut_disp3 /* = disp3_default*/,
+  double cut_cn /* = cn_default*/,
+  double cut_cn_eeq /* = cn_eeq_default*/
 ) {
   disp2 = cut_disp2;
   disp3 = cut_disp3;

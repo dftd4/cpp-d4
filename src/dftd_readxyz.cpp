@@ -26,7 +26,7 @@
 #include "dftd_econv.h"
 #include "dftd_geometry.h"
 
-void read_xyzfile(const std::string& name, dftd4::TMolecule& mol) {
+void read_xyzfile(const std::string &name, dftd4::TMolecule &mol) {
   std::ifstream geo;
   std::stringstream buffer;
   std::string line;
@@ -39,14 +39,14 @@ void read_xyzfile(const std::string& name, dftd4::TMolecule& mol) {
   if (!geo) {
     printf("Error: Cannot open file.");
     exit(EXIT_FAILURE);
-  } 
+  }
 
   buffer << (std::getline(geo, line), line);
   buffer >> n;
 
   mol.GetMemory(n);
 
-  std::getline(geo, line);  // skip comment line
+  std::getline(geo, line); // skip comment line
 
   for (int i = 0; i != n; i++) {
     geo >> sym >> x >> y >> z;
@@ -64,19 +64,19 @@ void read_xyzfile(const std::string& name, dftd4::TMolecule& mol) {
   geo.close();
 }
 
-int element(const std::string& sym) {
+int element(const std::string &sym) {
   char elem[3]{"  "};
   char pse[118][3]{
-      "h ", "he", "li", "be", "b ", "c ", "n ", "o ", "f ", "ne", "na", "mg",
-      "al", "si", "p ", "s ", "cl", "ar", "k ", "ca", "sc", "ti", "v ", "cr",
-      "mn", "fe", "co", "ni", "cu", "zn", "ga", "ge", "as", "se", "br", "kr",
-      "rb", "sr", "y ", "zr", "nb", "mo", "tc", "ru", "rh", "pd", "ag", "cd",
-      "in", "sn", "sb", "te", "i ", "xe", "cs", "ba", "la", "ce", "pr", "nd",
-      "pm", "sm", "eu", "gd", "tb", "dy", "ho", "er", "tm", "yb", "lu", "hf",
-      "ta", "w ", "re", "os", "ir", "pt", "au", "hg", "tl", "pb", "bi", "po",
-      "at", "rn", "fr", "ra", "ac", "th", "pa", "u ", "np", "pu", "am", "cm",
-      "bk", "cf", "es", "fm", "md", "no", "lr", "rf", "db", "sg", "bh", "hs",
-      "mt", "ds", "rg", "cn", "nh", "fl", "mc", "lv", "ts", "og",
+    "h ", "he", "li", "be", "b ", "c ", "n ", "o ", "f ", "ne", "na", "mg",
+    "al", "si", "p ", "s ", "cl", "ar", "k ", "ca", "sc", "ti", "v ", "cr",
+    "mn", "fe", "co", "ni", "cu", "zn", "ga", "ge", "as", "se", "br", "kr",
+    "rb", "sr", "y ", "zr", "nb", "mo", "tc", "ru", "rh", "pd", "ag", "cd",
+    "in", "sn", "sb", "te", "i ", "xe", "cs", "ba", "la", "ce", "pr", "nd",
+    "pm", "sm", "eu", "gd", "tb", "dy", "ho", "er", "tm", "yb", "lu", "hf",
+    "ta", "w ", "re", "os", "ir", "pt", "au", "hg", "tl", "pb", "bi", "po",
+    "at", "rn", "fr", "ra", "ac", "th", "pa", "u ", "np", "pu", "am", "cm",
+    "bk", "cf", "es", "fm", "md", "no", "lr", "rf", "db", "sg", "bh", "hs",
+    "mt", "ds", "rg", "cn", "nh", "fl", "mc", "lv", "ts", "og",
   };
 
   std::transform(sym.begin(), sym.end(), elem, ::tolower);
@@ -85,7 +85,8 @@ int element(const std::string& sym) {
     std::string a = elem;
     std::string b = pse[i];
     int stat = a.compare(b);
-    if (!stat) return i + 1;
+    if (!stat)
+      return i + 1;
   }
 
   return EXIT_SUCCESS;
