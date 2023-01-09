@@ -31,21 +31,20 @@ static const double disp2_default = 60.0;
 // Three-body interaction cutoff
 static const double disp3_default = 40.0;
 
-
 // Collection of real space cutoffs.
 class TCutoff {
-  public:
-    double disp2;
-    double disp3;
-    double cn;
-    double cn_eeq;
+    public:
+  double disp2;
+  double disp3;
+  double cn;
+  double cn_eeq;
 
-    explicit TCutoff(
-      double cut_disp2 = disp2_default,
-      double cut_disp3 = disp3_default,
-      double cut_cn = cn_default,
-      double cut_cn_eeq = cn_eeq_default
-    );
+  explicit TCutoff(
+    double cut_disp2 = disp2_default,
+    double cut_disp3 = disp3_default,
+    double cut_cn = cn_default,
+    double cut_cn_eeq = cn_eeq_default
+  );
 };
 
 } // namespace dftd4

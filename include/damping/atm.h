@@ -17,7 +17,7 @@
  */
 
 /**
- * Electronegativity equilibration (EEQ) model for DFT-D4
+ * @brief Three-body (ATM) dispersion
  */
 
 #pragma once
@@ -27,50 +27,53 @@
 
 namespace dftd4 {
 
-extern int get_charges(
+extern int get_atm_dispersion(
   const TMolecule &mol,
   const TMatrix<double> &dist,
-  const int charge,
   const double cutoff,
-  TVector<double> &q,
-  TMatrix<double> &dqdr,
-  bool lgrad
+  const double s9,
+  const double a1,
+  const double a2,
+  const double alp,
+  const TMatrix<double> &c6,
+  const TMatrix<double> &dc6dcn,
+  const TMatrix<double> &dc6dq,
+  TVector<double> &energy,
+  TVector<double> &dEdcn,
+  TVector<double> &dEdq,
+  TVector<double> &gradient,
+  bool lgrad = false
 );
 
-extern int get_vrhs(
-  const TMolecule &mol,
-  const int &charge,
-  const TVector<double> &cn,
-  TVector<double> &Xvec,
-  TVector<double> &dXvec,
-  bool lgrad
-);
-
-extern int get_amat_0d(
-  const TMolecule &mol,
-  const TMatrix<double> &dist,
-  TMatrix<double> &Amat
-);
-
-extern int get_damat_0d(
+extern int get_atm_dispersion_energy(
   const TMolecule &mol,
   const TMatrix<double> &dist,
-  const TVector<double> &q,
-  const TMatrix<double> &Amat,
-  TMatrix<double> &dAmat,
-  TMatrix<double> &atrace
+  const double cutoff,
+  const double s9,
+  const double a1,
+  const double a2,
+  const double alp,
+  const TMatrix<double> &c6,
+  TVector<double> &energy
 );
 
-extern int eeq_chrgeq(
+extern int get_atm_dispersion_derivs(
   const TMolecule &mol,
   const TMatrix<double> &dist,
-  const int &charge,
-  const TVector<double> &cn,
-  TVector<double> &qvec,
-  TMatrix<double> &dcndr,
-  TMatrix<double> &dqdr,
-  bool lgrad = false,
-  bool lverbose = false
+  const double cutoff,
+  const double s9,
+  const double a1,
+  const double a2,
+  const double alp,
+  const TMatrix<double> &c6,
+  const TMatrix<double> &dc6dcn,
+  const TMatrix<double> &dc6dq,
+  TVector<double> &energy,
+  TVector<double> &dEdcn,
+  TVector<double> &dEdq,
+  TVector<double> &gradient
 );
+
+extern double triple_scale(int ii, int jj, int kk);
 
 } // namespace dftd4

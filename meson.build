@@ -41,6 +41,8 @@ srcs = files(
   'src/dftd_eeq.cpp',
   'src/dftd_model.cpp',
   'src/dftd_ncoord.cpp',
+  'src/damping/atm.cpp',
+  'src/damping/rational.cpp',
 )
 
 cpp_d4_inc = include_directories('include')
@@ -64,6 +66,8 @@ install_headers(
   'include/dftd_model.h',
   'include/dftd_ncoord.h',
   'include/dftd_parameters.h',
+  'include/damping/atm.h',
+  'include/damping/rational.h',
 )
 
 cpp_d4_dep = declare_dependency(

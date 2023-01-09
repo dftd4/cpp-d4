@@ -1,0 +1,25 @@
+BasedOnStyle: LLVM
+
+# indentation: two spaces
+AccessModifierOffset: 2
+ConstructorInitializerIndentWidth: 2
+ContinuationIndentWidth: 2
+IndentWidth: 2
+IndentWrappedFunctionNames: true
+TabWidth: 2
+UseTab: Never
+
+# Python function argument style (>=14.0.0)
+AlignAfterOpenBracket: BlockIndent
+AllowAllParametersOfDeclarationOnNextLine: false
+BinPackArguments: false
+BinPackParameters: false
+ExperimentalAutoDetectBinPacking: false
+
+# short code blocks
+AllowShortBlocksOnASingleLine: Always
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
+
+AlignOperands: true
+AllowAllArgumentsOnNextLine: true

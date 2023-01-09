@@ -23,10 +23,10 @@
 namespace dftd4 {
 // Input of the molecular geometry
 class TMolecule {
- public:
+    public:
   int NAtoms;
-  TMatrix<double> xyz;  // Cartesian Coordinates: (NAtoms x 3)-matrix
-  TVector<int> at;   // atomic numbers
+  TMatrix<double> xyz; // Cartesian Coordinates: (NAtoms x 3)-matrix
+  TVector<int> at;     // atomic numbers
 
   TMolecule() { NAtoms = 0; }
   ~TMolecule() { FreeMemory(); }
@@ -44,4 +44,4 @@ class TMolecule {
   }
 };
 
-}  // namespace dftd4
+} // namespace dftd4
