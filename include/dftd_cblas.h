@@ -95,8 +95,7 @@ inline void BLAS_Add_Mat_x_Vec(
 
 inline double
   BLAS_Vec_x_Vec(const TVector<double> &A, const TVector<double> &B) {
-  if (A.N != B.N)
-    exit(EXIT_FAILURE);
+  if (A.N != B.N) exit(EXIT_FAILURE);
   return cblas_ddot(A.N, A.p, 1, B.p, 1);
 };
 
@@ -217,8 +216,7 @@ inline int BLAS_LINEQ(TMatrix<double> &a, TMatrix<double> &b, int m) {
   lapack_int info, n, nrhs;
   lapack_int *ipiv;
 
-  if (a.rows != a.cols)
-    return EXIT_FAILURE;
+  if (a.rows != a.cols) return EXIT_FAILURE;
 
   n = a.rows;
   nrhs = m;
@@ -239,9 +237,7 @@ inline int BLAS_LINEQ(TMatrix<double> &a, TMatrix<double> &b, int m) {
 }
 
 inline int BLAS_InvertMatrix(TMatrix<double> &a) {
-  if (a.rows != a.cols) {
-    return EXIT_FAILURE;
-  }
+  if (a.rows != a.cols) { return EXIT_FAILURE; }
 
   lapack_int info;
   lapack_int *ipiv = new lapack_int[a.rows];
@@ -255,17 +251,13 @@ inline int BLAS_InvertMatrix(TMatrix<double> &a) {
     ipiv
   );
 
-  if (info != 0) {
-    return EXIT_FAILURE;
-  }
+  if (info != 0) { return EXIT_FAILURE; }
 
   info = LAPACKE_dgetri(
     LAPACK_ROW_MAJOR, (lapack_int)a.rows, a.p, (lapack_int)a.cols, ipiv
   );
 
-  if (info != 0) {
-    return EXIT_FAILURE;
-  }
+  if (info != 0) { return EXIT_FAILURE; }
 
   delete[] ipiv;
 

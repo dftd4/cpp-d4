@@ -117,18 +117,15 @@ int get_charges(
   TMatrix<double> dcndr; // Derivative of EEQ-CN
 
   cn.NewVec(mol.NAtoms);
-  if (lgrad)
-    dcndr.NewMat(mol.NAtoms, 3 * mol.NAtoms);
+  if (lgrad) dcndr.NewMat(mol.NAtoms, 3 * mol.NAtoms);
 
   // get the EEQ coordination number
   info = get_ncoord_erf(mol, dist, cutoff, cn, dcndr, lgrad);
-  if (!info == EXIT_SUCCESS)
-    return info;
+  if (!info == EXIT_SUCCESS) return info;
 
   // corresponds to model%solve in Fortran
   info = eeq_chrgeq(mol, dist, charge, cn, q, dcndr, dqdr, lgrad, lverbose);
-  if (!info == EXIT_SUCCESS)
-    return info;
+  if (!info == EXIT_SUCCESS) return info;
 
   dcndr.Delete();
   cn.Delete();
@@ -273,16 +270,13 @@ int eeq_chrgeq(
   xvec.NewVec(m);
 
   TVector<double> dxdcn; // Derivative of chi vector w.r.t. CN
-  if (lgrad)
-    dxdcn.NewVec(m);
+  if (lgrad) dxdcn.NewVec(m);
 
   info = get_vrhs(mol, charge, cn, xvec, dxdcn, lgrad);
-  if (!info == EXIT_SUCCESS)
-    return info;
+  if (!info == EXIT_SUCCESS) return info;
 
   info = get_amat_0d(mol, dist, Amat);
-  if (!info == EXIT_SUCCESS)
-    return info;
+  if (!info == EXIT_SUCCESS) return info;
 
   TVector<double> vrhs;
   vrhs.NewVec(m);
@@ -293,11 +287,9 @@ int eeq_chrgeq(
 
   // solve: A Q = X (Eq.4) -> Q = Ainv X
   info = BLAS_InvertMatrix(Ainv);
-  if (!info == EXIT_SUCCESS)
-    return info;
+  if (!info == EXIT_SUCCESS) return info;
   info = BLAS_Add_Mat_x_Vec(vrhs, Ainv, xvec, false, 1.0);
-  if (!info == EXIT_SUCCESS)
-    return info;
+  if (!info == EXIT_SUCCESS) return info;
 
   // remove charge constraint (make vector smaller by one)
   for (int i = 0; i != mm; i++) {
@@ -354,8 +346,7 @@ int eeq_chrgeq(
     atrace.NewMat(m, 3);
 
     info = get_damat_0d(mol, dist, vrhs, Amat, dAmat, atrace);
-    if (!info == EXIT_SUCCESS)
-      return info;
+    if (!info == EXIT_SUCCESS) return info;
 
     for (int i = 0; i != mol.NAtoms; i++) {
       dAmat(3 * i, i) += atrace(i, 0);
@@ -383,8 +374,7 @@ int eeq_chrgeq(
     }
 
     info = BLAS_Add_Mat_x_Mat(dqdr, dAmat, A, false, false, -1.0);
-    if (!info == EXIT_SUCCESS)
-      return info;
+    if (!info == EXIT_SUCCESS) return info;
 
     dAmat.Delete();
   }

@@ -131,12 +131,8 @@ int main(int argc, char **argv) {
     help();
     exit(EXIT_SUCCESS);
   }
-  if (args.getflag("-v") || args.getflag("--verbose")) {
-    lverbose = true;
-  }
-  if (args.getflag("-g") || args.getflag("--grad")) {
-    lgrad = true;
-  }
+  if (args.getflag("-v") || args.getflag("--verbose")) { lverbose = true; }
+  if (args.getflag("-g") || args.getflag("--grad")) { lgrad = true; }
   if (args.getflag("--func")) {
     func = args.getopt("--func");
     dftd4::d4par(func, par, lmbd);
@@ -155,8 +151,7 @@ int main(int argc, char **argv) {
   dftd4::TMolInfo dat = dftd4::TMolInfo(charge);
 
   info = dftd4::get_dispersion(dat, mol, par, cutoff, energy, nullptr);
-  if (info != 0)
-    return EXIT_FAILURE;
+  if (info != 0) return EXIT_FAILURE;
 
   std::cout << "Dispersion energy: " << energy << " Eh\n";
 

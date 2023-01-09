@@ -68,19 +68,16 @@ int get_dispersion(
 
   // calculate partial charges from EEQ model
   info = get_charges(mol, dist, charge, cutoff.cn_eeq, q, dqdr, lgrad);
-  if (!info == EXIT_SUCCESS)
-    return info;
+  if (!info == EXIT_SUCCESS) return info;
 
   // get the D4 coordination number
   info = get_ncoord_d4(mol, dist, cutoff.cn, cn, dcndr, lgrad);
-  if (!info == EXIT_SUCCESS)
-    return info;
+  if (!info == EXIT_SUCCESS) return info;
 
   // maximum number of reference systems
   int mref{0};
   info = get_max_ref(mol, mref);
-  if (!info == EXIT_SUCCESS)
-    return info;
+  if (!info == EXIT_SUCCESS) return info;
 
   TMatrix<double> gwvec;
   TMatrix<double> dgwdcn;
@@ -91,8 +88,7 @@ int get_dispersion(
     dgwdq.NewMat(mref, mol.NAtoms);
   }
   info = weight_references(mol, cn, q, gwvec, dgwdcn, dgwdq, lgrad);
-  if (!info == EXIT_SUCCESS)
-    return info;
+  if (!info == EXIT_SUCCESS) return info;
 
   TMatrix<double> c6;
   TMatrix<double> dc6dcn;
@@ -104,8 +100,7 @@ int get_dispersion(
   }
 
   info = get_atomic_c6(mol, gwvec, dgwdcn, dgwdq, c6, dc6dcn, dc6dq, lgrad);
-  if (!info == EXIT_SUCCESS)
-    return info;
+  if (!info == EXIT_SUCCESS) return info;
 
   // --------------------------
   // Two-body dispersion energy
@@ -134,13 +129,11 @@ int get_dispersion(
     gradient,
     lgrad
   );
-  if (!info == EXIT_SUCCESS)
-    return info;
+  if (!info == EXIT_SUCCESS) return info;
 
   if (lgrad) {
     info = BLAS_Add_Mat_x_Vec(gradient, dqdr, dEdq, false, 1.0);
-    if (!info == EXIT_SUCCESS)
-      return info;
+    if (!info == EXIT_SUCCESS) return info;
   }
 
   dqdr.Delete();
@@ -162,8 +155,7 @@ int get_dispersion(
       dgwdq.NewMat(mref, mol.NAtoms);
     }
     info = weight_references(mol, cn, q, gwvec, dgwdcn, dgwdq, lgrad);
-    if (!info == EXIT_SUCCESS)
-      return info;
+    if (!info == EXIT_SUCCESS) return info;
 
     cn.Delete();
     q.Delete();
@@ -175,8 +167,7 @@ int get_dispersion(
       dc6dq.NewMat(mol.NAtoms, mol.NAtoms);
     }
     info = get_atomic_c6(mol, gwvec, dgwdcn, dgwdq, c6, dc6dcn, dc6dq, lgrad);
-    if (!info == EXIT_SUCCESS)
-      return info;
+    if (!info == EXIT_SUCCESS) return info;
 
     gwvec.Delete();
     dgwdcn.Delete();
@@ -197,8 +188,7 @@ int get_dispersion(
       gradient,
       lgrad
     );
-    if (!info == EXIT_SUCCESS)
-      return info;
+    if (!info == EXIT_SUCCESS) return info;
   } else {
     cn.Delete();
     q.Delete();
@@ -214,8 +204,7 @@ int get_dispersion(
 
   if (lgrad) {
     info = BLAS_Add_Mat_x_Vec(gradient, dcndr, dEdcn, false, 1.0);
-    if (!info == EXIT_SUCCESS)
-      return info;
+    if (!info == EXIT_SUCCESS) return info;
   }
 
   dcndr.Delete();

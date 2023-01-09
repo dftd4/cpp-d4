@@ -37,25 +37,18 @@ template <class T> class TVector {
     ElementSize = sizeof(T);
   }
   ~TVector() {
-    if (p != 0)
-      Delete();
+    if (p != 0) Delete();
   }
   void NewVector(int VectorLength) {
-    if (VectorLength < 0) {
-      std::exit(EXIT_FAILURE);
-    }
+    if (VectorLength < 0) { std::exit(EXIT_FAILURE); }
     if (p != 0 && N == VectorLength) {
       Init();
     } else {
       Delete();
-      if (VectorLength == 0) {
-        return;
-      }
+      if (VectorLength == 0) { return; }
       // get new memory
       p = new T[VectorLength];
-      if (!p) {
-        std::exit(EXIT_FAILURE);
-      }
+      if (!p) { std::exit(EXIT_FAILURE); }
       N = VectorLength;
       Init();
     }
@@ -66,9 +59,7 @@ template <class T> class TVector {
   void NewVec(int VectorLength) { return NewVector(VectorLength); }
 
   void Delete(void) {
-    if (p != 0 && N != 0) {
-      delete[] p;
-    }
+    if (p != 0 && N != 0) { delete[] p; }
     p = 0;
     N = 0;
   }
@@ -78,8 +69,7 @@ template <class T> class TVector {
       Delete();
       New(v.N);
     }
-    if (v.N == 0)
-      return;
+    if (v.N == 0) return;
     mem = (long int)N * ElementSize;
     std::memcpy(p, v.p, mem);
   }
@@ -118,26 +108,21 @@ template <class T> class TMatrix {
     ElementSize = sizeof(T);
   }
   ~TMatrix() {
-    if (p != 0)
-      Delete();
+    if (p != 0) Delete();
   }
 
   void NewMatrix(int r, int c) {
-    if (r < 0 || c < 0)
-      std::exit(EXIT_FAILURE);
+    if (r < 0 || c < 0) std::exit(EXIT_FAILURE);
     if (p != 0 && r == rows && c == cols) {
       Init();
     } else {
       long int mem = (long int)r * (long int)c;
-      if (p != 0)
-        Delete(); // Eventually delete old matrix
+      if (p != 0) Delete(); // Eventually delete old matrix
 
-      if (mem == 0)
-        return; // don't touch pointer if no memory is allocated
+      if (mem == 0) return; // don't touch pointer if no memory is allocated
 
       p = new T[mem];
-      if (!p)
-        std::exit(EXIT_FAILURE);
+      if (!p) std::exit(EXIT_FAILURE);
       rows = r;
       cols = c;
       Init();
@@ -152,9 +137,7 @@ template <class T> class TMatrix {
   void NewMat(int r, int c) { return NewMatrix(r, c); }
 
   void Delete(void) {
-    if (p != 0 && rows * cols != 0) {
-      delete[] p;
-    }
+    if (p != 0 && rows * cols != 0) { delete[] p; }
     rows = 0;
     cols = 0;
     p = 0;
@@ -204,8 +187,7 @@ template <class T> class TMatrix {
       New(m.rows, m.cols);
     }
     mem = (long int)rows * (long int)cols * ElementSize;
-    if (mem == 0)
-      return;
+    if (mem == 0) return;
     std::memcpy(p, m.p, mem);
   }
 

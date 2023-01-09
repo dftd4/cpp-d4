@@ -85,8 +85,7 @@ int element(const std::string &sym) {
     std::string a = elem;
     std::string b = pse[i];
     int stat = a.compare(b);
-    if (!stat)
-      return i + 1;
+    if (!stat) return i + 1;
   }
 
   return EXIT_SUCCESS;

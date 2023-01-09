@@ -356,12 +356,10 @@ int get_ncoord_erf(
   } else {
     info = ncoord_erf(mol, dist, cutoff, cn);
   }
-  if (!info == EXIT_SUCCESS)
-    return info;
+  if (!info == EXIT_SUCCESS) return info;
 
   info = cut_coordination_number(cn_max, cn, dcndr, lgrad);
-  if (!info == EXIT_SUCCESS)
-    return info;
+  if (!info == EXIT_SUCCESS) return info;
 
   return EXIT_SUCCESS;
 };
@@ -374,9 +372,7 @@ int get_ncoord_d4(
   TMatrix<double> &dcndr,
   bool lgrad
 ) {
-  if (lgrad) {
-    return dncoord_d4(mol, dist, cutoff, cn, dcndr);
-  }
+  if (lgrad) { return dncoord_d4(mol, dist, cutoff, cn, dcndr); }
   return ncoord_d4(mol, dist, cutoff, cn);
 };
 
@@ -395,8 +391,7 @@ int ncoord_d4(
     izp = mol.at(i);
     for (int j = 0; j != i; j++) {
       r = dist(i, j);
-      if (r > cutoff)
-        continue;
+      if (r > cutoff) continue;
 
       jzp = mol.at(j);
       rcovij = rad[izp] + rad[jzp];
@@ -428,8 +423,7 @@ int dncoord_d4(
     for (int j = 0; j != i; j++) {
       jzp = mol.at(j);
       r = dist(i, j);
-      if (r > cutoff)
-        continue;
+      if (r > cutoff) continue;
 
       rx = (mol.xyz(j, 0) - mol.xyz(i, 0)) / r;
       ry = (mol.xyz(j, 1) - mol.xyz(i, 1)) / r;
@@ -472,8 +466,7 @@ int ncoord_erf(
   for (int i = 0; i != mol.NAtoms; i++) {
     for (int j = 0; j != i; j++) {
       r = dist(i, j);
-      if (r > cutoff)
-        continue;
+      if (r > cutoff) continue;
 
       rcovij = rad[mol.at(i)] + rad[mol.at(j)];
       rr = r / rcovij;
@@ -500,8 +493,7 @@ int dncoord_erf(
   for (int i = 0; i != mol.NAtoms; i++) {
     for (int j = 0; j != i; j++) {
       r = dist(i, j);
-      if (r > cutoff)
-        continue;
+      if (r > cutoff) continue;
 
       rx = (mol.xyz(j, 0) - mol.xyz(i, 0)) / r;
       ry = (mol.xyz(j, 1) - mol.xyz(i, 1)) / r;

@@ -397,9 +397,7 @@ dfunc get_dfunc(std::string name) {
   std::string func = name;
   transform(name.begin(), name.end(), func.begin(), ::tolower);
   auto iter = dfuncs.find(func);
-  if (iter != dfuncs.end()) {
-    return iter->second;
-  }
+  if (iter != dfuncs.end()) { return iter->second; }
   return none;
 };
 
@@ -408,8 +406,7 @@ dparam get_d4eeqbjatm_2019_parameter(dfunc num) {
   double s6{1.0}, s8{0.0}, s10{0.0}, s9{1.0}, a1{0.0}, a2{0.0};
   int alp{16};
   switch (num) {
-  default:
-    break;
+  default: break;
   case am05: // (SAW211021)
     s8 = 1.71885838;
     a1 = 0.47901431;
@@ -1053,8 +1050,7 @@ dparam get_d4eeqbjmbd_2019_parameter(dfunc num) {
   double s6{1.0}, s8{0.0}, s10{0.0}, s9{1.0}, a1{0.0}, a2{0.0};
   int alp{16};
   switch (num) {
-  default:
-    break;
+  default: break;
   case b1b95:
     s8 = 1.19549420;
     a1 = 0.39241474;

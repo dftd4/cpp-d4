@@ -100,12 +100,10 @@ int get_max_ref(const TMolecule &mol, int &mref) {
   mref = refn[mol.at(0)];
   for (int i = 1; i != mol.NAtoms; i++) {
     int val = refn[mol.at(i)];
-    if (val > mref)
-      mref = val;
+    if (val > mref) mref = val;
   }
 
-  if (mref == 0.0)
-    return EXIT_FAILURE;
+  if (mref == 0.0) return EXIT_FAILURE;
   return EXIT_SUCCESS;
 }
 
@@ -167,9 +165,7 @@ int weight_references(
           gwk * dzeta(g_a, gi, refq[izp][iref] + zi, q(iat) + zi);
 
         dgwk = norm * (dexpw - expw * dnorm * norm);
-        if (is_exceptional(dgwk)) {
-          dgwk = 0.0;
-        }
+        if (is_exceptional(dgwk)) { dgwk = 0.0; }
         dgwdcn(iref, iat) =
           dgwk * zeta(g_a, gi, refq[izp][iref] + zi, q(iat) + zi);
       }
@@ -230,14 +226,12 @@ int get_atomic_c6(
   // maximum number of reference systems
   int mref{0};
   info = get_max_ref(mol, mref);
-  if (!info == EXIT_SUCCESS)
-    return info;
+  if (!info == EXIT_SUCCESS) return info;
 
   TMatrix<double> alpha;
   alpha.NewMat(mol.NAtoms, 23 * mref);
   info = set_refalpha_eeq(mol, alpha);
-  if (!info == EXIT_SUCCESS)
-    return info;
+  if (!info == EXIT_SUCCESS) return info;
 
   if (lgrad) {
     double dc6dcni{0.0}, dc6dcnj{0.0}, dc6dqi{0.0}, dc6dqj{0.0};
