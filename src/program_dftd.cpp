@@ -153,9 +153,9 @@ int main(int argc, char **argv) {
   dftd4::TCutoff cutoff;
 
   // molecular information
-  dftd4::TMolInfo dat = dftd4::TMolInfo(charge);
+  //dftd4::TMolInfo dat = dftd4::TMolInfo(charge);
   
-  info = dftd4::get_dispersion(dat, mol, par, cutoff, energy, nullptr);
+  info = dftd4::get_dispersion(mol, charge, par, cutoff, energy, nullptr);
   if (info != 0) return EXIT_FAILURE;
 
   std::cout << "Dispersion energy: " << energy << " Eh\n";

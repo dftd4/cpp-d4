@@ -19,10 +19,10 @@
 
 #include "dftd_matrix.h"
 
-extern "C" {
+//extern "C" {
 #include "cblas.h"
 #include "lapacke.h"
-}
+//}
 
 namespace dftd4 {
 
