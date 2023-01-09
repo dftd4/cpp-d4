@@ -44,13 +44,4 @@ class TMolecule {
   }
 };
 
-class TMolInfo {
-  public:
-    int Charge;
-
-    TMolInfo(int c = 0) {
-      Charge = c;
-    }
-};
-
 }  // namespace dftd4

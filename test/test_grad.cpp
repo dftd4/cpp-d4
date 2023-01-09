@@ -26,7 +26,7 @@
 
 using namespace dftd4;
 
-int test_numgrad(const TMolInfo &dat, TMolecule &mol, const dparam &par) {
+int test_numgrad(TMolecule &mol, const int charge, const dparam &par) {
   int info{0};
   double energy{0.0}, er{0.0}, el{0.0};
   double step{1.0e-6};
@@ -44,10 +44,10 @@ int test_numgrad(const TMolInfo &dat, TMolecule &mol, const dparam &par) {
       el = 0.0;
 
       mol.xyz(i, c) += step;
-      get_dispersion(dat, mol, par, cutoff, er, nullptr);
+      get_dispersion(mol, charge, par, cutoff, er, nullptr);
 
       mol.xyz(i, c) = mol.xyz(i, c) - 2*step;
-      get_dispersion(dat, mol, par, cutoff, el, nullptr);
+      get_dispersion(mol, charge, par, cutoff, el, nullptr);
 
       mol.xyz(i, c) = mol.xyz(i, c) + step;
       numgrad(i, c) = 0.5 * (er - el) / step;
@@ -57,7 +57,7 @@ int test_numgrad(const TMolInfo &dat, TMolecule &mol, const dparam &par) {
   // analytical gradient
   double* d4grad = new double[3*mol.NAtoms];
   for (int i = 0; i < 3*mol.NAtoms; i++) d4grad[i] = 0.0;
-  info = get_dispersion(dat, mol, par, cutoff, energy, d4grad);
+  info = get_dispersion(mol, charge, par, cutoff, energy, d4grad);
   if (!info == EXIT_SUCCESS) return info;
 
   // check translational invariance of analytical gradient
@@ -114,12 +114,12 @@ int test_pbed4_mb01() {
   par.a2 = 4.80688534;
 
   // assemble molecule
-  TMolInfo dat = TMolInfo(mb16_43_01_charge);
+  int charge = mb16_43_01_charge;
   TMolecule mol;
   int info = get_molecule(mb16_43_01_n, mb16_43_01_atoms, mb16_43_01_coord, mol);
   if (!info == EXIT_SUCCESS) return info;
 
-  return test_numgrad(dat, mol, par);
+  return test_numgrad(mol, charge, par);
 };
 
 int test_bp86d4atm_water() {
@@ -128,12 +128,12 @@ int test_bp86d4atm_water() {
   d4par("bp86", par, true);
 
   // assemble molecule
-  TMolInfo dat = TMolInfo(water_charge);
+  int charge = water_charge;
   TMolecule mol;
   int info = get_molecule(water_n, water_atoms, water_coord, mol);
   if (!info == EXIT_SUCCESS) return info;
 
-  return test_numgrad(dat, mol, par);
+  return test_numgrad(mol, charge, par);
 }
 
 int test_tpss0d4mbd_rost61m1() {
@@ -142,12 +142,12 @@ int test_tpss0d4mbd_rost61m1() {
   d4par("tpss0", par, false);
 
   // assemble molecule
-  TMolInfo dat = TMolInfo(rost61_m1_charge);
+  int charge = rost61_m1_charge;
   TMolecule mol;
   int info = get_molecule(rost61_m1_n, rost61_m1_atoms, rost61_m1_coord, mol);
   if (!info == EXIT_SUCCESS) return info;
 
-  return test_numgrad(dat, mol, par);
+  return test_numgrad(mol, charge, par);
 }
 
 int test_grad() {

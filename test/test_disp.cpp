@@ -42,7 +42,6 @@ int test_energy(
   d4par("bp86", par, latm);
 
   // assemble molecule
-  TMolInfo dat = TMolInfo(charge);
   TMolecule mol;
   info = get_molecule(n, atoms, coord, mol);
   if (!info == EXIT_SUCCESS) return info;
@@ -50,7 +49,7 @@ int test_energy(
   TCutoff cutoff;
 
   // dispersion main function
-  info = get_dispersion(dat, mol, par, cutoff, energy, nullptr);
+  info = get_dispersion(mol, charge, par, cutoff, energy, nullptr);
   if (!info == EXIT_SUCCESS) return info;
 
   if (check(energy, ref) == EXIT_FAILURE) {

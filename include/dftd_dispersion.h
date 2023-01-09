@@ -41,8 +41,8 @@ class dparam {
 /**
  * @brief Wrapper to handle the evaluation of dispersion energy and derivatives.
  * 
- * @param Dat Molecular information (only for consistency with ORCA).
  * @param mol Molecular geometry.
+ * @param charge Molecular charge.
  * @param par DFT-D4 parameters.
  * @param cutoff Real-space cutoffs for CN and dispersion.
  * @param energy Dispersion energy.
@@ -50,8 +50,8 @@ class dparam {
  * @return Exit status.
  */
 extern int get_dispersion(
-  const TMolInfo &Dat,
   const TMolecule &mol,
+  const int charge,
   const dparam &par,
   TCutoff cutoff,
   double &energy,

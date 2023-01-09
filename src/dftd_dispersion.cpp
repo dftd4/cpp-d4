@@ -34,8 +34,8 @@
 namespace dftd4 {
 
 int get_dispersion(
-  const TMolInfo &Dat,
   const TMolecule &mol,
+  const int charge,
   const dparam &par,
   TCutoff cutoff,
   double &energy,
@@ -66,7 +66,7 @@ int get_dispersion(
   }
 
   // calculate partial charges from EEQ model
-  info = get_charges(mol, dist, Dat.Charge, cutoff.cn_eeq, q, dqdr, lgrad);
+  info = get_charges(mol, dist, charge, cutoff.cn_eeq, q, dqdr, lgrad);
   if (!info == EXIT_SUCCESS) return info;
 
   // get the D4 coordination number

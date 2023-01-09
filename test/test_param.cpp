@@ -36,7 +36,7 @@ int test_rational_damping(const double ref[], TCutoff cutoff) {
   dparam par;
 
   // assemble molecule
-  TMolInfo dat = TMolInfo(upu23_0a_charge);
+  int charge = upu23_0a_charge;
   TMolecule mol;
   info = get_molecule(upu23_0a_n, upu23_0a_atoms, upu23_0a_coord, mol);
   if (!info == EXIT_SUCCESS) return info;
@@ -46,7 +46,7 @@ int test_rational_damping(const double ref[], TCutoff cutoff) {
     d4par(func, par, true);
 
     energy = 0.0;
-    info = get_dispersion(dat, mol, par, cutoff, energy, nullptr);
+    info = get_dispersion(mol, charge, par, cutoff, energy, nullptr);
     if (!info == EXIT_SUCCESS) return info;
 
     if (check(energy, ref[i]) == EXIT_FAILURE) {
