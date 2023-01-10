@@ -11,16 +11,21 @@ to C++ and provides the D4(EEQ)-ATM method.
 This project is build with `meson`, to setup and perform a build run:
 
 ```bash
-meson setup build
-ninja -C build
+meson setup _build
+meson compile -C _build
+```
+
+Run the test suite with:
+
+```bash
+meson test -C _build --print-errorlogs
 ```
 
 ## Citations
 
-- E. Caldeweyher, C. Bannwarth and S. Grimme, *J. Chem. Phys.*, **2017**, 147, 034112.
-  DOI: [10.1063/1.4993215](https://dx.doi.org/10.1063/1.4993215)
-- E. Caldeweyher, S. Ehlert, A. Hansen, H. Neugebauer, S. Spicher, C. Bannwarth and S. Grimme, *J. Chem. Phys.*,
-  **2019**, 150, 154122. DOI: [10.1063/1.5090222](https://dx.doi.org/10.1063/1.5090222)
+- E. Caldeweyher, C. Bannwarth and S. Grimme, _J. Chem. Phys._, **2017**, 147, 034112. DOI: [10.1063/1.4993215](https://dx.doi.org/10.1063/1.4993215)
+- E. Caldeweyher, S. Ehlert, A. Hansen, H. Neugebauer, S. Spicher, C. Bannwarth and S. Grimme, _J. Chem. Phys._, **2019**, 150, 154122. DOI: [10.1063/1.5090222](https://dx.doi.org/10.1063/1.5090222)
+- E. Caldeweyher, J.-M. Mewes, S. Ehlert and S. Grimme, _Phys. Chem. Chem. Phys._, **2020**, 22, 8499-8512. DOI: [10.1039/D0CP00502A](https://doi.org/10.1039/D0CP00502A)
 
 ## License
 
@@ -31,5 +36,5 @@ the Free Software Foundation, either version 3 of the License, or
 
 DFT-D4 is distributed in the hope that it will be useful,
 but without any warranty; without even the implied warranty of
-merchantability or fitness for a particular purpose.  See the
+merchantability or fitness for a particular purpose. See the
 GNU Lesser General Public License for more details.
