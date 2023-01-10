@@ -18,7 +18,7 @@
 project(
   'cpp-d4',
   'cpp',
-  version: '1.1',
+  version: '2.0',
   license: 'LGPL3-or-later',
   meson_version: '>=0.45',
 )
