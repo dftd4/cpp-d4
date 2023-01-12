@@ -38,6 +38,9 @@ endif(DEFINED LIBS_DIR AND DEFINED INCLUDE_DIR)
 
 
 set(cpp_d4_SRC
+  src/damping/atm.cpp
+  src/damping/rational.cpp
+
   src/dftd_cutoff.cpp
   src/dftd_damping.cpp
   src/dftd_dispersion.cpp
