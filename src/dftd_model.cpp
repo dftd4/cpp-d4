@@ -39,33 +39,35 @@ static const double freq[23]{0.000001, 0.050000, 0.100000, 0.200000, 0.300000,
                              0.900000, 1.000000, 1.200000, 1.400000, 1.600000,
                              1.800000, 2.000000, 2.500000, 3.000000, 4.000000,
                              5.000000, 7.500000, 10.00000};
-static const double weights[23]{(freq[1] - freq[0]),
-                                (freq[1] - freq[0]) + (freq[2] - freq[1]),
-                                (freq[2] - freq[1]) + (freq[3] - freq[2]),
-                                (freq[3] - freq[2]) + (freq[4] - freq[3]),
-                                (freq[4] - freq[3]) + (freq[5] - freq[4]),
-                                (freq[5] - freq[4]) + (freq[6] - freq[5]),
-                                (freq[6] - freq[5]) + (freq[7] - freq[6]),
-                                (freq[7] - freq[6]) + (freq[8] - freq[7]),
-                                (freq[8] - freq[7]) + (freq[9] - freq[8]),
-                                (freq[9] - freq[8]) + (freq[10] - freq[9]),
-                                (freq[10] - freq[9]) + (freq[11] - freq[10]),
-                                (freq[11] - freq[10]) + (freq[12] - freq[11]),
-                                (freq[12] - freq[11]) + (freq[13] - freq[12]),
-                                (freq[13] - freq[12]) + (freq[14] - freq[13]),
-                                (freq[14] - freq[13]) + (freq[15] - freq[14]),
-                                (freq[15] - freq[14]) + (freq[16] - freq[15]),
-                                (freq[16] - freq[15]) + (freq[17] - freq[16]),
-                                (freq[17] - freq[16]) + (freq[18] - freq[17]),
-                                (freq[18] - freq[17]) + (freq[19] - freq[18]),
-                                (freq[19] - freq[18]) + (freq[20] - freq[19]),
-                                (freq[20] - freq[19]) + (freq[21] - freq[20]),
-                                (freq[21] - freq[20]) + (freq[22] - freq[21]),
-                                (freq[22] - freq[21])};
+static const double weights[23]{
+  (freq[1] - freq[0]),
+  (freq[1] - freq[0]) + (freq[2] - freq[1]),
+  (freq[2] - freq[1]) + (freq[3] - freq[2]),
+  (freq[3] - freq[2]) + (freq[4] - freq[3]),
+  (freq[4] - freq[3]) + (freq[5] - freq[4]),
+  (freq[5] - freq[4]) + (freq[6] - freq[5]),
+  (freq[6] - freq[5]) + (freq[7] - freq[6]),
+  (freq[7] - freq[6]) + (freq[8] - freq[7]),
+  (freq[8] - freq[7]) + (freq[9] - freq[8]),
+  (freq[9] - freq[8]) + (freq[10] - freq[9]),
+  (freq[10] - freq[9]) + (freq[11] - freq[10]),
+  (freq[11] - freq[10]) + (freq[12] - freq[11]),
+  (freq[12] - freq[11]) + (freq[13] - freq[12]),
+  (freq[13] - freq[12]) + (freq[14] - freq[13]),
+  (freq[14] - freq[13]) + (freq[15] - freq[14]),
+  (freq[15] - freq[14]) + (freq[16] - freq[15]),
+  (freq[16] - freq[15]) + (freq[17] - freq[16]),
+  (freq[17] - freq[16]) + (freq[18] - freq[17]),
+  (freq[18] - freq[17]) + (freq[19] - freq[18]),
+  (freq[19] - freq[18]) + (freq[20] - freq[19]),
+  (freq[20] - freq[19]) + (freq[21] - freq[20]),
+  (freq[21] - freq[20]) + (freq[22] - freq[21]),
+  (freq[22] - freq[21])};
 
 inline double trapzd(const double a[23], const double b[23]) {
   double c6 = 0.0;
-  for (int w = 0; w != 23; w++) c6 += weights[w] * a[w] * b[w];
+  for (int w = 0; w != 23; w++)
+    c6 += weights[w] * a[w] * b[w];
   return 0.5 * c6;
 }
 
@@ -75,8 +77,8 @@ inline double weight_cn(const double wf, const double cn, const double cnref) {
   return exp(-arg);
 }
 
-inline double zeta(const double a, const double c, const double qref,
-                   const double qmod) {
+inline double
+  zeta(const double a, const double c, const double qref, const double qmod) {
   if (qmod <= 0.0) {
     return exp(a);
   } else {
@@ -84,8 +86,8 @@ inline double zeta(const double a, const double c, const double qref,
   }
 }
 
-inline double dzeta(const double a, const double c, const double qref,
-                    const double qmod) {
+inline double
+  dzeta(const double a, const double c, const double qref, const double qmod) {
   if (qmod <= 0.0) {
     return 0.0;
   } else {
@@ -106,12 +108,12 @@ int get_max_ref(const TMolecule &mol, int &mref) {
 }
 
 int weight_references(
-  const TMolecule& mol,
-  const TVector<double>& cn,
-  const TVector<double>& q,
-  TMatrix<double>& gwvec,
-  TMatrix<double>& dgwdcn,
-  TMatrix<double>& dgwdq,
+  const TMolecule &mol,
+  const TVector<double> &cn,
+  const TVector<double> &q,
+  TMatrix<double> &gwvec,
+  TMatrix<double> &dgwdcn,
+  TMatrix<double> &dgwdq,
   bool lgrad /*= false*/
 ) {
   int izp{0};
@@ -135,7 +137,7 @@ int weight_references(
           twf = (igw + 1) * wf;
           gw = weight_cn(twf, cn(iat), refcn[izp][iref]);
           norm += gw;
-          dnorm += 2*twf * (refcn[izp][iref] - cn(iat)) * gw;
+          dnorm += 2 * twf * (refcn[izp][iref] - cn(iat)) * gw;
         }
       }
       norm = 1.0 / norm;
@@ -146,7 +148,7 @@ int weight_references(
           twf = (igw + 1) * wf;
           gw = weight_cn(twf, cn(iat), refcn[izp][iref]);
           expw += gw;
-          dexpw += 2*twf * (refcn[izp][iref] - cn(iat)) * gw ;
+          dexpw += 2 * twf * (refcn[izp][iref] - cn(iat)) * gw;
         }
         gwk = expw * norm;
         if (is_exceptional(gwk)) {
@@ -157,14 +159,15 @@ int weight_references(
           }
         }
 
-        gwvec(iref, iat) = gwk * zeta(g_a, gi, refq[izp][iref] + zi, q(iat) + zi);
-        dgwdq(iref, iat) = gwk * dzeta(g_a, gi, refq[izp][iref] + zi, q(iat) + zi);
+        gwvec(iref, iat) =
+          gwk * zeta(g_a, gi, refq[izp][iref] + zi, q(iat) + zi);
+        dgwdq(iref, iat) =
+          gwk * dzeta(g_a, gi, refq[izp][iref] + zi, q(iat) + zi);
 
         dgwk = norm * (dexpw - expw * dnorm * norm);
-        if (is_exceptional(dgwk)) {
-          dgwk = 0.0;
-        }
-        dgwdcn(iref, iat) = dgwk * zeta(g_a, gi, refq[izp][iref] + zi, q(iat)+zi);
+        if (is_exceptional(dgwk)) { dgwk = 0.0; }
+        dgwdcn(iref, iat) =
+          dgwk * zeta(g_a, gi, refq[izp][iref] + zi, q(iat) + zi);
       }
     }
   } else {
@@ -198,7 +201,8 @@ int weight_references(
           }
         }
 
-        gwvec(iref, iat) = gwk * zeta(g_a, gi, refq[izp][iref] + zi, q(iat) + zi);
+        gwvec(iref, iat) =
+          gwk * zeta(g_a, gi, refq[izp][iref] + zi, q(iat) + zi);
       }
     }
   }
@@ -206,15 +210,14 @@ int weight_references(
   return EXIT_SUCCESS;
 }
 
-
 int get_atomic_c6(
-  const TMolecule& mol,
-  const TMatrix<double>& gwvec,
-  const TMatrix<double>& dgwdcn,
-  const TMatrix<double>& dgwdq,
-  TMatrix<double>& c6,
-  TMatrix<double>& dc6dcn,
-  TMatrix<double>& dc6dq,
+  const TMolecule &mol,
+  const TMatrix<double> &gwvec,
+  const TMatrix<double> &dgwdcn,
+  const TMatrix<double> &dgwdq,
+  TMatrix<double> &c6,
+  TMatrix<double> &dc6dcn,
+  TMatrix<double> &dc6dq,
   bool lgrad /*= false*/
 ) {
   int izp{0}, jzp{0}, info{0};
@@ -222,11 +225,11 @@ int get_atomic_c6(
 
   // maximum number of reference systems
   int mref{0};
-  info = get_max_ref(mol, mref); 
+  info = get_max_ref(mol, mref);
   if (!info == EXIT_SUCCESS) return info;
 
   TMatrix<double> alpha;
-  alpha.NewMat(mol.NAtoms, 23*mref);
+  alpha.NewMat(mol.NAtoms, 23 * mref);
   info = set_refalpha_eeq(mol, alpha);
   if (!info == EXIT_SUCCESS) return info;
 
@@ -237,15 +240,16 @@ int get_atomic_c6(
       izp = mol.at(iat);
       for (int jat = 0; jat != mol.NAtoms; jat++) {
         jzp = mol.at(jat);
-        
+
         dc6 = 0.0;
         dc6dcni = 0.0;
         dc6dcnj = 0.0;
         dc6dqi = 0.0;
         dc6dqj = 0.0;
-        for (int iref = 0; iref != refn[izp]; iref++) {      
+        for (int iref = 0; iref != refn[izp]; iref++) {
           for (int jref = 0; jref != refn[jzp]; jref++) {
-            refc6 = thopi * trapzd(&alpha[iat][23 * iref], &alpha[jat][23 * jref]);
+            refc6 =
+              thopi * trapzd(&alpha[iat][23 * iref], &alpha[jat][23 * jref]);
             dc6 += gwvec(iref, iat) * gwvec(jref, jat) * refc6;
 
             dc6dcni += dgwdcn(iref, iat) * gwvec(jref, jat) * refc6;
@@ -261,7 +265,7 @@ int get_atomic_c6(
         dc6dcn(iat, jat) = dc6dcni;
         dc6dcn(jat, iat) = dc6dcnj;
         dc6dq(iat, jat) = dc6dqi;
-        dc6dq(jat, iat) = dc6dqj; 
+        dc6dq(jat, iat) = dc6dqj;
       }
     }
   } else {
@@ -269,28 +273,28 @@ int get_atomic_c6(
       izp = mol.at(iat);
       for (int jat = 0; jat != mol.NAtoms; jat++) {
         jzp = mol.at(jat);
-        
+
         dc6 = 0.0;
-        for (int iref = 0; iref != refn[izp]; iref++) {      
+        for (int iref = 0; iref != refn[izp]; iref++) {
           for (int jref = 0; jref != refn[jzp]; jref++) {
-            refc6 = thopi * trapzd(&alpha[iat][23 * iref], &alpha[jat][23 * jref]);
+            refc6 =
+              thopi * trapzd(&alpha[iat][23 * iref], &alpha[jat][23 * jref]);
             dc6 += gwvec(iref, iat) * gwvec(jref, jat) * refc6;
           }
         }
 
         c6(iat, jat) = dc6;
-        c6(jat, iat) = dc6;      
+        c6(jat, iat) = dc6;
       }
     }
   }
 
   alpha.Delete();
-  
+
   return EXIT_SUCCESS;
 }
 
-
-int set_refalpha_eeq(const TMolecule& mol, TMatrix<double>& alpha) {
+int set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha) {
   int iat{0}, is{0};
   double iz{0.0}, aiw{0.0};
 
@@ -300,10 +304,13 @@ int set_refalpha_eeq(const TMolecule& mol, TMatrix<double>& alpha) {
       is = refsys[iat][ir];
       iz = zeff[is];
       for (int k = 0; k != 23; k++) {
-        aiw = secscale[is] * secalpha[is][k]
-          * zeta(g_a, gam[is] * g_c, iz, refsq[iat][ir] + iz);
-        alpha(i, 23*ir + k) = std::max(0.0, refascale[iat][ir] * (refalpha[iat][23*ir + k]
-              - refscount[iat][ir] * aiw));
+        aiw = secscale[is] * secalpha[is][k] *
+              zeta(g_a, gam[is] * g_c, iz, refsq[iat][ir] + iz);
+        alpha(i, 23 * ir + k) = std::max(
+          0.0,
+          refascale[iat][ir] *
+            (refalpha[iat][23 * ir + k] - refscount[iat][ir] * aiw)
+        );
       }
     }
   }

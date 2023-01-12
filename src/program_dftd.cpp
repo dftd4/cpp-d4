@@ -27,9 +27,8 @@
 #include "dftd_matrix.h"
 #include "dftd_readxyz.h"
 
-
 class argparser {
- public:
+    public:
   argparser(int &argc, char **argv) {
     for (int i = 1; i != argc; i++) {
       this->args.push_back(std::string(argv[i]));
@@ -48,7 +47,7 @@ class argparser {
     return find(this->args.begin(), this->args.end(), opt) != this->args.end();
   }
 
- private:
+    private:
   std::vector<std::string> args;
 };
 
@@ -113,7 +112,7 @@ int main(int argc, char **argv) {
   std::string func;
   bool lverbose{false};
   bool lmbd{true}, lgrad{false};
-  dftd4::dparam par;  // damping parameter for DFT-D4 calculation
+  dftd4::dparam par; // damping parameter for DFT-D4 calculation
   dftd4::TMolecule mol;
   int info{0};
   int charge{0};
@@ -132,12 +131,8 @@ int main(int argc, char **argv) {
     help();
     exit(EXIT_SUCCESS);
   }
-  if (args.getflag("-v") || args.getflag("--verbose")) {
-    lverbose = true;
-  }
-  if (args.getflag("-g") || args.getflag("--grad")) {
-    lgrad = true;
-  }
+  if (args.getflag("-v") || args.getflag("--verbose")) { lverbose = true; }
+  if (args.getflag("-g") || args.getflag("--grad")) { lgrad = true; }
   if (args.getflag("--func")) {
     func = args.getopt("--func");
     dftd4::d4par(func, par, lmbd);
@@ -152,9 +147,6 @@ int main(int argc, char **argv) {
   // initialize default cutoffs
   dftd4::TCutoff cutoff;
 
-  // molecular information
-  //dftd4::TMolInfo dat = dftd4::TMolInfo(charge);
-  
   info = dftd4::get_dispersion(mol, charge, par, cutoff, energy, nullptr);
   if (info != 0) return EXIT_FAILURE;
 

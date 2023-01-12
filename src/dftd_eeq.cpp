@@ -46,48 +46,39 @@ static const double xi[87]{
   0.56999999, 0.56999999, 0.56999999, 0.56999999, 0.56999999, 0.56999999,
   0.87936784, 1.02761808, 0.93297476, 1.10172128, 0.97350071, 1.16695666,
   1.23997927, 1.18464453, 1.14191734, 1.12334192, 1.01485321, 1.12950808,
-  1.30804834, 1.33689961, 1.27465977
-};
+  1.30804834, 1.33689961, 1.27465977};
 static const double gam[87]{
-  0.0,         -0.35015861, 1.04121227,  0.09281243,  0.09412380,
-  0.26629137,  0.19408787,  0.05317918,  0.03151644,  0.32275132,
-  1.30996037,  0.24206510,  0.04147733,  0.11634126,  0.13155266,
-  0.15350650,  0.15250997,  0.17523529,  0.28774450,  0.42937314,
-  0.01896455,  0.07179178,  -0.01121381, -0.03093370, 0.02716319,
-  -0.01843812, -0.15270393, -0.09192645, -0.13418723, -0.09861139,
-  0.18338109,  0.08299615,  0.11370033,  0.19005278,  0.10980677,
-  0.12327841,  0.25345554,  0.58615231,  0.16093861,  0.04548530,
-  -0.02478645, 0.01909943,  0.01402541,  -0.03595279, 0.01137752,
-  -0.03697213, 0.08009416,  0.02274892,  0.12801822,  -0.02078702,
-  0.05284319,  0.07581190,  0.09663758,  0.09547417,  0.07803344,
-  0.64913257,  0.15348654,  0.05054344,  0.11000000,  0.11000000,
-  0.11000000,  0.11000000,  0.11000000,  0.11000000,  0.11000000,
-  0.11000000,  0.11000000,  0.11000000,  0.11000000,  0.11000000,
-  0.11000000,  0.11000000,  -0.02786741, 0.01057858,  -0.03892226,
-  -0.04574364, -0.03874080, -0.03782372, -0.07046855, 0.09546597,
-  0.21953269,  0.02522348,  0.15263050,  0.08042611,  0.01878626,
-  0.08715453,  0.10500484
-};
+  0.0,         -0.35015861, 1.04121227,  0.09281243,  0.09412380,  0.26629137,
+  0.19408787,  0.05317918,  0.03151644,  0.32275132,  1.30996037,  0.24206510,
+  0.04147733,  0.11634126,  0.13155266,  0.15350650,  0.15250997,  0.17523529,
+  0.28774450,  0.42937314,  0.01896455,  0.07179178,  -0.01121381, -0.03093370,
+  0.02716319,  -0.01843812, -0.15270393, -0.09192645, -0.13418723, -0.09861139,
+  0.18338109,  0.08299615,  0.11370033,  0.19005278,  0.10980677,  0.12327841,
+  0.25345554,  0.58615231,  0.16093861,  0.04548530,  -0.02478645, 0.01909943,
+  0.01402541,  -0.03595279, 0.01137752,  -0.03697213, 0.08009416,  0.02274892,
+  0.12801822,  -0.02078702, 0.05284319,  0.07581190,  0.09663758,  0.09547417,
+  0.07803344,  0.64913257,  0.15348654,  0.05054344,  0.11000000,  0.11000000,
+  0.11000000,  0.11000000,  0.11000000,  0.11000000,  0.11000000,  0.11000000,
+  0.11000000,  0.11000000,  0.11000000,  0.11000000,  0.11000000,  0.11000000,
+  -0.02786741, 0.01057858,  -0.03892226, -0.04574364, -0.03874080, -0.03782372,
+  -0.07046855, 0.09546597,  0.21953269,  0.02522348,  0.15263050,  0.08042611,
+  0.01878626,  0.08715453,  0.10500484};
 static const double kappa[87]{
-  0.0,         0.04916110,  0.10937243,  -0.12349591, -0.02665108,
-  -0.02631658, 0.06005196,  0.09279548,  0.11689703,  0.15704746,
-  0.07987901,  -0.10002962, -0.07712863, -0.02170561, -0.04964052,
-  0.14250599,  0.07126660,  0.13682750,  0.14877121,  -0.10219289,
-  -0.08979338, -0.08273597, -0.01754829, -0.02765460, -0.02558926,
-  -0.08010286, -0.04163215, -0.09369631, -0.03774117, -0.05759708,
-  0.02431998,  -0.01056270, -0.02692862, 0.07657769,  0.06561608,
-  0.08006749,  0.14139200,  -0.05351029, -0.06701705, -0.07377246,
-  -0.02927768, -0.03867291, -0.06929825, -0.04485293, -0.04800824,
-  -0.01484022, 0.07917502,  0.06619243,  0.02434095,  -0.01505548,
-  -0.03030768, 0.01418235,  0.08953411,  0.08967527,  0.07277771,
-  -0.02129476, -0.06188828, -0.06568203, -0.11000000, -0.11000000,
-  -0.11000000, -0.11000000, -0.11000000, -0.11000000, -0.11000000,
-  -0.11000000, -0.11000000, -0.11000000, -0.11000000, -0.11000000,
-  -0.11000000, -0.11000000, -0.03585873, -0.03132400, -0.05902379,
-  -0.02827592, -0.07606260, -0.02123839, 0.03814822,  0.02146834,
-  0.01580538,  -0.00894298, -0.05864876, -0.01817842, 0.07721851,
-  0.07936083,  0.05849285
-};
+  0.0,         0.04916110,  0.10937243,  -0.12349591, -0.02665108, -0.02631658,
+  0.06005196,  0.09279548,  0.11689703,  0.15704746,  0.07987901,  -0.10002962,
+  -0.07712863, -0.02170561, -0.04964052, 0.14250599,  0.07126660,  0.13682750,
+  0.14877121,  -0.10219289, -0.08979338, -0.08273597, -0.01754829, -0.02765460,
+  -0.02558926, -0.08010286, -0.04163215, -0.09369631, -0.03774117, -0.05759708,
+  0.02431998,  -0.01056270, -0.02692862, 0.07657769,  0.06561608,  0.08006749,
+  0.14139200,  -0.05351029, -0.06701705, -0.07377246, -0.02927768, -0.03867291,
+  -0.06929825, -0.04485293, -0.04800824, -0.01484022, 0.07917502,  0.06619243,
+  0.02434095,  -0.01505548, -0.03030768, 0.01418235,  0.08953411,  0.08967527,
+  0.07277771,  -0.02129476, -0.06188828, -0.06568203, -0.11000000, -0.11000000,
+  -0.11000000, -0.11000000, -0.11000000, -0.11000000, -0.11000000, -0.11000000,
+  -0.11000000, -0.11000000, -0.11000000, -0.11000000, -0.11000000, -0.11000000,
+  -0.03585873, -0.03132400, -0.05902379, -0.02827592, -0.07606260, -0.02123839,
+  0.03814822,  0.02146834,  0.01580538,  -0.00894298, -0.05864876, -0.01817842,
+  0.07721851,  0.07936083,  0.05849285};
 static const double alp[87]{
   0.0,        0.55159092, 0.66205886, 0.90529132, 1.51710827, 2.86070364,
   1.88862966, 1.32250290, 1.23166285, 1.77503721, 1.11955204, 1.28263182,
@@ -103,29 +94,27 @@ static const double alp[87]{
   1.63999999, 1.63999999, 1.63999999, 1.63999999, 1.63999999, 1.63999999,
   1.47055223, 1.81127084, 1.40189963, 1.54015481, 1.33721475, 1.57165422,
   1.04815857, 1.78342098, 2.79106396, 1.78160840, 2.47588882, 2.37670734,
-  1.76613217, 2.66172302, 2.82773085
-};
+  1.76613217, 2.66172302, 2.82773085};
 
 static const double small = 1e-14;
 static const double pi = 3.1415926535897932384626433832795029;
 static const double sqrtpi = std::sqrt(pi);
 static const double sqrt2pi = std::sqrt(2.0 / pi);
 
-
 int get_charges(
-  const TMolecule& mol,
-  const TMatrix<double>& dist,
+  const TMolecule &mol,
+  const TMatrix<double> &dist,
   const int charge,
   const double cutoff,
-  TVector<double>& q,
-  TMatrix<double>& dqdr,
+  TVector<double> &q,
+  TMatrix<double> &dqdr,
   bool lgrad
 ) {
   int info{0};
   bool lverbose{false};
 
-  TVector<double> cn;        // EEQ cordination number
-  TMatrix<double> dcndr;     // Derivative of EEQ-CN
+  TVector<double> cn;    // EEQ cordination number
+  TMatrix<double> dcndr; // Derivative of EEQ-CN
 
   cn.NewVec(mol.NAtoms);
   if (lgrad) dcndr.NewMat(mol.NAtoms, 3 * mol.NAtoms);
@@ -145,11 +134,11 @@ int get_charges(
 };
 
 int get_vrhs(
-  const TMolecule& mol,
-  const int& charge,
-  const TVector<double>& cn,
-  TVector<double>& Xvec,
-  TVector<double>& dXvec,
+  const TMolecule &mol,
+  const int &charge,
+  const TVector<double> &cn,
+  TVector<double> &Xvec,
+  TVector<double> &dXvec,
   bool lgrad
 ) {
   double tmp{0.0};
@@ -160,7 +149,7 @@ int get_vrhs(
       izp = mol.at(i);
       tmp = kappa[izp] / std::sqrt(cn(i) + small);
       Xvec(i) = -xi[izp] + tmp * cn(i);
-      dXvec(i) = 0.5*tmp;
+      dXvec(i) = 0.5 * tmp;
     }
     dXvec(mol.NAtoms) = 0.0;
   } else {
@@ -170,16 +159,16 @@ int get_vrhs(
       Xvec(i) = -xi[izp] + tmp * cn(i);
     }
   }
-  
+
   Xvec(mol.NAtoms) = charge;
 
   return EXIT_SUCCESS;
 };
 
 int get_amat_0d(
-  const TMolecule& mol,
+  const TMolecule &mol,
   const TMatrix<double> &dist,
-  TMatrix<double>& Amat
+  TMatrix<double> &Amat
 ) {
   double gamij = 0.0;
   int izp, jzp;
@@ -209,14 +198,13 @@ int get_amat_0d(
   return EXIT_SUCCESS;
 };
 
-
 int get_damat_0d(
-  const TMolecule& mol,
-  const TMatrix<double>& dist,
-  const TVector<double>& q,
-  const TMatrix<double>& Amat,
-  TMatrix<double>& dAmat,
-  TMatrix<double>& atrace
+  const TMolecule &mol,
+  const TMatrix<double> &dist,
+  const TVector<double> &q,
+  const TMatrix<double> &Amat,
+  TMatrix<double> &dAmat,
+  TMatrix<double> &atrace
 ) {
   double alphai, alphaj;
   double rx, ry, rz, r2;
@@ -235,47 +223,53 @@ int get_damat_0d(
       r2 = pow(dist(i, j), 2);
 
       gam = 1.0 / std::sqrt((alphai + alphaj));
-      arg = gam*gam * r2;
+      arg = gam * gam * r2;
       dtmp = 2.0 * gam * std::exp(-arg) / (sqrtpi * r2) - Amat(j, i) / r2;
       dgx = dtmp * rx;
       dgy = dtmp * ry;
       dgz = dtmp * rz;
-      
+
       atrace(i, 0) += dgx * q(j);
       atrace(i, 1) += dgy * q(j);
       atrace(i, 2) += dgz * q(j);
       atrace(j, 0) -= dgx * q(i);
       atrace(j, 1) -= dgy * q(i);
       atrace(j, 2) -= dgz * q(i);
-      
-      dAmat(3*i, j) = dgx * q(i);
-      dAmat(3*i + 1, j) = dgy * q(i);
-      dAmat(3*i + 2, j) = dgz * q(i);
-      dAmat(3*j, i) = -dgx * q(j);
-      dAmat(3*j + 1, i) = -dgy * q(j);
-      dAmat(3*j + 2, i) = -dgz * q(j);
+
+      dAmat(3 * i, j) = dgx * q(i);
+      dAmat(3 * i + 1, j) = dgy * q(i);
+      dAmat(3 * i + 2, j) = dgz * q(i);
+      dAmat(3 * j, i) = -dgx * q(j);
+      dAmat(3 * j + 1, i) = -dgy * q(j);
+      dAmat(3 * j + 2, i) = -dgz * q(j);
     }
   }
 
   return EXIT_SUCCESS;
 };
 
-int eeq_chrgeq(const TMolecule& mol, const TMatrix<double>& dist,
-               const int& charge, const TVector<double>& cn, 
-               TVector<double>& qvec, TMatrix<double>& dcndr,
-               TMatrix<double>& dqdr, bool lgrad /*= false*/,
-               bool lverbose /*= false*/) {
+int eeq_chrgeq(
+  const TMolecule &mol,
+  const TMatrix<double> &dist,
+  const int &charge,
+  const TVector<double> &cn,
+  TVector<double> &qvec,
+  TMatrix<double> &dcndr,
+  TMatrix<double> &dqdr,
+  bool lgrad /*= false*/,
+  bool lverbose /*= false*/
+) {
   double qtotal = 0.0;
   int info = 0;
   int m = mol.NAtoms + 1;
   int mm = mol.NAtoms;
 
-  TMatrix<double> Amat;   // Coulomb matrix
-  TVector<double> xvec;   // x (chi) vector
+  TMatrix<double> Amat; // Coulomb matrix
+  TVector<double> xvec; // x (chi) vector
   Amat.NewMat(m, m);
   xvec.NewVec(m);
 
-  TVector<double> dxdcn;  // Derivative of chi vector w.r.t. CN
+  TVector<double> dxdcn; // Derivative of chi vector w.r.t. CN
   if (lgrad) dxdcn.NewVec(m);
 
   info = get_vrhs(mol, charge, cn, xvec, dxdcn, lgrad);
@@ -309,14 +303,22 @@ int eeq_chrgeq(const TMolecule& mol, const TMatrix<double>& dist,
   }
 
   if (fabs(qtotal - charge) > 1.0e-8) {
-    printf("DFT-D4: EEQ charge constraint error: %14.8f vs. %14d\n", qtotal, charge);
+    printf(
+      "DFT-D4: EEQ charge constraint error: %14.8f vs. %14d\n", qtotal, charge
+    );
   }
 
   if (lverbose) {
     printf("    #   sym             EN              q            Aii\n");
     for (int i = 0; i != mol.NAtoms; i++) {
-      printf("%5d %5d %14.8f %14.8f %14.8f\n", i, mol.at(i), -xvec(i), qvec(i),
-             Amat(i, i));
+      printf(
+        "%5d %5d %14.8f %14.8f %14.8f\n",
+        i,
+        mol.at(i),
+        -xvec(i),
+        qvec(i),
+        Amat(i, i)
+      );
     }
   }
 
@@ -331,7 +333,8 @@ int eeq_chrgeq(const TMolecule& mol, const TMatrix<double>& dist,
   // es = BLAS_Vec_x_Vec(scratch, vrhs);
   // scratch.Delete();
   // energy += es; // pass energy as argument of function
-  // if (lverbose) printf("isotroptic electrostatic (IES) energy: %14.7f\n", es);
+  // if (lverbose) printf("isotroptic electrostatic (IES) energy: %14.7f\n",
+  // es);
 
   // Gradient (note that the corresponding gradient flag in Fortran is `cpq`)
   if (lgrad) {
@@ -346,14 +349,14 @@ int eeq_chrgeq(const TMolecule& mol, const TMatrix<double>& dist,
     if (!info == EXIT_SUCCESS) return info;
 
     for (int i = 0; i != mol.NAtoms; i++) {
-      dAmat(3*i, i) += atrace(i, 0);
-      dAmat(3*i + 1, i) += atrace(i, 1);
-      dAmat(3*i + 2, i) += atrace(i, 2);
+      dAmat(3 * i, i) += atrace(i, 0);
+      dAmat(3 * i + 1, i) += atrace(i, 1);
+      dAmat(3 * i + 2, i) += atrace(i, 2);
 
       for (int j = 0; j != mol.NAtoms; j++) {
-        dAmat(3*j, i) -= dcndr(j, 3*i) * dxdcn(i);
-        dAmat(3*j + 1, i) -= dcndr(j, 3*i + 1) * dxdcn(i);
-        dAmat(3*j + 2, i) -= dcndr(j, 3*i + 2) * dxdcn(i);
+        dAmat(3 * j, i) -= dcndr(j, 3 * i) * dxdcn(i);
+        dAmat(3 * j + 1, i) -= dcndr(j, 3 * i + 1) * dxdcn(i);
+        dAmat(3 * j + 2, i) -= dcndr(j, 3 * i + 2) * dxdcn(i);
       }
     }
 
@@ -372,7 +375,7 @@ int eeq_chrgeq(const TMolecule& mol, const TMatrix<double>& dist,
 
     info = BLAS_Add_Mat_x_Mat(dqdr, dAmat, A, false, false, -1.0);
     if (!info == EXIT_SUCCESS) return info;
-    
+
     dAmat.Delete();
   }
 
@@ -380,8 +383,8 @@ int eeq_chrgeq(const TMolecule& mol, const TMatrix<double>& dist,
   Ainv.Delete();
   Amat.Delete();
   xvec.Delete();
-  
+
   return EXIT_SUCCESS;
 }
 
-}  // namespace dftd4
+} // namespace dftd4
