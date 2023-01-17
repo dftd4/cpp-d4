@@ -1,0 +1,107 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - "docs/**"
+      - "*.md"
+      - "*.rst"
+
+  pull_request:
+    paths-ignore:
+      - "docs/**"
+      - "*.md"
+      - "*.rst"
+
+  workflow_dispatch:
+
+env:
+  M_BUILD_DIR: _build_meson
+  C_BUILD_DIR: _build_cmake
+  PIP_PACKAGES: >-
+    meson>=0.45
+    ninja
+    cmake
+    gcovr
+jobs:
+  gcc-build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        gcc_v: [9, 10, 11, 12]
+
+    env:
+      FC: gfortran
+      CC: gcc
+      GCC_V: ${{ matrix.gcc_v }}
+      OMP_NUM_THREADS: 2,1
+      PYTHON_V: 3.8
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_V }}
+
+      - name: Install GCC ${{ matrix.GCC_V }} (OSX)
+        if: contains(matrix.os, 'macos')
+        run: |
+          ln -s /usr/local/bin/gfortran-${{ env.GCC_V }} /usr/local/bin/gfortran
+          ln -s /usr/local/bin/gcc-${{ env.GCC_V }} /usr/local/bin/gcc
+          ln -s /usr/local/bin/g++-${{ env.GCC_V }} /usr/local/bin/g++
+
+      - name: Install GCC (Linux)
+        if: contains(matrix.os, 'ubuntu')
+        run: >-
+          sudo update-alternatives
+          --install /usr/bin/gcc gcc /usr/bin/gcc-${{ env.GCC_V }} 100
+          --slave /usr/bin/gfortran gfortran /usr/bin/gfortran-${{ env.GCC_V }}
+          --slave /usr/bin/gcov gcov /usr/bin/gcov-${{ env.GCC_V }}
+
+      - name: Install CBLAS and LAPACKE
+        if: contains(matrix.os, 'ubuntu')
+        run: sudo apt-get install libopenblas-dev liblapacke liblapacke-dev libatlas-base-dev
+
+      - name: Install meson and test dependencies
+        run: pip3 install ${{ env.PIP_PACKAGES }}
+
+      - name: Configure build
+        run: >-
+          meson setup ${{ env.M_BUILD_DIR }}
+          --buildtype=debug
+          --prefix=$PWD/_dist
+          --libdir=lib
+          --warnlevel=0
+          -Db_coverage=${{ env.COVERAGE }}
+        env:
+          COVERAGE: ${{ contains(matrix.os, 'ubuntu') && 'true' || 'false' }}
+
+      - name: Build library
+        run: meson compile -C ${{ env.M_BUILD_DIR }}
+
+      - name: Run unit tests
+        run: |
+          meson test -C ${{ env.M_BUILD_DIR }} --print-errorlogs --no-rebuild --num-processes 2 -t 2
+
+      - name: Create coverage report
+        if: matrix.os == 'ubuntu-latest' && matrix.GCC_V == '11'
+        run: |
+          ninja -C ${{ env.M_BUILD_DIR }} coverage
+
+      - name: Install project
+        run: |
+          meson install -C ${{ env.M_BUILD_DIR }} --no-rebuild
+          echo "DFTD4_PREFIX=$PWD/_dist" >> $GITHUB_ENV
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        if: matrix.os == 'ubuntu-latest' && matrix.GCC_V == '11'
+        with:
+          files: ./coverage.xml # optional
