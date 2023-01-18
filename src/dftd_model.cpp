@@ -26,11 +26,6 @@
 
 namespace dftd4 {
 
-// Parameters
-const double wf = 6.0;
-const double g_a = 3.0;
-const double g_c = 2.0;
-
 static const double pi = 3.141592653589793238462643383279502884197;
 static const double thopi = 3.0 / pi;
 
@@ -64,50 +59,17 @@ static const double weights[23]{
   (freq[21] - freq[20]) + (freq[22] - freq[21]),
   (freq[22] - freq[21])};
 
-inline double trapzd(const double a[23], const double b[23]) {
-  double c6 = 0.0;
-  for (int w = 0; w != 23; w++)
-    c6 += weights[w] * a[w] * b[w];
-  return 0.5 * c6;
-}
+TD4Model::TD4Model(
+  double wf_scale /*= wf_default*/,
+  double ga_scale /*= ga_default*/,
+  double gc_scale /*= gc_default*/
+) {
+  wf = wf_scale;
+  ga = ga_scale;
+  gc = gc_scale;
+};
 
-inline double weight_cn(const double wf, const double cn, const double cnref) {
-  double dcn = cn - cnref;
-  double arg = wf * dcn * dcn;
-  return exp(-arg);
-}
-
-inline double
-  zeta(const double a, const double c, const double qref, const double qmod) {
-  if (qmod <= 0.0) {
-    return exp(a);
-  } else {
-    return exp(a * (1.0 - exp(c * (1.0 - qref / qmod))));
-  }
-}
-
-inline double
-  dzeta(const double a, const double c, const double qref, const double qmod) {
-  if (qmod <= 0.0) {
-    return 0.0;
-  } else {
-    return -a * c * exp(c * (1.0 - qref / qmod)) * zeta(a, c, qref, qmod) *
-           qref / pow(qmod, 2);
-  }
-}
-
-int get_max_ref(const TMolecule &mol, int &mref) {
-  mref = refn[mol.at(0)];
-  for (int i = 1; i != mol.NAtoms; i++) {
-    int val = refn[mol.at(i)];
-    if (val > mref) mref = val;
-  }
-
-  if (mref == 0.0) return EXIT_FAILURE;
-  return EXIT_SUCCESS;
-}
-
-int weight_references(
+int TD4Model::weight_references(
   const TMolecule &mol,
   const TVector<double> &cn,
   const TVector<double> &q,
@@ -126,7 +88,7 @@ int weight_references(
     for (int iat = 0; iat != mol.NAtoms; iat++) {
       izp = mol.at(iat);
       zi = zeff[izp];
-      gi = gam[izp] * g_c;
+      gi = gam[izp] * gc;
 
       norm = 0.0;
       dnorm = 0.0;
@@ -160,21 +122,21 @@ int weight_references(
         }
 
         gwvec(iref, iat) =
-          gwk * zeta(g_a, gi, refq[izp][iref] + zi, q(iat) + zi);
+          gwk * zeta(ga, gi, refq[izp][iref] + zi, q(iat) + zi);
         dgwdq(iref, iat) =
-          gwk * dzeta(g_a, gi, refq[izp][iref] + zi, q(iat) + zi);
+          gwk * dzeta(ga, gi, refq[izp][iref] + zi, q(iat) + zi);
 
         dgwk = norm * (dexpw - expw * dnorm * norm);
         if (is_exceptional(dgwk)) { dgwk = 0.0; }
         dgwdcn(iref, iat) =
-          dgwk * zeta(g_a, gi, refq[izp][iref] + zi, q(iat) + zi);
+          dgwk * zeta(ga, gi, refq[izp][iref] + zi, q(iat) + zi);
       }
     }
   } else {
     for (int iat = 0; iat != mol.NAtoms; iat++) {
       izp = mol.at(iat);
       zi = zeff[izp];
-      gi = gam[izp] * g_c;
+      gi = gam[izp] * gc;
 
       norm = 0.0;
       maxcn = 0.0;
@@ -202,7 +164,7 @@ int weight_references(
         }
 
         gwvec(iref, iat) =
-          gwk * zeta(g_a, gi, refq[izp][iref] + zi, q(iat) + zi);
+          gwk * zeta(ga, gi, refq[izp][iref] + zi, q(iat) + zi);
       }
     }
   }
@@ -210,7 +172,7 @@ int weight_references(
   return EXIT_SUCCESS;
 }
 
-int get_atomic_c6(
+int TD4Model::get_atomic_c6(
   const TMolecule &mol,
   const TMatrix<double> &gwvec,
   const TMatrix<double> &dgwdcn,
@@ -294,7 +256,7 @@ int get_atomic_c6(
   return EXIT_SUCCESS;
 }
 
-int set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha) {
+int TD4Model::set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha) {
   int iat{0}, is{0};
   double iz{0.0}, aiw{0.0};
 
@@ -305,7 +267,7 @@ int set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha) {
       iz = zeff[is];
       for (int k = 0; k != 23; k++) {
         aiw = secscale[is] * secalpha[is][k] *
-              zeta(g_a, gam[is] * g_c, iz, refsq[iat][ir] + iz);
+              zeta(ga, gam[is] * gc, iz, refsq[iat][ir] + iz);
         alpha(i, 23 * ir + k) = std::max(
           0.0,
           refascale[iat][ir] *
@@ -315,6 +277,49 @@ int set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha) {
     }
   }
 
+  return EXIT_SUCCESS;
+}
+
+inline double trapzd(const double a[23], const double b[23]) {
+  double c6 = 0.0;
+  for (int w = 0; w != 23; w++)
+    c6 += weights[w] * a[w] * b[w];
+  return 0.5 * c6;
+}
+
+inline double weight_cn(const double wf, const double cn, const double cnref) {
+  double dcn = cn - cnref;
+  double arg = wf * dcn * dcn;
+  return exp(-arg);
+}
+
+inline double
+  zeta(const double a, const double c, const double qref, const double qmod) {
+  if (qmod <= 0.0) {
+    return exp(a);
+  } else {
+    return exp(a * (1.0 - exp(c * (1.0 - qref / qmod))));
+  }
+}
+
+inline double
+  dzeta(const double a, const double c, const double qref, const double qmod) {
+  if (qmod <= 0.0) {
+    return 0.0;
+  } else {
+    return -a * c * exp(c * (1.0 - qref / qmod)) * zeta(a, c, qref, qmod) *
+           qref / pow(qmod, 2);
+  }
+}
+
+int get_max_ref(const TMolecule &mol, int &mref) {
+  mref = refn[mol.at(0)];
+  for (int i = 1; i != mol.NAtoms; i++) {
+    int val = refn[mol.at(i)];
+    if (val > mref) mref = val;
+  }
+
+  if (mref == 0.0) return EXIT_FAILURE;
   return EXIT_SUCCESS;
 }
 

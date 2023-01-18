@@ -24,6 +24,7 @@
 #include "dftd_damping.h"
 #include "dftd_dispersion.h"
 #include "dftd_geometry.h"
+#include "dftd_model.h"
 #include "dftd_matrix.h"
 #include "dftd_readxyz.h"
 
@@ -144,10 +145,11 @@ int main(int argc, char **argv) {
   // readin the geometry file
   read_xyzfile(fname, mol);
 
-  // initialize default cutoffs
+  // initialize default cutoffs and default D4 model
   dftd4::TCutoff cutoff;
+  dftd4::TD4Model d4;
 
-  info = dftd4::get_dispersion(mol, charge, par, cutoff, energy, nullptr);
+  info = dftd4::get_dispersion(mol, charge, d4, par, cutoff, energy, nullptr);
   if (info != 0) return EXIT_FAILURE;
 
   std::cout << "Dispersion energy: " << energy << " Eh\n";

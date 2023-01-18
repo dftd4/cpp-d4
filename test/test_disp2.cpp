@@ -21,12 +21,12 @@
 #include <dftd_model.h>
 
 #include "molecules.h"
-#include "test_disp.h"
+#include "test_disp2.h"
 #include "util.h"
 
 using namespace dftd4;
 
-int test_energy(
+int test_energy2(
   const int n,
   const char atoms[][4],
   const double coord[],
@@ -40,6 +40,7 @@ int test_energy(
   // BP86 parameters
   dparam par;
   d4par("bp86", par, latm);
+  par.s9 = 0.0;
 
   // assemble molecule
   TMolecule mol;
@@ -53,37 +54,28 @@ int test_energy(
   info = get_dispersion(mol, charge, d4, par, cutoff, energy, nullptr);
   if (!info == EXIT_SUCCESS) return info;
 
-  if (check(energy, ref) == EXIT_FAILURE) {
-    print_fail("BP86-D4-ATM", energy, ref);
+  if (check(energy, ref, 1e-8) == EXIT_FAILURE) {
+    print_fail("BP86-D4", energy, ref);
     return EXIT_FAILURE;
   }
 
   return EXIT_SUCCESS;
 }
 
-int test_disp() {
+int test_disp2() {
   int info;
 
-  info = test_energy(
-    water_n, water_atoms, water_coord, water_charge, water_ref_energy
+  info = test_energy2(
+    water_n, water_atoms, water_coord, water_charge, -2.3162150393943E-04
   );
   if (!info == EXIT_SUCCESS) return info;
 
-  info = test_energy(
+  info = test_energy2(
     mb16_43_01_n,
     mb16_43_01_atoms,
     mb16_43_01_coord,
     mb16_43_01_charge,
-    mb16_43_01_ref_energy
-  );
-  if (!info == EXIT_SUCCESS) return info;
-
-  info = test_energy(
-    rost61_m1_n,
-    rost61_m1_atoms,
-    rost61_m1_coord,
-    rost61_m1_charge,
-    rost61_m1_ref_energy
+    -2.5912431304617E-02
   );
   if (!info == EXIT_SUCCESS) return info;
 

@@ -16,6 +16,7 @@
 # along with cpp-d4.  If not, see <https://www.gnu.org/licenses/>.
 
 tests = [
+  'disp2',
   'disp',
   'grad',
   'ncoord',

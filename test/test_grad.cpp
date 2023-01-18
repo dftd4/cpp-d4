@@ -19,6 +19,7 @@
 #include <dftd_damping.h>
 #include <dftd_dispersion.h>
 #include <dftd_matrix.h>
+#include <dftd_model.h>
 
 #include "molecules.h"
 #include "test_grad.h"
@@ -36,6 +37,7 @@ int test_numgrad(TMolecule &mol, const int charge, const dparam &par) {
   numgrad.New(mol.NAtoms, 3);
 
   TCutoff cutoff;
+  TD4Model d4;
 
   // numerical gradient
   for (int i = 0; i < mol.NAtoms; i++) {
@@ -44,10 +46,10 @@ int test_numgrad(TMolecule &mol, const int charge, const dparam &par) {
       el = 0.0;
 
       mol.xyz(i, c) += step;
-      get_dispersion(mol, charge, par, cutoff, er, nullptr);
+      get_dispersion(mol, charge, d4, par, cutoff, er, nullptr);
 
       mol.xyz(i, c) = mol.xyz(i, c) - 2*step;
-      get_dispersion(mol, charge, par, cutoff, el, nullptr);
+      get_dispersion(mol, charge, d4, par, cutoff, el, nullptr);
 
       mol.xyz(i, c) = mol.xyz(i, c) + step;
       numgrad(i, c) = 0.5 * (er - el) / step;
@@ -57,7 +59,7 @@ int test_numgrad(TMolecule &mol, const int charge, const dparam &par) {
   // analytical gradient
   double* d4grad = new double[3*mol.NAtoms];
   for (int i = 0; i < 3*mol.NAtoms; i++) d4grad[i] = 0.0;
-  info = get_dispersion(mol, charge, par, cutoff, energy, d4grad);
+  info = get_dispersion(mol, charge, d4, par, cutoff, energy, d4grad);
   if (!info == EXIT_SUCCESS) return info;
 
   // check translational invariance of analytical gradient
