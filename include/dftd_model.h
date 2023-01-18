@@ -23,49 +23,49 @@
 
 namespace dftd4 {
 
-// Default weighting factor for coordination number interpolation
-static const double wf_default = 6.0;
-
 // Default maximum charge scaling height for partial charge extrapolation
 static const double ga_default = 3.0;
 
 // Default charge scaling steepness for partial charge extrapolation
 static const double gc_default = 2.0;
 
+// Default weighting factor for coordination number interpolation
+static const double wf_default = 6.0;
+
 class TD4Model {
-    public:
-  double wf;
-  double ga;
-  double gc;
+  public:
+    double ga;
+    double gc;
+    double wf;
 
-  explicit TD4Model(
-    double wf_scale = wf_default,
-    double ga_scale = ga_default,
-    double gc_scale = gc_default
-  );
+    explicit TD4Model(
+      double ga_scale = ga_default,
+      double gc_scale = gc_default,
+      double wf_scale = wf_default
+    );
 
-  int weight_references(
-    const TMolecule &mol,
-    const TVector<double> &cn,
-    const TVector<double> &q,
-    TMatrix<double> &gwvec,
-    TMatrix<double> &dgwdcn,
-    TMatrix<double> &dgwdq,
-    bool lgrad = false
-  );
+    int weight_references(
+      const TMolecule &mol,
+      const TVector<double> &cn,
+      const TVector<double> &q,
+      TMatrix<double> &gwvec,
+      TMatrix<double> &dgwdcn,
+      TMatrix<double> &dgwdq,
+      bool lgrad = false
+    ) const;
 
-  int get_atomic_c6(
-    const TMolecule &mol,
-    const TMatrix<double> &gwvec,
-    const TMatrix<double> &dgwdcn,
-    const TMatrix<double> &dgwdq,
-    TMatrix<double> &c6,
-    TMatrix<double> &dc6dcn,
-    TMatrix<double> &dc6dq,
-    bool lgrad = false
-  );
+    int get_atomic_c6(
+      const TMolecule &mol,
+      const TMatrix<double> &gwvec,
+      const TMatrix<double> &dgwdcn,
+      const TMatrix<double> &dgwdq,
+      TMatrix<double> &c6,
+      TMatrix<double> &dc6dcn,
+      TMatrix<double> &dc6dq,
+      bool lgrad = false
+    ) const;
 
-  int set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha);
+    int set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha) const;
 };
 
 extern inline double trapzd(const double a[23], const double b[23]);

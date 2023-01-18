@@ -37,9 +37,9 @@ namespace dftd4 {
 int get_dispersion(
   const TMolecule &mol,
   const int charge,
-  TD4Model &d4,
+  const TD4Model &d4,
   const dparam &par,
-  TCutoff cutoff,
+  const TCutoff cutoff,
   double &energy,
   double *GRAD
 ) {
