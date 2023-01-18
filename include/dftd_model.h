@@ -23,6 +23,51 @@
 
 namespace dftd4 {
 
+// Default weighting factor for coordination number interpolation
+static const double wf_default = 6.0;
+
+// Default maximum charge scaling height for partial charge extrapolation
+static const double ga_default = 3.0;
+
+// Default charge scaling steepness for partial charge extrapolation
+static const double gc_default = 2.0;
+
+class TD4Model {
+    public:
+  double wf;
+  double ga;
+  double gc;
+
+  explicit TD4Model(
+    double wf_scale = wf_default,
+    double ga_scale = ga_default,
+    double gc_scale = gc_default
+  );
+
+  int weight_references(
+    const TMolecule &mol,
+    const TVector<double> &cn,
+    const TVector<double> &q,
+    TMatrix<double> &gwvec,
+    TMatrix<double> &dgwdcn,
+    TMatrix<double> &dgwdq,
+    bool lgrad = false
+  );
+
+  int get_atomic_c6(
+    const TMolecule &mol,
+    const TMatrix<double> &gwvec,
+    const TMatrix<double> &dgwdcn,
+    const TMatrix<double> &dgwdq,
+    TMatrix<double> &c6,
+    TMatrix<double> &dc6dcn,
+    TMatrix<double> &dc6dq,
+    bool lgrad = false
+  );
+
+  int set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha);
+};
+
 extern inline double trapzd(const double a[23], const double b[23]);
 
 extern inline double
@@ -34,29 +79,6 @@ extern inline double
   dzeta(const double a, const double c, const double qref, const double qmod);
 
 extern int get_max_ref(const TMolecule &mol, int &mref);
-
-extern int weight_references(
-  const TMolecule &mol,
-  const TVector<double> &cn,
-  const TVector<double> &q,
-  TMatrix<double> &gwvec,
-  TMatrix<double> &dgwdcn,
-  TMatrix<double> &dgwdq,
-  bool lgrad = false
-);
-
-extern int get_atomic_c6(
-  const TMolecule &mol,
-  const TMatrix<double> &gwvec,
-  const TMatrix<double> &dgwdcn,
-  const TMatrix<double> &dgwdq,
-  TMatrix<double> &c6,
-  TMatrix<double> &dc6dcn,
-  TMatrix<double> &dc6dq,
-  bool lgrad = false
-);
-
-extern int set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha);
 
 extern bool is_exceptional(double val);
 

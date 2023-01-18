@@ -15,16 +15,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with cpp-d4.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef TEST_DISP_H
-#define TEST_DISP_H
+#ifndef TEST_DISP2_H
+#define TEST_DISP2_H
 
-static const double water_ref_energy{-2.3162148796416E-04};
-
-static const double mb16_43_01_ref_energy{-2.5882588037023E-02};
-
-static const double rost61_m1_ref_energy{-3.4287391104745E-02};
-
-extern int test_energy(
+extern int test_energy2(
   const int n,
   const char atoms[][4],
   const double coord[],
@@ -32,6 +26,6 @@ extern int test_energy(
   const double ref
 );
 
-extern int test_disp(void);
+extern int test_disp2(void);
 
-#endif // TEST_DISP_H
+#endif // TEST_DISP2_H

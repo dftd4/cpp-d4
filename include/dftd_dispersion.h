@@ -23,6 +23,7 @@
 
 #include "dftd_cutoff.h"
 #include "dftd_geometry.h"
+#include "dftd_model.h"
 
 namespace dftd4 {
 
@@ -43,6 +44,7 @@ class dparam {
  * @param mol Molecular geometry.
  * @param charge Molecular charge.
  * @param par DFT-D4 parameters.
+ * @param d4 Base D4 dispersion model.
  * @param cutoff Real-space cutoffs for CN and dispersion.
  * @param energy Dispersion energy.
  * @param GRAD Dispersion gradient.
@@ -51,6 +53,7 @@ class dparam {
 extern int get_dispersion(
   const TMolecule &mol,
   const int charge,
+  TD4Model &d4,
   const dparam &par,
   TCutoff cutoff,
   double &energy,
