@@ -19,10 +19,8 @@
 
 #include "dftd_matrix.h"
 
-//extern "C" {
 #include "cblas.h"
 #include "lapacke.h"
-//}
 
 namespace dftd4 {
 
