@@ -24,3 +24,4 @@ AllowShortIfStatementsOnASingleLine: AllIfsAndElse
 
 AlignOperands: true
 AllowAllArgumentsOnNextLine: true
+InsertTrailingCommas: Wrapped
