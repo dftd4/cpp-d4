@@ -86,7 +86,6 @@ class TMolecule {
       for(int i = 0; i < NAtoms; ++i)
       {
           std::cout << at(i) << " " << xyz(i, 0) << " " << xyz(i, 1) << " " << xyz(i, 2) << std::endl;
-
       }
   }
 };

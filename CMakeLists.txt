@@ -2,10 +2,10 @@ cmake_minimum_required(VERSION 3.18)
 project(cpp-d4)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-if(NOT DEFINED LIBS_DIR AND NOT DEFINED INCLUDE_DIR)
+if(NOT DEFINED D4LIBS_DIR AND NOT DEFINED D4INCLUDE_DIR)
   	find_package(LAPACKE REQUIRED)
 	find_package(CBLAS CONFIG REQUIRED)
-endif(NOT DEFINED LIBS_DIR AND NOT DEFINED INCLUDE_DIR)
+endif(NOT DEFINED D4LIBS_DIR AND NOT DEFINED D4INCLUDE_DIR)
 
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
@@ -31,16 +31,16 @@ else()
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -rdynamic")
 endif(WIN32)
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
+
 include_directories(${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR} )
-if(DEFINED LIBS_DIR AND DEFINED INCLUDE_DIR)
-	include_directories(${INCLUDE_DIR})
-endif(DEFINED LIBS_DIR AND DEFINED INCLUDE_DIR)
+if(DEFINED D4LIBS_DIR AND DEFINED D4INCLUDE_DIR)
+	include_directories(${D4INCLUDE_DIR})
+endif(DEFINED D4LIBS_DIR AND DEFINED D4INCLUDE_DIR)
 
 
 set(cpp_d4_SRC
   src/damping/atm.cpp
   src/damping/rational.cpp
-
   src/dftd_cutoff.cpp
   src/dftd_damping.cpp
   src/dftd_dispersion.cpp
@@ -66,16 +66,21 @@ add_executable(cpp-d4_test
   test/util.cpp
 )
 
-if(DEFINED LIBS_DIR AND DEFINED INCLUDE_DIR)
-	link_directories(${LIBS_DIR})
+if(DEFINED D4LIBS_DIR AND DEFINED D4INCLUDE_DIR)
+	link_directories(${D4LIBS_DIR})
 
 	target_link_libraries(cpp-d4 libcpp_d4 cblas  lapacke pthread)
 	target_link_libraries(cpp-d4_test libcpp_d4 cblas lapacke pthread)
 else()
 	target_link_libraries(cpp-d4 libcpp_d4 ${LAPACKE_LIBRARIES}  ${CBLAS_LIBRARIES} pthread)
 	target_link_libraries(cpp-d4_test libcpp_d4 ${LAPACKE_LIBRARIES}  ${CBLAS_LIBRARIES} pthread)
-endif(DEFINED LIBS_DIR AND DEFINED INCLUDE_DIR)
+endif(DEFINED D4LIBS_DIR AND DEFINED D4INCLUDE_DIR)
 
+include(CTest)
+add_test(NAME disp COMMAND cpp-d4_test disp)
+add_test(NAME grad COMMAND cpp-d4_test grad)
+add_test(NAME ncoord COMMAND cpp-d4_test ncoord)
+add_test(NAME param COMMAND cpp-d4_test param)
 
 if(WIN32) # Check if we are on Windows
 else()

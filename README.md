@@ -6,8 +6,11 @@
 This project is a port of the [`dftd4`](https://github.com/dftd4/dftd4) project
 to C++ and provides the D4(EEQ)-ATM method.
 
-## Building This Project
+## Requirements
+cpp-d4 depends on cblas and lapacke, the C implementation of blas and lapack.
 
+
+## Building This Project
 This project is build with `meson`, to setup and perform a build run:
 
 ```bash
@@ -21,6 +24,45 @@ Run the test suite with:
 meson test -C _build --print-errorlogs
 ```
 
+In addition to `meson`, one can use CMake to build cpp-d4 and include it into external projects (see for example [https://github.com/conradhuebler/curcuma](https://github.com/conradhuebler/curcuma)). 
+
+```bash
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+make
+```
+The tests can be started with
+
+```bash
+make test
+```
+In case, cblas and lapacke can not be found using cmake (which for example happens on Ubuntu), one can specify one include and library path for both dependencies.
+
+```bash
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo .. -DD4LIBS_DIR=/usr/lib/ -DD4INCLUDE_DIR=/usr/include/
+```
+
+```bash
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo .. -DD4LIBS_DIR=$(find /usr -name 'cblas.so' |head -n1 |sed 's/cblas.so//g') -DD4INCLUDE_DIR=$(find /usr -name 'cblas.h' |head -n1 |sed 's/cblas.h//g')
+```
+
+Using CMake it is then easy to include cpp-d4 in an own project.
+
+```cmake
+if(NOT DEFINED D4LIBS_DIR AND NOT DEFINED D4INCLUDE_DIR)
+  	find_package(LAPACKE REQUIRED)
+	find_package(CBLAS CONFIG REQUIRED)
+else()
+	include_directories(${INCLUDE_DIR})
+endif(DEFINED D4LIBS_DIR AND DEFINED D4INCLUDE_DIR)
+
+add_subdirectory(cpp-d4)
+
+if(DEFINED D4LIBS_DIR AND DEFINED D4INCLUDE_DIR)
+    target_link_libraries(yourproject PUBLIC libcpp_d4 cblas lapacke )
+else()
+    target_link_libraries(yourproject PUBLIC libcpp_d4 ${LAPACKE_LIBRARIES}  ${CBLAS_LIBRARIES} )
+endif(DEFINED D4LIBS_DIR AND DEFINED D4INCLUDE_DIR)
+```
 ## Citations
 
 - E. Caldeweyher, C. Bannwarth and S. Grimme, _J. Chem. Phys._, **2017**, 147, 034112. DOI: [10.1063/1.4993215](https://dx.doi.org/10.1063/1.4993215)
