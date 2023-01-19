@@ -61,6 +61,7 @@ add_executable(cpp-d4_test
   test/test_grad.cpp
   test/molecules.cpp
   test/test_disp.cpp
+  test/test_disp2.cpp
   test/test_ncoord.cpp
   test/test_param.cpp
   test/util.cpp
@@ -77,10 +78,13 @@ else()
 endif(DEFINED D4LIBS_DIR AND DEFINED D4INCLUDE_DIR)
 
 include(CTest)
+
+add_test(NAME disp2 COMMAND cpp-d4_test disp)
 add_test(NAME disp COMMAND cpp-d4_test disp)
 add_test(NAME grad COMMAND cpp-d4_test grad)
 add_test(NAME ncoord COMMAND cpp-d4_test ncoord)
 add_test(NAME param COMMAND cpp-d4_test param)
+
 
 if(WIN32) # Check if we are on Windows
 else()
