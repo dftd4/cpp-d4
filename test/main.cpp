@@ -21,13 +21,14 @@
 #include <map>
 
 #include "test_disp.h"
+#include "test_disp2.h"
 #include "test_grad.h"
 #include "test_ncoord.h"
 #include "test_param.h"
 
-
 enum test {
   invalid,
+  disp2,
   disp,
   grad,
   ncoord,
@@ -35,34 +36,28 @@ enum test {
 };
 
 test get_tests(std::string name) {
-  static const std::map<std::string, test> testStrings {
-      {"disp", disp},
-      {"grad", grad},
-      {"ncoord", ncoord},
-      {"param", param},
+  static const std::map<std::string, test> testStrings{
+    {"disp", disp},
+    {"disp2", disp2},
+    {"grad", grad},
+    {"ncoord", ncoord},
+    {"param", param},
   };
 
   std::string test = name;
   transform(name.begin(), name.end(), test.begin(), ::tolower);
   auto iter = testStrings.find(test);
-  if (iter != testStrings.end()) {
-    return iter->second;
-  }
+  if (iter != testStrings.end()) { return iter->second; }
   return invalid;
 };
 
-
 int main(int argc, char *argv[]) {
   switch (get_tests(argv[1])) {
-    default:
-      return EXIT_FAILURE;
-    case disp:
-      return test_disp();
-    case grad:
-      return test_grad();
-    case ncoord:
-      return test_ncoord(); 
-    case param:
-      return test_param(); 
+  default: return EXIT_FAILURE;
+  case disp2: return test_disp2();
+  case disp: return test_disp();
+  case grad: return test_grad();
+  case ncoord: return test_ncoord();
+  case param: return test_param();
   }
 }
