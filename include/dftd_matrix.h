@@ -33,15 +33,15 @@ template <class T> class TVector {
 
   TVector() {
     N = 0;
-    p = 0;
+    p = nullptr;
     ElementSize = sizeof(T);
   }
   ~TVector() {
-    if (p != 0) Delete();
+    if (p != nullptr) Delete();
   }
   void NewVector(int VectorLength) {
     if (VectorLength < 0) { std::exit(EXIT_FAILURE); }
-    if (p != 0 && N == VectorLength) {
+    if (p != nullptr && N == VectorLength) {
       Init();
     } else {
       Delete();
@@ -59,8 +59,8 @@ template <class T> class TVector {
   void NewVec(int VectorLength) { return NewVector(VectorLength); }
 
   void Delete(void) {
-    if (p != 0 && N != 0) { delete[] p; }
-    p = 0;
+    if (p != nullptr && N != 0) { delete[] p; }
+    p = nullptr;
     N = 0;
   }
   void CopyVec(const TVector &v) {
@@ -74,7 +74,7 @@ template <class T> class TVector {
     std::memcpy(p, v.p, mem);
   }
   void Init(void) {
-    if (p != 0) {
+    if (p != nullptr) {
       long int mem = (long int)N * ElementSize;
       std::memset(p, 0, mem);
     }
@@ -104,20 +104,20 @@ template <class T> class TMatrix {
   TMatrix() {
     cols = 0;
     rows = 0;
-    p = 0;
+    p = nullptr;
     ElementSize = sizeof(T);
   }
   ~TMatrix() {
-    if (p != 0) Delete();
+    if (p != nullptr) Delete();
   }
 
   void NewMatrix(int r, int c) {
     if (r < 0 || c < 0) std::exit(EXIT_FAILURE);
-    if (p != 0 && r == rows && c == cols) {
+    if (p != nullptr && r == rows && c == cols) {
       Init();
     } else {
       long int mem = (long int)r * (long int)c;
-      if (p != 0) Delete(); // Eventually delete old matrix
+      if (p != nullptr) Delete(); // Eventually delete old matrix
 
       if (mem == 0) return; // don't touch pointer if no memory is allocated
 
@@ -137,15 +137,15 @@ template <class T> class TMatrix {
   void NewMat(int r, int c) { return NewMatrix(r, c); }
 
   void Delete(void) {
-    if (p != 0 && rows * cols != 0) { delete[] p; }
+    if (p != nullptr && rows * cols != 0) { delete[] p; }
     rows = 0;
     cols = 0;
-    p = 0;
+    p = nullptr;
   }
 
   void Init(void) {
     long int mem;
-    if (p != 0) {
+    if (p != nullptr) {
       mem = (long int)cols * (long int)rows * ElementSize;
       std::memset(p, 0, mem);
     }
@@ -155,7 +155,7 @@ template <class T> class TMatrix {
     T x;
     int i, j;
 
-    if (p != 0) {
+    if (p != nullptr) {
       if (rows == cols) {
         for (i = 0; i < rows; i++) {
           for (j = 0; j < i; j++) {
