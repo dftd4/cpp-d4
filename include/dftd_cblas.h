@@ -24,6 +24,16 @@
 
 namespace dftd4 {
 
+/**
+ * @brief General matrix vector multiplication (`C = alpha * A * V + C`).
+ * 
+ * @param C Result vector C. Modified in-place.
+ * @param A Matrix A.
+ * @param V Vector V.
+ * @param Transpose Specifies whether to transpose matrix A.
+ * @param alpha Scaling factor for the product of matrix A and vector X.
+ * @return Exit code
+ */
 inline int BLAS_Add_Mat_x_Vec(
   TVector<double> &C,
   TMatrix<double> &A,
@@ -70,34 +80,18 @@ inline int BLAS_Add_Mat_x_Vec(
   return EXIT_FAILURE;
 };
 
-inline void BLAS_Add_Mat_x_Vec(
-  double *C,
-  const double *A,
-  const double *B,
-  const int rows,
-  const int cols,
-  const bool Transpose,
-  const double alpha,
-  const double beta
-) {
-  if (Transpose) {
-    cblas_dgemv(
-      CblasRowMajor, CblasTrans, rows, cols, alpha, A, cols, B, 1, beta, C, 1
-    );
-  } else {
-    cblas_dgemv(
-      CblasRowMajor, CblasNoTrans, rows, cols, alpha, A, cols, B, 1, beta, C, 1
-    );
-  };
-};
 
-inline double
-  BLAS_Vec_x_Vec(const TVector<double> &A, const TVector<double> &B) {
-  if (A.N != B.N) exit(EXIT_FAILURE);
-  return cblas_ddot(A.N, A.p, 1, B.p, 1);
-};
-
-/// C = alpha * A * B + C
+/**
+ * @brief General matrix-matrix multiplication (`C = alpha * A * B + C`).
+ * 
+ * @param C Result matrix C. Modified in-place.
+ * @param A Matrix A.
+ * @param B Matrix B.
+ * @param TransposeA Specifies whether to transpose matrix A.
+ * @param TransposeB Specifies whether to transpose matrix B.
+ * @param alpha Scaling factor for the product of matrix A and matrix B.
+ * @return Exit code.
+ */
 inline int BLAS_Add_Mat_x_Mat(
   TMatrix<double> &C,
   const TMatrix<double> &A,
@@ -209,37 +203,19 @@ inline int BLAS_Add_Mat_x_Mat(
   return EXIT_SUCCESS;
 };
 
-// Linear equation solver
-inline int BLAS_LINEQ(TMatrix<double> &a, TMatrix<double> &b, int m) {
-  lapack_int info, n, nrhs;
-  lapack_int *ipiv;
-
-  if (a.rows != a.cols) return EXIT_FAILURE;
-
-  n = a.rows;
-  nrhs = m;
-
-  a.Transpose();
-  b.Transpose();
-
-  ipiv = new lapack_int[n];
-
-  info = LAPACKE_dgesv(LAPACK_COL_MAJOR, n, nrhs, a.p, n, ipiv, b.p, n);
-
-  delete[] ipiv;
-
-  a.Transpose();
-  b.Transpose();
-
-  return info;
-}
-
+/**
+ * @brief Compute inverse of a matrix using LU decomposition.
+ * 
+ * @param a Matrix a.
+ * @return Exit code.
+ */
 inline int BLAS_InvertMatrix(TMatrix<double> &a) {
   if (a.rows != a.cols) { return EXIT_FAILURE; }
 
   lapack_int info;
   lapack_int *ipiv = new lapack_int[a.rows];
 
+  // LU factorization of a general m-by-n matrix
   info = LAPACKE_dgetrf(
     LAPACK_ROW_MAJOR,
     (lapack_int)a.rows,
@@ -248,13 +224,12 @@ inline int BLAS_InvertMatrix(TMatrix<double> &a) {
     (lapack_int)a.cols,
     ipiv
   );
-
   if (info != 0) { return EXIT_FAILURE; }
 
+  // Inverse of an LU-factored general matrix
   info = LAPACKE_dgetri(
     LAPACK_ROW_MAJOR, (lapack_int)a.rows, a.p, (lapack_int)a.cols, ipiv
   );
-
   if (info != 0) { return EXIT_FAILURE; }
 
   delete[] ipiv;

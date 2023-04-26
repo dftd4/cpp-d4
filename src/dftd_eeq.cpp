@@ -322,20 +322,6 @@ int eeq_chrgeq(
     }
   }
 
-  // Electrostatic energy (E = q * (0.5 * Amat * q + (-Xvec)) )
-  // -> not required for D4
-  // TVector<double> scratch;
-  // scratch.New(m);
-  // for (int i = 0; i != m; i++) scratch(i) = -xvec(i);
-
-  // info = BLAS_Add_Mat_x_Vec(scratch, Amat, vrhs, false, 0.5);
-  // if (!info == EXIT_SUCCESS) return info;
-  // es = BLAS_Vec_x_Vec(scratch, vrhs);
-  // scratch.Delete();
-  // energy += es; // pass energy as argument of function
-  // if (lverbose) printf("isotroptic electrostatic (IES) energy: %14.7f\n",
-  // es);
-
   // Gradient (note that the corresponding gradient flag in Fortran is `cpq`)
   if (lgrad) {
     int ThreeN = 3 * mol.NAtoms;

@@ -28,14 +28,14 @@
 namespace dftd4 {
 
 class dparam {
-    public:
-  double s6;
-  double s8;
-  double s10;
-  double s9;
-  double a1;
-  double a2;
-  int alp;
+  public:
+    double s6;
+    double s8;
+    double s10;
+    double s9;
+    double a1;
+    double a2;
+    int alp;
 };
 
 /**
@@ -46,16 +46,16 @@ class dparam {
  * @param par DFT-D4 parameters.
  * @param d4 Base D4 dispersion model.
  * @param cutoff Real-space cutoffs for CN and dispersion.
- * @param energy Dispersion energy.
- * @param GRAD Dispersion gradient.
+ * @param energy Dispersion energy (inout).
+ * @param GRAD Dispersion gradient (inout).
  * @return Exit status.
  */
 extern int get_dispersion(
   const TMolecule &mol,
   const int charge,
-  TD4Model &d4,
+  const TD4Model &d4,
   const dparam &par,
-  TCutoff cutoff,
+  const TCutoff cutoff,
   double &energy,
   double *GRAD
 );

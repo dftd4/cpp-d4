@@ -4,6 +4,7 @@ BasedOnStyle: LLVM
 AccessModifierOffset: 2
 ConstructorInitializerIndentWidth: 2
 ContinuationIndentWidth: 2
+IndentAccessModifiers: true
 IndentWidth: 2
 IndentWrappedFunctionNames: true
 TabWidth: 2
@@ -23,3 +24,4 @@ AllowShortIfStatementsOnASingleLine: AllIfsAndElse
 
 AlignOperands: true
 AllowAllArgumentsOnNextLine: true
+InsertTrailingCommas: Wrapped

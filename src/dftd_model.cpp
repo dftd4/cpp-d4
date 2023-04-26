@@ -60,13 +60,13 @@ static const double weights[23]{
   (freq[22] - freq[21])};
 
 TD4Model::TD4Model(
-  double wf_scale /*= wf_default*/,
   double ga_scale /*= ga_default*/,
-  double gc_scale /*= gc_default*/
+  double gc_scale /*= gc_default*/,
+  double wf_scale /*= wf_default*/
 ) {
-  wf = wf_scale;
   ga = ga_scale;
   gc = gc_scale;
+  wf = wf_scale;
 };
 
 int TD4Model::weight_references(
@@ -77,7 +77,7 @@ int TD4Model::weight_references(
   TMatrix<double> &dgwdcn,
   TMatrix<double> &dgwdq,
   bool lgrad /*= false*/
-) {
+) const {
   int izp{0};
   double gw{0.0}, twf{0.0}, maxcn{0.0};
   double norm{0.0}, dnorm{0.0};
@@ -181,7 +181,7 @@ int TD4Model::get_atomic_c6(
   TMatrix<double> &dc6dcn,
   TMatrix<double> &dc6dq,
   bool lgrad /*= false*/
-) {
+) const {
   int izp{0}, jzp{0}, info{0};
   double refc6{0.0}, dc6{0.0};
 
@@ -256,7 +256,8 @@ int TD4Model::get_atomic_c6(
   return EXIT_SUCCESS;
 }
 
-int TD4Model::set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha) {
+int TD4Model::set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha)
+  const {
   int iat{0}, is{0};
   double iz{0.0}, aiw{0.0};
 
