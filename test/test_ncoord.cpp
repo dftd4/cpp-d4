@@ -27,7 +27,6 @@
 
 using namespace dftd4;
 
-
 int test_cn(
   const int n,
   const char atoms[][4],
@@ -39,7 +38,7 @@ int test_cn(
   // assemble molecule
   TMolecule mol;
   info = get_molecule(n, atoms, coord, mol);
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   // get reference
   TVector<double> ref;
@@ -48,21 +47,30 @@ int test_cn(
     ref(i) = ref_cn[i];
   }
 
+  // dummy for masking of possible ghost atoms
+  dftd4::TIVector realIdx;
+  realIdx.NewVec(mol.NAtoms);
+  int nat = 0;
+  for (int i = 0; i != mol.NAtoms; i++) {
+    realIdx(i) = nat++;
+  }
+
   // distances
-  TMatrix<double> dist;      
+  TMatrix<double> dist;
   dist.New(n, n);
-  calc_distances(mol, dist);
+  calc_distances(mol, realIdx, dist);
 
   // erf-CN without cutoff
   TVector<double> cn;
   TMatrix<double> dcndr; // empty because no gradient needed
   cn.New(n);
-  info = get_ncoord_d4(mol, dist, 9999.9, cn, dcndr, false);
-  if (!info == EXIT_SUCCESS) return info;
+  info = get_ncoord_d4(mol, realIdx, dist, 9999.9, cn, dcndr, false);
+  if (info != EXIT_SUCCESS) return info;
 
   // compare to ref
   for (int i = 0; i != n; i++) {
     if (check(cn(i), ref(i)) == EXIT_FAILURE) {
+      print_fail("CN_D4", cn(i), ref(i));
       return EXIT_FAILURE;
     }
   }
@@ -72,16 +80,18 @@ int test_cn(
 
 int test_ncoord() {
   int info;
-  
+
+  info = test_cn(water_n, water_atoms, water_coord, water_ref_cn);
+  if (info != EXIT_SUCCESS) return info;
+
   info = test_cn(
     mb16_43_01_n, mb16_43_01_atoms, mb16_43_01_coord, mb16_43_01_ref_cn
   );
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
-  info = test_cn(
-    rost61_m1_n, rost61_m1_atoms, rost61_m1_coord, rost61_m1_ref_cn
-  );
-  if (!info == EXIT_SUCCESS) return info;
+  info =
+    test_cn(rost61_m1_n, rost61_m1_atoms, rost61_m1_coord, rost61_m1_ref_cn);
+  if (info != EXIT_SUCCESS) return info;
 
   return EXIT_SUCCESS;
 }

@@ -32,10 +32,10 @@ int get_molecule(int n, const char atoms[][4], const double coord[], TMolecule& 
   ;
   mol.GetMemory(n);
   for (int i = 0; i != n; i++) {
-    mol.xyz(i, 0) = coord[3*i];
-    mol.xyz(i, 1) = coord[3*i+1];
-    mol.xyz(i, 2) = coord[3*i+2];
-    mol.at(i) = element(atoms[i]);
+    mol.CC(i, 0) = coord[3*i];
+    mol.CC(i, 1) = coord[3*i+1];
+    mol.CC(i, 2) = coord[3*i+2];
+    mol.ATNO(i) = element(atoms[i]);
   }
 
   return EXIT_SUCCESS;

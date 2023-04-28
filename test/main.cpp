@@ -23,6 +23,7 @@
 #include "test_disp.h"
 #include "test_disp2.h"
 #include "test_grad.h"
+#include "test_ghost.h"
 #include "test_ncoord.h"
 #include "test_param.h"
 
@@ -30,6 +31,7 @@ enum test {
   invalid,
   disp2,
   disp,
+  ghost,
   grad,
   ncoord,
   param,
@@ -39,6 +41,7 @@ test get_tests(std::string name) {
   static const std::map<std::string, test> testStrings{
     {"disp", disp},
     {"disp2", disp2},
+    {"ghost", ghost},
     {"grad", grad},
     {"ncoord", ncoord},
     {"param", param},
@@ -56,6 +59,7 @@ int main(int argc, char *argv[]) {
   default: return EXIT_FAILURE;
   case disp2: return test_disp2();
   case disp: return test_disp();
+  case ghost: return test_ghost();
   case grad: return test_grad();
   case ncoord: return test_ncoord();
   case param: return test_param();

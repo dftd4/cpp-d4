@@ -54,11 +54,11 @@ void read_xyzfile(const std::string &name, dftd4::TMolecule &mol) {
       printf("Error: Input file could not be read.");
       exit(EXIT_FAILURE);
     }
-    mol.xyz(i, 0) = x * aatoau;
-    mol.xyz(i, 1) = y * aatoau;
-    mol.xyz(i, 2) = z * aatoau;
+    mol.CC(i, 0) = x * aatoau;
+    mol.CC(i, 1) = y * aatoau;
+    mol.CC(i, 2) = z * aatoau;
     at = element(sym);
-    mol.at(i) = at;
+    mol.ATNO(i) = at;
   }
 
   geo.close();

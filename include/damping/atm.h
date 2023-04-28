@@ -29,6 +29,7 @@ namespace dftd4 {
 
 extern int get_atm_dispersion(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   const double cutoff,
   const double s9,
@@ -47,6 +48,7 @@ extern int get_atm_dispersion(
 
 extern int get_atm_dispersion_energy(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   const double cutoff,
   const double s9,
@@ -59,6 +61,7 @@ extern int get_atm_dispersion_energy(
 
 extern int get_atm_dispersion_derivs(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   const double cutoff,
   const double s9,

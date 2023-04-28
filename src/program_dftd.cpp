@@ -24,32 +24,33 @@
 #include "dftd_damping.h"
 #include "dftd_dispersion.h"
 #include "dftd_geometry.h"
-#include "dftd_model.h"
 #include "dftd_matrix.h"
+#include "dftd_model.h"
 #include "dftd_readxyz.h"
 
 class argparser {
-    public:
-  argparser(int &argc, char **argv) {
-    for (int i = 1; i != argc; i++) {
-      this->args.push_back(std::string(argv[i]));
+  public:
+    argparser(int &argc, char **argv) {
+      for (int i = 1; i != argc; i++) {
+        this->args.push_back(std::string(argv[i]));
+      }
     }
-  }
-  const std::string &getopt(const std::string &opt) const {
-    std::vector<std::string>::const_iterator iter;
-    iter = find(this->args.begin(), this->args.end(), opt);
-    if (iter != this->args.end() && ++iter != this->args.end()) {
-      return *iter;
+    const std::string &getopt(const std::string &opt) const {
+      std::vector<std::string>::const_iterator iter;
+      iter = find(this->args.begin(), this->args.end(), opt);
+      if (iter != this->args.end() && ++iter != this->args.end()) {
+        return *iter;
+      }
+      static const std::string empty("");
+      return empty;
     }
-    static const std::string empty("");
-    return empty;
-  }
-  bool getflag(const std::string &opt) const {
-    return find(this->args.begin(), this->args.end(), opt) != this->args.end();
-  }
+    bool getflag(const std::string &opt) const {
+      return find(this->args.begin(), this->args.end(), opt) !=
+             this->args.end();
+    }
 
-    private:
-  std::vector<std::string> args;
+  private:
+    std::vector<std::string> args;
 };
 
 void dftd4_citation() {
@@ -149,8 +150,19 @@ int main(int argc, char **argv) {
   dftd4::TCutoff cutoff;
   dftd4::TD4Model d4;
 
-  info = dftd4::get_dispersion(mol, charge, d4, par, cutoff, energy, nullptr);
-  if (info != 0) return EXIT_FAILURE;
+  // masking (nothing excluded)
+  dftd4::TVector<int> realIdx;
+  realIdx.NewVec(mol.NAtoms);
+  int nat = 0;
+  for (int i = 0; i != mol.NAtoms; i++) {
+    realIdx(i) = nat;
+    nat++;
+  }
+
+  info = dftd4::get_dispersion(
+    mol, realIdx, charge, d4, par, cutoff, energy, nullptr
+  );
+  if (info != EXIT_SUCCESS) return info;
 
   std::cout << "Dispersion energy: " << energy << " Eh\n";
 

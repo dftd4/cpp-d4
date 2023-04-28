@@ -34,9 +34,9 @@ static const double wf_default = 6.0;
 
 class TD4Model {
   public:
+    double wf;
     double ga;
     double gc;
-    double wf;
 
     explicit TD4Model(
       double ga_scale = ga_default,
@@ -46,6 +46,7 @@ class TD4Model {
 
     int weight_references(
       const TMolecule &mol,
+      const TIVector &realIdx,
       const TVector<double> &cn,
       const TVector<double> &q,
       TMatrix<double> &gwvec,
@@ -56,6 +57,7 @@ class TD4Model {
 
     int get_atomic_c6(
       const TMolecule &mol,
+      const TIVector &realIdx,
       const TMatrix<double> &gwvec,
       const TMatrix<double> &dgwdcn,
       const TMatrix<double> &dgwdq,

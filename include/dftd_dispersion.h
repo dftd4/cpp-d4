@@ -42,6 +42,7 @@ class dparam {
  * @brief Wrapper to handle the evaluation of dispersion energy and derivatives.
  *
  * @param mol Molecular geometry.
+ * @param realIdx List for real atoms excluding ghost/non atoms
  * @param charge Molecular charge.
  * @param par DFT-D4 parameters.
  * @param d4 Base D4 dispersion model.
@@ -52,6 +53,7 @@ class dparam {
  */
 extern int get_dispersion(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const int charge,
   const TD4Model &d4,
   const dparam &par,

@@ -32,15 +32,21 @@ namespace dftd4 {
  * Calculate all distance pairs and store in matrix.
  *
  * @param mol Molecule object.
+ * @param realIdx List for real atoms excluding ghost/non atoms
  * @param dist Distance matrix (inout).
  * @return Exit status.
  */
-extern int calc_distances(const TMolecule &mol, TMatrix<double> &dist);
+extern int calc_distances(
+  const TMolecule &mol,
+  const TIVector &realIdx,
+  TMatrix<double> &dist
+);
 
 /**
  * Wrapper for error function coordination number.
  *
  * @param mol Molecule object.
+ * @param realIdx List for real atoms excluding ghost/non atoms
  * @param dist Distance matrix.
  * @param cn Vector of coordination numbers.
  * @param cutoff Real-space cutoff (default: @see {dftd_cutoff.h}).
@@ -50,6 +56,7 @@ extern int calc_distances(const TMolecule &mol, TMatrix<double> &dist);
  */
 extern int get_ncoord_erf(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   const double cutoff,
   TVector<double> &cn,
@@ -61,6 +68,7 @@ extern int get_ncoord_erf(
  * Calculate error function coordination number.
  *
  * @param mol Molecule object.
+ * @param realIdx List for real atoms excluding ghost/non atoms
  * @param dist Distance matrix.
  * @param cutoff Real-space cutoff (default: @see {dftd_cutoff.h}).
  * @param cn Vector of coordination numbers.
@@ -68,6 +76,7 @@ extern int get_ncoord_erf(
  */
 extern int ncoord_erf(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   const double cutoff,
   TVector<double> &cn
@@ -78,6 +87,7 @@ extern int ncoord_erf(
  * w.r.t. nuclear coordinates.
  *
  * @param mol Molecule object.
+ * @param realIdx List for real atoms excluding ghost/non atoms
  * @param dist Distance matrix.
  * @param cutoff Real-space cutoff (default: @see {dftd_cutoff.h}).
  * @param cn Vector of coordination numbers.
@@ -86,6 +96,7 @@ extern int ncoord_erf(
  */
 extern int dncoord_erf(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   const double cutoff,
   TVector<double> &cn,
@@ -96,6 +107,7 @@ extern int dncoord_erf(
  * Wrapper for error function coordination number for DFT-D4.
  *
  * @param mol Molecule object.
+ * @param realIdx List for real atoms excluding ghost/non atoms
  * @param dist Distance matrix.
  * @param cutoff Real-space cutoff (default: @see {dftd_cutoff.h}).
  * @param cn Vector of coordination numbers.
@@ -103,6 +115,7 @@ extern int dncoord_erf(
  */
 extern int get_ncoord_d4(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   const double cutoff,
   TVector<double> &cn,
@@ -114,6 +127,7 @@ extern int get_ncoord_d4(
  * Calculate covalent coordination number for DFT-D4.
  *
  * @param mol Molecule object.
+ * @param realIdx List for real atoms excluding ghost/non atoms
  * @param dist Distance matrix.
  * @param cutoff Real-space cutoff (default: @see {dftd_cutoff.h}).
  * @param cn Vector of coordination numbers.
@@ -121,6 +135,7 @@ extern int get_ncoord_d4(
  */
 extern int ncoord_d4(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   const double cutoff,
   TVector<double> &cn
@@ -131,6 +146,7 @@ extern int ncoord_d4(
  * w.r.t. nuclear coordinates
  *
  * @param mol Molecule object.
+ * @param realIdx List for real atoms excluding ghost/non atoms
  * @param dist Distance matrix.
  * @param cutoff Real-space cutoff (default: @see {dftd_cutoff.h}).
  * @param cn Vector of coordination numbers.
@@ -139,6 +155,7 @@ extern int ncoord_d4(
  */
 extern int dncoord_d4(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   const double cutoff,
   TVector<double> &cn,

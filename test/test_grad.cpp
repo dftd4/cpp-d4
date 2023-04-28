@@ -39,28 +39,39 @@ int test_numgrad(TMolecule &mol, const int charge, const dparam &par) {
   TCutoff cutoff;
   TD4Model d4;
 
+  // masking (nothing excluded)
+  TVector<int> realIdx;
+  realIdx.NewVec(mol.NAtoms);
+  int nat = 0;
+  for (int i = 0; i != mol.NAtoms; i++) {
+    realIdx(i) = nat;
+    nat++;
+  }
+
   // numerical gradient
   for (int i = 0; i < mol.NAtoms; i++) {
     for (int c = 0; c < 3; c++) {
       er = 0.0;
       el = 0.0;
 
-      mol.xyz(i, c) += step;
-      get_dispersion(mol, charge, d4, par, cutoff, er, nullptr);
+      mol.CC(i, c) += step;
+      get_dispersion(mol, realIdx, charge, d4, par, cutoff, er, nullptr);
 
-      mol.xyz(i, c) = mol.xyz(i, c) - 2*step;
-      get_dispersion(mol, charge, d4, par, cutoff, el, nullptr);
+      mol.CC(i, c) = mol.CC(i, c) - 2 * step;
+      get_dispersion(mol, realIdx, charge, d4, par, cutoff, el, nullptr);
 
-      mol.xyz(i, c) = mol.xyz(i, c) + step;
+      mol.CC(i, c) = mol.CC(i, c) + step;
       numgrad(i, c) = 0.5 * (er - el) / step;
-    }    
+    }
   }
 
   // analytical gradient
-  double* d4grad = new double[3*mol.NAtoms];
-  for (int i = 0; i < 3*mol.NAtoms; i++) d4grad[i] = 0.0;
-  info = get_dispersion(mol, charge, d4, par, cutoff, energy, d4grad);
-  if (!info == EXIT_SUCCESS) return info;
+  double *d4grad = new double[3 * mol.NAtoms];
+  for (int i = 0; i < 3 * mol.NAtoms; i++) {
+    d4grad[i] = 0.0;
+  }
+  info = get_dispersion(mol, realIdx, charge, d4, par, cutoff, energy, d4grad);
+  if (info != EXIT_SUCCESS) return info;
 
   // check translational invariance of analytical gradient
   if (is_trans_invar(mol, d4grad) != EXIT_SUCCESS) return EXIT_FAILURE;
@@ -68,8 +79,8 @@ int test_numgrad(TMolecule &mol, const int charge, const dparam &par) {
   // compare against numerical gradient
   for (int i = 0; i < mol.NAtoms; i++) {
     for (int c = 0; c < 3; c++) {
-      if (check(d4grad[3*i + c], numgrad(i, c), thr) != EXIT_SUCCESS) {
-        print_fail("Gradient mismatch", d4grad[3*i + c], numgrad(i, c));
+      if (check(d4grad[3 * i + c], numgrad(i, c), thr) != EXIT_SUCCESS) {
+        print_fail("Gradient mismatch", d4grad[3 * i + c], numgrad(i, c));
         return EXIT_FAILURE;
       }
     }
@@ -78,14 +89,14 @@ int test_numgrad(TMolecule &mol, const int charge, const dparam &par) {
   return EXIT_SUCCESS;
 }
 
-int is_trans_invar(const TMolecule& mol, double gradient[]) {
+int is_trans_invar(const TMolecule &mol, double gradient[]) {
   double xsum{0.0};
   double ysum{0.0};
   double zsum{0.0};
   for (int i = 0; i < mol.NAtoms; i++) {
-    xsum += gradient[3*i];
-    ysum += gradient[3*i + 1];
-    zsum += gradient[3*i + 2];
+    xsum += gradient[3 * i];
+    ysum += gradient[3 * i + 1];
+    zsum += gradient[3 * i + 2];
   }
 
   if (check(xsum, 0.0) != EXIT_SUCCESS) {
@@ -104,7 +115,6 @@ int is_trans_invar(const TMolecule& mol, double gradient[]) {
   return EXIT_SUCCESS;
 }
 
-
 int test_pbed4_mb01() {
   // PBE-D4(EEQ) parameters
   dparam par;
@@ -118,8 +128,9 @@ int test_pbed4_mb01() {
   // assemble molecule
   int charge = mb16_43_01_charge;
   TMolecule mol;
-  int info = get_molecule(mb16_43_01_n, mb16_43_01_atoms, mb16_43_01_coord, mol);
-  if (!info == EXIT_SUCCESS) return info;
+  int info =
+    get_molecule(mb16_43_01_n, mb16_43_01_atoms, mb16_43_01_coord, mol);
+  if (info != EXIT_SUCCESS) return info;
 
   return test_numgrad(mol, charge, par);
 };
@@ -133,7 +144,7 @@ int test_bp86d4atm_water() {
   int charge = water_charge;
   TMolecule mol;
   int info = get_molecule(water_n, water_atoms, water_coord, mol);
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   return test_numgrad(mol, charge, par);
 }
@@ -147,7 +158,7 @@ int test_tpss0d4mbd_rost61m1() {
   int charge = rost61_m1_charge;
   TMolecule mol;
   int info = get_molecule(rost61_m1_n, rost61_m1_atoms, rost61_m1_coord, mol);
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   return test_numgrad(mol, charge, par);
 }
@@ -156,13 +167,13 @@ int test_grad() {
   int info{0};
 
   info = test_pbed4_mb01();
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   info = test_bp86d4atm_water();
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   info = test_tpss0d4mbd_rost61m1();
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   return EXIT_SUCCESS;
 };

@@ -29,6 +29,7 @@ namespace dftd4 {
 
 extern int get_charges(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   const int charge,
   const double cutoff,
@@ -39,6 +40,7 @@ extern int get_charges(
 
 extern int get_vrhs(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const int &charge,
   const TVector<double> &cn,
   TVector<double> &Xvec,
@@ -48,12 +50,14 @@ extern int get_vrhs(
 
 extern int get_amat_0d(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   TMatrix<double> &Amat
 );
 
 extern int get_damat_0d(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   const TVector<double> &q,
   const TMatrix<double> &Amat,
@@ -63,6 +67,7 @@ extern int get_damat_0d(
 
 extern int eeq_chrgeq(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   const int &charge,
   const TVector<double> &cn,
