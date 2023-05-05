@@ -59,8 +59,9 @@ int test_rational_damping(const double ref[], TCutoff cutoff) {
     d4par(func, par, true);
 
     energy = 0.0;
-    info =
-      get_dispersion(mol, realIdx, charge, d4, par, cutoff, energy, nullptr);
+    info = get_dispersion(
+      mol, realIdx, charge, d4, par, cutoff, false, energy, nullptr
+    );
     if (info != EXIT_SUCCESS) return info;
 
     if (check(energy, ref[i]) == EXIT_FAILURE) {

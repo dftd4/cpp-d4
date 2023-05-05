@@ -126,13 +126,17 @@ int main(int argc, char **argv) {
     help();
     exit(EXIT_FAILURE);
   }
+
   // setup the argparser from the commandline
   argparser args(argc, argv);
+
   // check for help flag first
   if (args.getflag("-h") || args.getflag("--help")) {
     help();
     exit(EXIT_SUCCESS);
   }
+
+  // get other flags
   if (args.getflag("-v") || args.getflag("--verbose")) { lverbose = true; }
   if (args.getflag("-g") || args.getflag("--grad")) { lgrad = true; }
   if (args.getflag("--func")) {
@@ -159,12 +163,39 @@ int main(int argc, char **argv) {
     nat++;
   }
 
+  // analytical gradient
+  double *d4grad;
+  if (lgrad) {
+    d4grad = new double[3 * mol.NAtoms];
+    for (int i = 0; i < 3 * mol.NAtoms; i++) {
+      d4grad[i] = 0.0;
+    }
+  } else {
+    d4grad = nullptr;
+  }
+
   info = dftd4::get_dispersion(
-    mol, realIdx, charge, d4, par, cutoff, energy, nullptr
+    mol, realIdx, charge, d4, par, cutoff, lverbose, energy, d4grad
   );
   if (info != EXIT_SUCCESS) return info;
 
-  std::cout << "Dispersion energy: " << energy << " Eh\n";
+  // Print results
+  printf("Dispersion energy: %.15e Eh\n", energy);
+
+  if (lgrad) {
+    printf("\nDispersion gradient\n");
+    int count{0};
+    for (int i = 0; i < mol.NAtoms; i++) {
+      printf(
+        "%3i  :  %+14.9le  %+14.9le  %+14.9le\n",
+        i + 1,
+        d4grad[count],
+        d4grad[count + 1],
+        d4grad[count + 2]
+      );
+      count = count + 3;
+    };
+  }
 
   mol.FreeMemory();
 

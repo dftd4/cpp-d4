@@ -41,6 +41,7 @@ int get_dispersion(
   const TD4Model &d4,
   const dparam &par,
   const TCutoff cutoff,
+  const bool /*lverbose*/,
   double &energy,
   double *GRAD
 ) {

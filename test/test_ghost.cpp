@@ -113,11 +113,10 @@ int test_water(const int n, const char atoms[][4], const double coord[]) {
   par.s9 = 0.0;
 
   // dispersion main function
-  info = get_dispersion(mol, realIdx, charge, d4, par, cutoff, energy, nullptr);
+  info = get_dispersion(
+    mol, realIdx, charge, d4, par, cutoff, false, energy, nullptr
+  );
   if (info != EXIT_SUCCESS) return info;
-
-
-
 
   if (check(energy, ref, 1e-8) == EXIT_FAILURE) {
     print_fail("GHOST: Two-body Energy", energy, ref);
@@ -133,7 +132,9 @@ int test_water(const int n, const char atoms[][4], const double coord[]) {
 
   // dispersion main function
   par.s9 = 1.0;
-  info = get_dispersion(mol, realIdx, charge, d4, par, cutoff, energy, nullptr);
+  info = get_dispersion(
+    mol, realIdx, charge, d4, par, cutoff, false, energy, nullptr
+  );
   if (info != EXIT_SUCCESS) return info;
 
   if (check(energy, ref, 1e-8) == EXIT_FAILURE) {
@@ -161,7 +162,9 @@ int test_water(const int n, const char atoms[][4], const double coord[]) {
   info = get_charges(mol, realIdx, dist, charge, cutoff.cn_eeq, q, dqdr, lgrad);
   if (info != EXIT_SUCCESS) return info;
 
-  info = get_dispersion(mol, realIdx, charge, d4, par, cutoff, energy, d4grad);
+  info = get_dispersion(
+    mol, realIdx, charge, d4, par, cutoff, false, energy, d4grad
+  );
   if (info != EXIT_SUCCESS) return info;
 
   for (int i = 0; i < 3 * mol.NAtoms; i++) {

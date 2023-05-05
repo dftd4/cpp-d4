@@ -55,10 +55,10 @@ int test_numgrad(TMolecule &mol, const int charge, const dparam &par) {
       el = 0.0;
 
       mol.CC(i, c) += step;
-      get_dispersion(mol, realIdx, charge, d4, par, cutoff, er, nullptr);
+      get_dispersion(mol, realIdx, charge, d4, par, cutoff, false, er, nullptr);
 
       mol.CC(i, c) = mol.CC(i, c) - 2 * step;
-      get_dispersion(mol, realIdx, charge, d4, par, cutoff, el, nullptr);
+      get_dispersion(mol, realIdx, charge, d4, par, cutoff, false, el, nullptr);
 
       mol.CC(i, c) = mol.CC(i, c) + step;
       numgrad(i, c) = 0.5 * (er - el) / step;
@@ -70,7 +70,9 @@ int test_numgrad(TMolecule &mol, const int charge, const dparam &par) {
   for (int i = 0; i < 3 * mol.NAtoms; i++) {
     d4grad[i] = 0.0;
   }
-  info = get_dispersion(mol, realIdx, charge, d4, par, cutoff, energy, d4grad);
+  info = get_dispersion(
+    mol, realIdx, charge, d4, par, cutoff, false, energy, d4grad
+  );
   if (info != EXIT_SUCCESS) return info;
 
   // check translational invariance of analytical gradient

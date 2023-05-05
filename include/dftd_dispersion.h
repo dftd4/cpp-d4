@@ -47,6 +47,7 @@ class dparam {
  * @param par DFT-D4 parameters.
  * @param d4 Base D4 dispersion model.
  * @param cutoff Real-space cutoffs for CN and dispersion.
+ * @param lverbose Flag for verbosity of printout.
  * @param energy Dispersion energy (inout).
  * @param GRAD Dispersion gradient (inout).
  * @return Exit status.
@@ -58,6 +59,7 @@ extern int get_dispersion(
   const TD4Model &d4,
   const dparam &par,
   const TCutoff cutoff,
+  const bool /*lverbose*/,
   double &energy,
   double *GRAD
 );

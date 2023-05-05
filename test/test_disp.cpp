@@ -59,7 +59,9 @@ int test_energy(
   }
 
   // dispersion main function
-  info = get_dispersion(mol, realIdx, charge, d4, par, cutoff, energy, nullptr);
+  info = get_dispersion(
+    mol, realIdx, charge, d4, par, cutoff, false, energy, nullptr
+  );
   if (info != EXIT_SUCCESS) return info;
 
   if (check(energy, ref) == EXIT_FAILURE) {
