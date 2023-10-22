@@ -258,21 +258,21 @@ int TD4Model::get_atomic_c6(
 
 int TD4Model::set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha)
   const {
-  int iat{0}, is{0};
+  int izp{0}, is{0};
   double iz{0.0}, aiw{0.0};
 
-  for (int i = 0; i != mol.NAtoms; i++) {
-    iat = mol.at(i);
-    for (int ir = 0; ir != refn[iat]; ir++) {
-      is = refsys[iat][ir];
+  for (int iat = 0; iat != mol.NAtoms; iat++) {
+    izp = mol.at(iat);
+    for (int ir = 0; ir != refn[izp]; ir++) {
+      is = refsys[izp][ir];
       iz = zeff[is];
       for (int k = 0; k != 23; k++) {
         aiw = secscale[is] * secalpha[is][k] *
-              zeta(ga, gam[is] * gc, iz, refsq[iat][ir] + iz);
-        alpha(i, 23 * ir + k) = std::max(
+              zeta(ga, gam[is] * gc, iz, refsq[izp][ir] + iz);
+        alpha(iat, 23 * ir + k) = std::max(
           0.0,
-          refascale[iat][ir] *
-            (refalpha[iat][23 * ir + k] - refscount[iat][ir] * aiw)
+          refascale[izp][ir] *
+            (refalpha[izp][23 * ir + k] - refscount[izp][ir] * aiw)
         );
       }
     }

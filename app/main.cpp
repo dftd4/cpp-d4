@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
   bool lmbd{true}, lgrad{false};
   dftd4::dparam par; // damping parameter for DFT-D4 calculation
   dftd4::TMolecule mol;
-  int info{0};
+  int info{0}, i{0}, j{0};
   int charge{0};
   double energy{0.0};
 

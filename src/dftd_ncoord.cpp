@@ -23,12 +23,11 @@
  * This module works on a distance matrix to avoid recalculating
  * the distances every time.
  */
-#include "dftd_ncoord.h"
-
 #include <cmath>
 #include <iostream>
 
 #include "dftd_geometry.h"
+#include "dftd_ncoord.h"
 #include "dftd_matrix.h"
 
 namespace dftd4 {
