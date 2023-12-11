@@ -87,5 +87,18 @@ int test_disp() {
   );
   if (!info == EXIT_SUCCESS) return info;
 
+  info =
+    test_energy(amf3_n, amf3_atoms, amf3_coord, amf3_charge, amf3_ref_energy);
+  if (!info == EXIT_SUCCESS) return info;
+
+  info = test_energy(
+    actinides_n,
+    actinides_atoms,
+    actinides_coord,
+    actinides_charge,
+    actinides_ref_energy
+  );
+  if (!info == EXIT_SUCCESS) return info;
+
   return EXIT_SUCCESS;
 }
