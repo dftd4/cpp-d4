@@ -88,5 +88,14 @@ int test_disp2() {
   // );
   // if (info != EXIT_SUCCESS) return info;
 
+  info = test_energy2(
+    actinides_n,
+    actinides_atoms,
+    actinides_coord,
+    actinides_charge,
+    -2.754490712510605e-01
+  );
+  if (!info == EXIT_SUCCESS) return info;
+
   return EXIT_SUCCESS;
 }
