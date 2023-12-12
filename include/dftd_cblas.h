@@ -26,7 +26,7 @@ namespace dftd4 {
 
 /**
  * @brief General matrix vector multiplication (`C = alpha * A * V + C`).
- * 
+ *
  * @param C Result vector C. Modified in-place.
  * @param A Matrix A.
  * @param V Vector V.
@@ -80,10 +80,9 @@ inline int BLAS_Add_Mat_x_Vec(
   return EXIT_FAILURE;
 };
 
-
 /**
  * @brief General matrix-matrix multiplication (`C = alpha * A * B + C`).
- * 
+ *
  * @param C Result matrix C. Modified in-place.
  * @param A Matrix A.
  * @param B Matrix B.
@@ -205,7 +204,7 @@ inline int BLAS_Add_Mat_x_Mat(
 
 /**
  * @brief Compute inverse of a matrix using LU decomposition.
- * 
+ *
  * @param a Matrix a.
  * @return Exit code.
  */

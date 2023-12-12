@@ -106,13 +106,13 @@ void help() {
            be verbose
    -h, --help
            print this message
-
+   -g, --grad
+           calculate dispersion gradient
 )";
 }
 
 int main(int argc, char **argv) {
   std::string func;
-  bool lverbose{false};
   bool lmbd{true}, lgrad{false};
   dftd4::dparam par; // damping parameter for DFT-D4 calculation
   dftd4::TMolecule mol;
@@ -137,12 +137,21 @@ int main(int argc, char **argv) {
   }
 
   // get other flags
-  if (args.getflag("-v") || args.getflag("--verbose")) { lverbose = true; }
+  // bool lverbose{false};
+  // if (args.getflag("-v") || args.getflag("--verbose")) { lverbose = true; }
   if (args.getflag("-g") || args.getflag("--grad")) { lgrad = true; }
+
   if (args.getflag("--func")) {
     func = args.getopt("--func");
-    dftd4::d4par(func, par, lmbd);
+  } else if (args.getflag("-f")) {
+    func = args.getopt("-f");
+  } else {
+    printf("WARNING: No functional given (via '--func'). Defaulting to PBE.\n\n"
+    );
+    func = "pbe";
   }
+  dftd4::d4par(func, par, lmbd);
+
   // last argument is assumed to filename since
   // dftd4 [options] <file>
   std::string fname{argv[argc - 1]};

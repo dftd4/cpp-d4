@@ -22,7 +22,6 @@
 
 #include <cmath>
 
-#include "damping/atm.h"
 #include "dftd_cblas.h"
 #include "dftd_dispersion.h"
 #include "dftd_eeq.h"
@@ -30,6 +29,7 @@
 #include "dftd_matrix.h"
 #include "dftd_ncoord.h"
 #include "dftd_parameters.h"
+#include "damping/dftd_atm.h"
 
 namespace dftd4 {
 
