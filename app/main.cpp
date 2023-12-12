@@ -106,17 +106,17 @@ void help() {
            be verbose
    -h, --help
            print this message
-
+   -g, --grad
+           calculate dispersion gradient
 )";
 }
 
 int main(int argc, char **argv) {
   std::string func;
-  bool lverbose{false};
   bool lmbd{true}, lgrad{false};
   dftd4::dparam par; // damping parameter for DFT-D4 calculation
   dftd4::TMolecule mol;
-  int info{0}, i{0}, j{0};
+  int info{0};
   int charge{0};
   double energy{0.0};
 
@@ -137,12 +137,21 @@ int main(int argc, char **argv) {
   }
 
   // get other flags
-  if (args.getflag("-v") || args.getflag("--verbose")) { lverbose = true; }
+  // bool lverbose{false};
+  // if (args.getflag("-v") || args.getflag("--verbose")) { lverbose = true; }
   if (args.getflag("-g") || args.getflag("--grad")) { lgrad = true; }
+
   if (args.getflag("--func")) {
     func = args.getopt("--func");
-    dftd4::d4par(func, par, lmbd);
+  } else if (args.getflag("-f")) {
+    func = args.getopt("-f");
+  } else {
+    printf("WARNING: No functional given (via '--func'). Defaulting to PBE.\n\n"
+    );
+    func = "pbe";
   }
+  dftd4::d4par(func, par, lmbd);
+
   // last argument is assumed to filename since
   // dftd4 [options] <file>
   std::string fname{argv[argc - 1]};
@@ -153,15 +162,6 @@ int main(int argc, char **argv) {
   // initialize default cutoffs and default D4 model
   dftd4::TCutoff cutoff;
   dftd4::TD4Model d4;
-
-  // masking (nothing excluded)
-  dftd4::TVector<int> realIdx;
-  realIdx.NewVec(mol.NAtoms);
-  int nat = 0;
-  for (int i = 0; i != mol.NAtoms; i++) {
-    realIdx(i) = nat;
-    nat++;
-  }
 
   // analytical gradient
   double *d4grad;
