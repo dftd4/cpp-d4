@@ -23,25 +23,25 @@
 namespace dftd4 {
 // Input of the molecular geometry
 class TMolecule {
-    public:
-  int NAtoms;
-  TMatrix<double> xyz; // Cartesian Coordinates: (NAtoms x 3)-matrix
-  TVector<int> at;     // atomic numbers
+  public:
+    int NAtoms;
+    TMatrix<double> xyz; // Cartesian Coordinates: (NAtoms x 3)-matrix
+    TVector<int> at;     // atomic numbers
 
-  TMolecule() { NAtoms = 0; }
-  ~TMolecule() { FreeMemory(); }
+    TMolecule() { NAtoms = 0; }
+    ~TMolecule() { FreeMemory(); }
 
-  void GetMemory(int NumAt_) {
-    FreeMemory();
-    NAtoms = NumAt_;
-    xyz.New(NAtoms, 3);
-    at.New(NAtoms);
-  }
+    void GetMemory(int NumAt_) {
+      FreeMemory();
+      NAtoms = NumAt_;
+      xyz.New(NAtoms, 3);
+      at.New(NAtoms);
+    }
 
-  void FreeMemory(void) {
-    xyz.Delete();
-    at.Delete();
-  }
+    void FreeMemory(void) {
+      xyz.Delete();
+      at.Delete();
+    }
 };
 
 } // namespace dftd4

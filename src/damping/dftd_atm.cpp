@@ -30,7 +30,7 @@
 #include "dftd_matrix.h"
 #include "dftd_ncoord.h"
 #include "dftd_parameters.h"
-#include "damping/atm.h"
+#include "damping/dftd_atm.h"
 
 namespace dftd4 {
 

@@ -20,7 +20,10 @@ project(
   'cpp',
   version: '2.0',
   license: 'LGPL3-or-later',
-  meson_version: '>=0.45',
+  meson_version: '>=0.46',
+  default_options: [
+    'default_library=both',
+  ],
 )
 
 cxx = meson.get_compiler('cpp')
@@ -41,8 +44,8 @@ srcs = files(
   'src/dftd_eeq.cpp',
   'src/dftd_model.cpp',
   'src/dftd_ncoord.cpp',
-  'src/damping/atm.cpp',
-  'src/damping/rational.cpp',
+  'src/damping/dftd_atm.cpp',
+  'src/damping/dftd_rational.cpp',
 )
 
 cpp_d4_inc = include_directories('include')
@@ -66,8 +69,8 @@ install_headers(
   'include/dftd_model.h',
   'include/dftd_ncoord.h',
   'include/dftd_parameters.h',
-  'include/damping/atm.h',
-  'include/damping/rational.h',
+  'include/damping/dftd_atm.h',
+  'include/damping/dftd_rational.h',
 )
 
 cpp_d4_dep = declare_dependency(
@@ -79,8 +82,8 @@ cpp_d4_dep = declare_dependency(
 executable(
   meson.project_name(),
   sources: files(
-    'src/program_dftd.cpp',
-    'src/dftd_readxyz.cpp',
+    'app/main.cpp',
+    'app/readxyz.cpp',
   ),
   dependencies: cpp_d4_dep,
   install: true,

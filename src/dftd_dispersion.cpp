@@ -21,8 +21,8 @@
  */
 #include <cmath>
 
-#include "damping/atm.h"
-#include "damping/rational.h"
+#include "damping/dftd_atm.h"
+#include "damping/dftd_rational.h"
 #include "dftd_cblas.h"
 #include "dftd_dispersion.h"
 #include "dftd_eeq.h"
