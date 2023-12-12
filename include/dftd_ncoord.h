@@ -200,4 +200,4 @@ extern inline double log_cn_cut(const double cn_max, const double cn);
 
 extern inline double dlog_cn_cut(const double cn_max, const double cn);
 
-}; // namespace dftd4
+} // namespace dftd4

@@ -31,7 +31,13 @@
 
 using namespace dftd4;
 
-int test_water(const int n, const char atoms[][4], const double coord[]) {
+int test_water(
+  const int n,
+  const char atoms[][4],
+  const double coord[],
+  const double ref_grad[],
+  const TIVector &realIdx
+) {
   int info;
 
   // assemble molecule
@@ -39,16 +45,6 @@ int test_water(const int n, const char atoms[][4], const double coord[]) {
   TMolecule mol;
   info = get_molecule(n, atoms, coord, mol);
   if (info != EXIT_SUCCESS) return info;
-
-  // dummy for masking of ghost atoms
-  TIVector realIdx;
-  realIdx.NewVec(mol.NAtoms);
-  realIdx(0) = 0;
-  realIdx(1) = 1;
-  realIdx(2) = 2;
-  realIdx(3) = -1;
-  realIdx(4) = -1;
-  realIdx(5) = -1;
 
   // number of real atoms
   int nat = realIdx.Max() + 1;
@@ -116,9 +112,6 @@ int test_water(const int n, const char atoms[][4], const double coord[]) {
   info = get_dispersion(mol, realIdx, charge, d4, par, cutoff, energy, nullptr);
   if (info != EXIT_SUCCESS) return info;
 
-
-
-
   if (check(energy, ref, 1e-8) == EXIT_FAILURE) {
     print_fail("GHOST: Two-body Energy", energy, ref);
     return EXIT_FAILURE;
@@ -153,11 +146,11 @@ int test_water(const int n, const char atoms[][4], const double coord[]) {
     d4grad[i] = 0.0;
   }
 
-  dcndr.NewMatrix(3 * mol.NAtoms, nat);
+  dcndr.NewMatrix(3 * nat, nat);
   info = get_ncoord_d4(mol, realIdx, dist, cutoff.cn, cn, dcndr, lgrad);
   if (info != EXIT_SUCCESS) return info;
 
-  dqdr.NewMatrix(3 * mol.NAtoms, nat);
+  dqdr.NewMatrix(3 * nat, nat);
   info = get_charges(mol, realIdx, dist, charge, cutoff.cn_eeq, q, dqdr, lgrad);
   if (info != EXIT_SUCCESS) return info;
 
@@ -165,8 +158,8 @@ int test_water(const int n, const char atoms[][4], const double coord[]) {
   if (info != EXIT_SUCCESS) return info;
 
   for (int i = 0; i < 3 * mol.NAtoms; i++) {
-    if (check(d4grad[i], water_dimer_ref_grad[i], 1e-8) == EXIT_FAILURE) {
-      print_fail("GHOST: Gradient", d4grad[i], water_dimer_ref_grad[i]);
+    if (check(d4grad[i], ref_grad[i], 1e-8) == EXIT_FAILURE) {
+      print_fail("GHOST: Gradient", d4grad[i], ref_grad[i]);
       return EXIT_FAILURE;
     }
   }
@@ -177,7 +170,39 @@ int test_water(const int n, const char atoms[][4], const double coord[]) {
 int test_ghost() {
   int info;
 
-  info = test_water(water_dimer_n, water_dimer_atoms, water_dimer_coord);
+  // dummy for masking of ghost atoms
+  TIVector realidx;
+  realidx.NewVec(water_dimer_n);
+  realidx(0) = 0;
+  realidx(1) = 1;
+  realidx(2) = 2;
+  realidx(3) = -1;
+  realidx(4) = -1;
+  realidx(5) = -1;
+
+  info = test_water(
+    water_dimer_n,
+    water_dimer_atoms,
+    water_dimer_coord,
+    water_dimer_ref_grad,
+    realidx
+  );
+  if (info != EXIT_SUCCESS) return info;
+
+  realidx(0) = -1;
+  realidx(1) = 0;
+  realidx(2) = -1;
+  realidx(3) = 1;
+  realidx(4) = 2;
+  realidx(5) = -1;
+
+  info = test_water(
+    water_ghost_n,
+    water_ghost_atoms,
+    water_ghost_coord,
+    water_ghost_ref_grad,
+    realidx
+  );
   if (info != EXIT_SUCCESS) return info;
 
   return EXIT_SUCCESS;

@@ -63,10 +63,10 @@ static const double zeff[119]{
  * These values are actually never used in the code. Only r4r2 is used.
  */
 static const double r2r4[119]{
-  0.0,             //  dummy
-  8.0589,  3.4698, //  H,He
+  0.0,                                                           //  dummy
+  8.0589,  3.4698,                                               //  H,He
   29.0974, 14.8517, 11.8799, 7.8715,  5.5588,  4.7566,  3.8025,
-  3.1036, //  Li-Ne
+  3.1036,                                                        //  Li-Ne
   26.1552, 17.2304, 17.7210, 12.7442, 9.5361,  8.1652,  6.7463,
   5.6004,                                                        //  Na-Ar
   29.2012, 22.3934,                                              //  K,Ca

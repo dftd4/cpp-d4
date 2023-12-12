@@ -27,8 +27,8 @@
 #include <iostream>
 
 #include "dftd_geometry.h"
-#include "dftd_ncoord.h"
 #include "dftd_matrix.h"
+#include "dftd_ncoord.h"
 
 namespace dftd4 {
 
@@ -383,7 +383,7 @@ int get_ncoord_d4(
   TMatrix<double> &dcndr,
   bool lgrad
 ) {
-  if (lgrad) { return dncoord_d4(mol, realIdx, dist, cutoff, cn, dcndr); }
+  if (lgrad) return dncoord_d4(mol, realIdx, dist, cutoff, cn, dcndr);
   return ncoord_d4(mol, realIdx, dist, cutoff, cn);
 };
 
@@ -462,18 +462,18 @@ int dncoord_d4(
       cn(jj) += countf;
 
       dcountf = den * derf_count(kn, rr) / rcovij;
-      dcndr(3 * j, jj) += dcountf * rx;
-      dcndr(3 * j + 1, jj) += dcountf * ry;
-      dcndr(3 * j + 2, jj) += dcountf * rz;
-      dcndr(3 * j, ii) = dcountf * rx;
-      dcndr(3 * j + 1, ii) = dcountf * ry;
-      dcndr(3 * j + 2, ii) = dcountf * rz;
-      dcndr(3 * i, jj) = -dcountf * rx;
-      dcndr(3 * i + 1, jj) = -dcountf * ry;
-      dcndr(3 * i + 2, jj) = -dcountf * rz;
-      dcndr(3 * i, ii) += -dcountf * rx;
-      dcndr(3 * i + 1, ii) += -dcountf * ry;
-      dcndr(3 * i + 2, ii) += -dcountf * rz;
+      dcndr(3 * jj, jj) += dcountf * rx;
+      dcndr(3 * jj + 1, jj) += dcountf * ry;
+      dcndr(3 * jj + 2, jj) += dcountf * rz;
+      dcndr(3 * jj, ii) = dcountf * rx;
+      dcndr(3 * jj + 1, ii) = dcountf * ry;
+      dcndr(3 * jj + 2, ii) = dcountf * rz;
+      dcndr(3 * ii, jj) = -dcountf * rx;
+      dcndr(3 * ii + 1, jj) = -dcountf * ry;
+      dcndr(3 * ii + 2, jj) = -dcountf * rz;
+      dcndr(3 * ii, ii) += -dcountf * rx;
+      dcndr(3 * ii + 1, ii) += -dcountf * ry;
+      dcndr(3 * ii + 2, ii) += -dcountf * rz;
     }
   }
   return EXIT_SUCCESS;
@@ -546,21 +546,21 @@ int dncoord_erf(
       cn(jj) += countf;
 
       dcountf = derf_count(kn, rr) / rcovij;
-      dcndr(jj, 3 * j) += dcountf * rx;
-      dcndr(jj, 3 * j + 1) += dcountf * ry;
-      dcndr(jj, 3 * j + 2) += dcountf * rz;
+      dcndr(jj, 3 * jj) += dcountf * rx;
+      dcndr(jj, 3 * jj + 1) += dcountf * ry;
+      dcndr(jj, 3 * jj + 2) += dcountf * rz;
 
-      dcndr(jj, 3 * i) += dcountf * rx;
-      dcndr(jj, 3 * i + 1) += dcountf * ry;
-      dcndr(jj, 3 * i + 2) += dcountf * rz;
+      dcndr(jj, 3 * ii) += dcountf * rx;
+      dcndr(jj, 3 * ii + 1) += dcountf * ry;
+      dcndr(jj, 3 * ii + 2) += dcountf * rz;
 
-      dcndr(ii, 3 * j) -= dcountf * rx;
-      dcndr(ii, 3 * j + 1) -= dcountf * ry;
-      dcndr(ii, 3 * j + 2) -= dcountf * rz;
+      dcndr(ii, 3 * jj) -= dcountf * rx;
+      dcndr(ii, 3 * jj + 1) -= dcountf * ry;
+      dcndr(ii, 3 * jj + 2) -= dcountf * rz;
 
-      dcndr(ii, 3 * i) -= dcountf * rx;
-      dcndr(ii, 3 * i + 1) -= dcountf * ry;
-      dcndr(ii, 3 * i + 2) -= dcountf * rz;
+      dcndr(ii, 3 * ii) -= dcountf * rx;
+      dcndr(ii, 3 * ii + 1) -= dcountf * ry;
+      dcndr(ii, 3 * ii + 2) -= dcountf * rz;
     }
   }
 

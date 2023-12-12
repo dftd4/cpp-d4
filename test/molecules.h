@@ -103,6 +103,38 @@ static const double water_dimer_coord[water_dimer_n * 3]{
   -1.42952433403007,
 };
 
+// Water ghost
+static const int water_ghost_n{6};
+static const int water_ghost_charge{0};
+static const char water_ghost_atoms[water_ghost_n][4]{
+  "X",
+  "O",
+  "X",
+  "H",
+  "H",
+  "X",
+};
+static const double water_ghost_coord[water_ghost_n * 3]{
+  +2.36992046172956, // ghost
+  +0.05080150740831, // ghost
+  +0.00000000000000, // ghost
+  -3.24461780406248, // O
+  -0.10530990158270, // O
+  +0.00000000000000, // O
+  +3.07751820457461, // ghost
+  -0.81358303254468, // ghost
+  +1.42952433403007, // ghost
+  -3.84932865216183, // H1
+  +1.60128210841514, // H1
+  +0.00000000000000, // H1
+  -1.43101041465447, // H2
+  +0.08039197290338, // H2
+  +0.00000000000000, // H2
+  +3.07751820457461, // ghost
+  -0.81358303254468, // ghost
+  -1.42952433403007, // ghost
+};
+
 // MB16_43: 01
 static const int mb16_43_01_n{16};
 static const int mb16_43_01_charge{0};
