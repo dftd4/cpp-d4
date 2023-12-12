@@ -35,3 +35,8 @@
 /build*/
 /install*/
 /_*/
+
+# project-specific
+/scripts/old/*
+/scripts/*.h
+/scripts/*.cpp

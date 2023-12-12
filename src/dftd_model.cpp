@@ -57,7 +57,8 @@ static const double weights[23]{
   (freq[19] - freq[18]) + (freq[20] - freq[19]),
   (freq[20] - freq[19]) + (freq[21] - freq[20]),
   (freq[21] - freq[20]) + (freq[22] - freq[21]),
-  (freq[22] - freq[21])};
+  (freq[22] - freq[21])
+};
 
 TD4Model::TD4Model(
   double ga_scale /*= ga_default*/,
@@ -126,9 +127,8 @@ int TD4Model::weight_references(
           }
         }
 
-        gwvec(iref, iat) = gwk * zeta(ga, gi, refq[izp][iref] + zi, q(ii) + zi);
-        dgwdq(iref, iat) =
-          gwk * dzeta(ga, gi, refq[izp][iref] + zi, q(ii) + zi);
+        gwvec(iref, ii) = gwk * zeta(ga, gi, refq[izp][iref] + zi, q(ii) + zi);
+        dgwdq(iref, ii) = gwk * dzeta(ga, gi, refq[izp][iref] + zi, q(ii) + zi);
 
         dgwk = norm * (dexpw - expw * dnorm * norm);
         if (is_exceptional(dgwk)) { dgwk = 0.0; }

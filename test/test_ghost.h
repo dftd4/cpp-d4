@@ -18,6 +18,10 @@
 #ifndef TEST_GHOST_H
 #define TEST_GHOST_H
 
+#include <dftd_matrix.h>
+
+using namespace dftd4;
+
 static const double water_dimer_ref_cn[3]{
   +1.6104087812936088,
   +0.80554651093269469,
@@ -52,7 +56,34 @@ static const double water_dimer_ref_grad[3 * 6]{
   +0.0000000000000000E+00,
 };
 
-extern int test_water(const int n, const char atoms[][4], const double coord[]);
+static const double water_ghost_ref_grad[3 * 6]{
+  +0.0000000000000000E+00, // ghost
+  +0.0000000000000000E+00, // ghost
+  +0.0000000000000000E+00, // ghost
+  +3.6769324466783607E-05, // O
+  +5.8683292759696172E-05, // O
+  +0.0000000000000000E+00, // O
+  +0.0000000000000000E+00, // ghost
+  +0.0000000000000000E+00, // ghost
+  +0.0000000000000000E+00, // ghost
+  +4.8209580157792990E-06, // H1
+  -4.4217699200268973E-05, // H1
+  +0.0000000000000000E+00, // H1
+  -4.1590282482562915E-05, // H2
+  -1.4465593559427221E-05, // H2
+  +0.0000000000000000E+00, // H2
+  +0.0000000000000000E+00, // ghost
+  +0.0000000000000000E+00, // ghost
+  +0.0000000000000000E+00, // ghost
+};
+
+extern int test_water(
+  const int n,
+  const char atoms[][4],
+  const double coord[],
+  const double ref_grad[],
+  const TIVector &realIdx
+);
 
 extern int test_ghost(void);
 

@@ -65,9 +65,9 @@ int get_dispersion(
   cn.NewVector(nat);
   q.NewVector(nat);
   if (lgrad) {
-    dcndr.NewMatrix(3 * mol.NAtoms, nat);
-    dqdr.NewMatrix(3 * mol.NAtoms, nat);
-    gradient.NewVector(3 * mol.NAtoms);
+    dcndr.NewMatrix(3 * nat, nat);
+    dqdr.NewMatrix(3 * nat, nat);
+    gradient.NewVector(3 * nat);
   }
 
   // calculate partial charges from EEQ model
@@ -138,8 +138,7 @@ int get_dispersion(
   );
   if (info != EXIT_SUCCESS) return info;
 
-  if (lgrad) { BLAS_Add_Mat_x_Vec(gradient, dqdr, dEdq, false, 1.0); }
-
+  if (lgrad) BLAS_Add_Mat_x_Vec(gradient, dqdr, dEdq, false, 1.0);
   dqdr.DelMat();
 
   // ----------------------------
@@ -224,9 +223,15 @@ int get_dispersion(
 
   // write to input gradient
   if (lgrad) {
-    for (int i = 0; i != 3 * mol.NAtoms; i++) {
-      GRAD[i] = gradient(i);
+    for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
+      ii = realIdx(i);
+      if (ii < 0) continue;
+
+      GRAD[3 * i] = gradient(3 * ii);
+      GRAD[3 * i + 1] = gradient(3 * ii + 1);
+      GRAD[3 * i + 2] = gradient(3 * ii + 2);
     }
+
     gradient.DelVec();
   }
 

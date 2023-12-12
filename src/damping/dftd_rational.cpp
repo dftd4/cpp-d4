@@ -18,6 +18,8 @@
 
 #include <cmath>
 
+#include "damping/dftd_atm.h"
+#include "damping/dftd_rational.h"
 #include "dftd_cblas.h"
 #include "dftd_dispersion.h"
 #include "dftd_eeq.h"
@@ -25,9 +27,6 @@
 #include "dftd_matrix.h"
 #include "dftd_ncoord.h"
 #include "dftd_parameters.h"
-#include "damping/dftd_atm.h"
-#include "damping/dftd_rational.h"
-
 
 namespace dftd4 {
 
@@ -119,8 +118,8 @@ int get_dispersion2_energy(
       }
 
       e = -c6ij * edisp * 0.5;
-      energy(iat) += e;
-      energy(jat) += e;
+      energy(ii) += e;
+      energy(jj) += e;
     }
   }
 
@@ -164,7 +163,7 @@ int get_dispersion2_derivs(
 
       r4r2ij = 3.0 * r4r2[izp] * r4r2[jzp];
       r0ij = par.a1 * sqrt(r4r2ij) + par.a2;
-      c6ij = c6(iat, jat);
+      c6ij = c6(ii, jj);
 
       t6 = fdmpr_bj(6, r, r0ij);
       t8 = fdmpr_bj(8, r, r0ij);
@@ -199,12 +198,12 @@ int get_dispersion2_derivs(
       dEdq(ii) -= dc6dq(ii, jj) * edisp;
       dEdq(jj) -= dc6dq(jj, ii) * edisp;
 
-      gradient(3 * iat) += dgx;
-      gradient(3 * iat + 1) += dgy;
-      gradient(3 * iat + 2) += dgz;
-      gradient(3 * jat) -= dgx;
-      gradient(3 * jat + 1) -= dgy;
-      gradient(3 * jat + 2) -= dgz;
+      gradient(3 * ii) += dgx;
+      gradient(3 * ii + 1) += dgy;
+      gradient(3 * ii + 2) += dgz;
+      gradient(3 * jj) -= dgx;
+      gradient(3 * jj + 1) -= dgy;
+      gradient(3 * jj + 2) -= dgz;
     }
   }
   return EXIT_SUCCESS;

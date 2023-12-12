@@ -301,15 +301,15 @@ int get_atm_dispersion_derivs(
         dgyjk = c9ijk * (-dang * fdmp + ang * dfdmp) / r2jk * yjk;
         dgzjk = c9ijk * (-dang * fdmp + ang * dfdmp) / r2jk * zjk;
 
-        gradient(3 * iat + 0) += -dgxij - dgxik;
-        gradient(3 * iat + 1) += -dgyij - dgyik;
-        gradient(3 * iat + 2) += -dgzij - dgzik;
-        gradient(3 * jat + 0) += dgxij - dgxjk;
-        gradient(3 * jat + 1) += dgyij - dgyjk;
-        gradient(3 * jat + 2) += dgzij - dgzjk;
-        gradient(3 * kat + 0) += dgxik + dgxjk;
-        gradient(3 * kat + 1) += dgyik + dgyjk;
-        gradient(3 * kat + 2) += dgzik + dgzjk;
+        gradient(3 * ii + 0) += -dgxij - dgxik;
+        gradient(3 * ii + 1) += -dgyij - dgyik;
+        gradient(3 * ii + 2) += -dgzij - dgzik;
+        gradient(3 * jj + 0) += dgxij - dgxjk;
+        gradient(3 * jj + 1) += dgyij - dgyjk;
+        gradient(3 * jj + 2) += dgzij - dgzjk;
+        gradient(3 * kk + 0) += dgxik + dgxjk;
+        gradient(3 * kk + 1) += dgyik + dgyjk;
+        gradient(3 * kk + 2) += dgzik + dgzjk;
 
         dEdcn(ii) -= e * 0.5 * (dc6dcn(ii, jj) / c6ij + dc6dcn(ii, kk) / c6ik);
         dEdcn(jj) -= e * 0.5 * (dc6dcn(jj, ii) / c6ij + dc6dcn(jj, kk) / c6jk);
