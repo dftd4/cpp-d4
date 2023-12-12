@@ -20,7 +20,7 @@ project(
   'cpp',
   version: '2.0',
   license: 'LGPL3-or-later',
-  meson_version: '>=0.46',
+  meson_version: '>=0.51',
   default_options: [
     'default_library=both',
   ],
