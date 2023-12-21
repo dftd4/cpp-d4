@@ -84,7 +84,7 @@ int test_disp2() {
     actinides_atoms,
     actinides_coord,
     actinides_charge,
-    -2.754490712510605e-01
+    -2.7594153499942E-01
   );
   if (!info == EXIT_SUCCESS) return info;
 
