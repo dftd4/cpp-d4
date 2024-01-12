@@ -22,8 +22,11 @@
 #include <sstream>
 #include <string>
 
-#include "dftd_econv.h"
 #include "dftd_geometry.h"
+
+// convert bohr (a.u.) to Ångström and back
+static const double autoaa = 0.52917721090449243;
+static const double aatoau = 1.0 / autoaa;
 
 void read_xyzfile(const std::string &name, dftd4::TMolecule &mol) {
   std::ifstream geo;
