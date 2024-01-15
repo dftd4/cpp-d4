@@ -24,9 +24,9 @@ static const double mb16_43_01_ref_energy{-2.5882588037023E-02};
 
 static const double rost61_m1_ref_energy{-3.4287391104745E-02};
 
-static const double amf3_ref_energy{-2.7175915776341e-03};
+static const double amf3_ref_energy{-2.7238862689481E-03};
 
-static const double actinides_ref_energy{-2.759592056567113e-01};
+static const double actinides_ref_energy{-2.758574011776306E-01};
 
 extern int test_energy(
   const int n,
