@@ -100,12 +100,12 @@ int TD4Model::weight_references(
       dnorm = 0.0;
       maxcn = 0.0;
       for (int iref = 0; iref != refn[izp]; iref++) {
-        maxcn = std::max(maxcn, refcn[izp][iref]);
+        maxcn = std::max(maxcn, refcovcn[izp][iref]);
         for (int igw = 0; igw != refc[izp][iref]; igw++) {
           twf = (igw + 1) * wf;
-          gw = weight_cn(twf, cn(ii), refcn[izp][iref]);
+          gw = weight_cn(twf, cn(ii), refcovcn[izp][iref]);
           norm += gw;
-          dnorm += 2 * twf * (refcn[izp][iref] - cn(ii)) * gw;
+          dnorm += 2 * twf * (refcovcn[izp][iref] - cn(ii)) * gw;
         }
       }
       norm = 1.0 / norm;
@@ -114,13 +114,13 @@ int TD4Model::weight_references(
         dexpw = 0.0;
         for (int igw = 0; igw != refc[izp][iref]; igw++) {
           twf = (igw + 1) * wf;
-          gw = weight_cn(twf, cn(ii), refcn[izp][iref]);
+          gw = weight_cn(twf, cn(ii), refcovcn[izp][iref]);
           expw += gw;
-          dexpw += 2 * twf * (refcn[izp][iref] - cn(ii)) * gw;
+          dexpw += 2 * twf * (refcovcn[izp][iref] - cn(ii)) * gw;
         }
         gwk = expw * norm;
         if (is_exceptional(gwk)) {
-          if (refcn[izp][iref] == maxcn) {
+          if (refcovcn[izp][iref] == maxcn) {
             gwk = 1.0;
           } else {
             gwk = 0.0;
@@ -148,10 +148,10 @@ int TD4Model::weight_references(
       norm = 0.0;
       maxcn = 0.0;
       for (int iref = 0; iref != refn[izp]; iref++) {
-        maxcn = std::max(maxcn, refcn[izp][iref]);
+        maxcn = std::max(maxcn, refcovcn[izp][iref]);
         for (int igw = 0; igw != refc[izp][iref]; igw++) {
           twf = (igw + 1) * wf;
-          norm += weight_cn(twf, cn(ii), refcn[izp][iref]);
+          norm += weight_cn(twf, cn(ii), refcovcn[izp][iref]);
         }
       }
       norm = 1.0 / norm;
@@ -159,11 +159,11 @@ int TD4Model::weight_references(
         expw = 0.0;
         for (int igw = 0; igw != refc[izp][iref]; igw++) {
           twf = (igw + 1) * wf;
-          expw += weight_cn(twf, cn(ii), refcn[izp][iref]);
+          expw += weight_cn(twf, cn(ii), refcovcn[izp][iref]);
         }
         gwk = expw * norm;
         if (std::isnan(gwk)) {
-          if (refcn[izp][iref] == maxcn) {
+          if (refcovcn[izp][iref] == maxcn) {
             gwk = 1.0;
           } else {
             gwk = 0.0;
@@ -284,6 +284,8 @@ int TD4Model::set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha)
     izp = mol.ATNO(iat);
     for (int ir = 0; ir != refn[izp]; ir++) {
       is = refsys[izp][ir];
+      if (is == 0) continue;
+
       iz = zeff[is];
       for (int k = 0; k != 23; k++) {
         aiw = secscale[is] * secalpha[is][k] *
