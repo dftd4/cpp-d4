@@ -207,6 +207,7 @@ int main(int argc, char **argv) {
   }
 
   mol.FreeMemory();
+  delete[] d4grad;
 
   return EXIT_SUCCESS;
 }

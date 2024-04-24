@@ -293,7 +293,7 @@ int get_damat_0d(
 
       dAmat(3 * ii, jj) = dgx * q(ii);
       dAmat(3 * ii + 1, jj) = dgy * q(ii);
-      dAmat(3 * ii + 2, jj) = dgz * q(i);
+      dAmat(3 * ii + 2, jj) = dgz * q(ii);
       dAmat(3 * jj, ii) = -dgx * q(jj);
       dAmat(3 * jj + 1, ii) = -dgy * q(jj);
       dAmat(3 * jj + 2, ii) = -dgz * q(jj);

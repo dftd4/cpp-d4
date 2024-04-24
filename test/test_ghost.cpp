@@ -164,6 +164,7 @@ int test_water(
     }
   }
 
+  delete[] d4grad;
   return EXIT_SUCCESS;
 }
 
