@@ -48,6 +48,7 @@ class TD4Model {
       const TMolecule &mol,
       const TVector<double> &cn,
       const TVector<double> &q,
+      const TMatrix<double> &refq,
       TMatrix<double> &gwvec,
       TMatrix<double> &dgwdcn,
       TMatrix<double> &dgwdq,
@@ -64,6 +65,8 @@ class TD4Model {
       TMatrix<double> &dc6dq,
       bool lgrad = false
     ) const;
+
+    int set_refq_eeq(const TMolecule &mol, TMatrix<double> &refq) const;
 
     int set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha) const;
 };

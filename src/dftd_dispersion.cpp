@@ -80,6 +80,12 @@ int get_dispersion(
   info = get_max_ref(mol, mref);
   if (!info == EXIT_SUCCESS) return info;
 
+  // reference charges
+  TMatrix<double> refq;
+  refq.NewMat(mref, mol.NAtoms);
+  info = d4.set_refq_eeq(mol, refq);
+  if (!info == EXIT_SUCCESS) return info;
+
   TMatrix<double> gwvec;
   TMatrix<double> dgwdcn;
   TMatrix<double> dgwdq;
@@ -88,7 +94,7 @@ int get_dispersion(
     dgwdcn.NewMat(mref, mol.NAtoms);
     dgwdq.NewMat(mref, mol.NAtoms);
   }
-  info = d4.weight_references(mol, cn, q, gwvec, dgwdcn, dgwdq, lgrad);
+  info = d4.weight_references(mol, cn, q, refq, gwvec, dgwdcn, dgwdq, lgrad);
   if (!info == EXIT_SUCCESS) return info;
 
   TMatrix<double> c6;
@@ -155,11 +161,12 @@ int get_dispersion(
       dgwdcn.NewMat(mref, mol.NAtoms);
       dgwdq.NewMat(mref, mol.NAtoms);
     }
-    info = d4.weight_references(mol, cn, q, gwvec, dgwdcn, dgwdq, lgrad);
+    info = d4.weight_references(mol, cn, q, refq, gwvec, dgwdcn, dgwdq, lgrad);
     if (!info == EXIT_SUCCESS) return info;
 
     cn.Delete();
     q.Delete();
+    refq.Delete();
 
     // calculate reference C6 coefficients
     c6.NewMat(mol.NAtoms, mol.NAtoms);
@@ -193,6 +200,7 @@ int get_dispersion(
   } else {
     cn.Delete();
     q.Delete();
+    refq.Delete();
     gwvec.Delete();
     dgwdcn.Delete();
     dgwdq.Delete();
