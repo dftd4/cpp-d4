@@ -66,9 +66,9 @@ class TD4Model {
       bool lgrad = false
     ) const;
 
-    int set_refq_eeq(const TMolecule &mol, TMatrix<double> &refq) const;
+    virtual int set_refq_eeq(const TMolecule &mol, TMatrix<double> &refq) const;
 
-    int set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha) const;
+    virtual int set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha) const;
 };
 
 extern inline double trapzd(const double a[23], const double b[23]);
