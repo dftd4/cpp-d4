@@ -70,7 +70,11 @@ class TD4Model {
       bool lgrad = false
     ) const;
 
-    virtual int set_refq_eeq(const TMolecule &mol, TMatrix<double> &refq) const;
+    virtual int set_refq_eeq(
+      const TMolecule &mol,
+      const TIVector &realIdx,
+      TMatrix<double> &refq
+    ) const;
 
     virtual int
       set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha) const;

@@ -275,14 +275,25 @@ int TD4Model::get_atomic_c6(
   return EXIT_SUCCESS;
 }
 
-int TD4Model::set_refq_eeq(const TMolecule &mol, TMatrix<double> &refq) const {
-  int izp;
+int TD4Model::set_refq_eeq(
+  const TMolecule &mol,
+  const TIVector &realIdx,
+  TMatrix<double> &refq
+) const {
+  int izp{0}, ii{0};
+
   for (int iat = 0; iat != mol.NAtoms; iat++) {
+    ii = realIdx(iat);
+    if (ii < 0) continue;
+
     izp = mol.ATNO(iat);
+
     for (int iref = 0; iref != refn[izp]; iref++) {
-      refq(iref, iat) = refq_eeq[izp][iref];
+      refq(iref, ii) = refq_eeq[izp][iref];
     }
   }
+
+  refq.Print();
 
   return EXIT_SUCCESS;
 }

@@ -85,8 +85,8 @@ int get_dispersion(
 
   // reference charges
   TMatrix<double> refq;
-  refq.NewMat(mref, mol.NAtoms);
-  info = d4.set_refq_eeq(mol, refq);
+  refq.NewMat(mref, nat);
+  info = d4.set_refq_eeq(mol, realIdx, refq);
   if (!info == EXIT_SUCCESS) return info;
 
   TMatrix<double> gwvec;
