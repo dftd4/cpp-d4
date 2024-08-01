@@ -57,7 +57,8 @@ static const double weights[23]{
   (freq[19] - freq[18]) + (freq[20] - freq[19]),
   (freq[20] - freq[19]) + (freq[21] - freq[20]),
   (freq[21] - freq[20]) + (freq[22] - freq[21]),
-  (freq[22] - freq[21])};
+  (freq[22] - freq[21])
+};
 
 TD4Model::TD4Model(
   double ga_scale /*= ga_default*/,
@@ -123,14 +124,14 @@ int TD4Model::weight_references(
         }
 
         gwvec(iref, iat) =
-          gwk * zeta(ga, gi, refq(iref,iat) + zi, q(iat) + zi);
+          gwk * zeta(ga, gi, refq(iref, iat) + zi, q(iat) + zi);
         dgwdq(iref, iat) =
-          gwk * dzeta(ga, gi, refq(iref,iat) + zi, q(iat) + zi);
+          gwk * dzeta(ga, gi, refq(iref, iat) + zi, q(iat) + zi);
 
         dgwk = norm * (dexpw - expw * dnorm * norm);
         if (is_exceptional(dgwk)) { dgwk = 0.0; }
         dgwdcn(iref, iat) =
-          dgwk * zeta(ga, gi, refq(iref,iat) + zi, q(iat) + zi);
+          dgwk * zeta(ga, gi, refq(iref, iat) + zi, q(iat) + zi);
       }
     }
   } else {
@@ -165,7 +166,7 @@ int TD4Model::weight_references(
         }
 
         gwvec(iref, iat) =
-          gwk * zeta(ga, gi, refq(iref,iat) + zi, q(iat) + zi);
+          gwk * zeta(ga, gi, refq(iref, iat) + zi, q(iat) + zi);
       }
     }
   }
@@ -257,8 +258,7 @@ int TD4Model::get_atomic_c6(
   return EXIT_SUCCESS;
 }
 
-int TD4Model::set_refq_eeq(const TMolecule &mol, TMatrix<double> &refq) 
-  const {
+int TD4Model::set_refq_eeq(const TMolecule &mol, TMatrix<double> &refq) const {
   int izp;
   for (int iat = 0; iat != mol.NAtoms; iat++) {
     izp = mol.at(iat);
