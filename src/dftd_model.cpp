@@ -293,8 +293,6 @@ int TD4Model::set_refq_eeq(
     }
   }
 
-  refq.Print();
-
   return EXIT_SUCCESS;
 }
 
