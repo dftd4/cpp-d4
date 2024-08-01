@@ -183,7 +183,7 @@ int get_dispersion(
     info = d4.get_atomic_c6(
       mol, realIdx, gwvec, dgwdcn, dgwdq, c6, dc6dcn, dc6dq, lgrad
     );
-    if (info != EXIT_SUCCESS) return info;
+    if (!info == EXIT_SUCCESS) return info;
 
     gwvec.DelMat();
     dgwdcn.DelMat();

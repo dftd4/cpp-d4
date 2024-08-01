@@ -71,7 +71,7 @@ int test_numgrad(TMolecule &mol, const int charge, const dparam &par) {
     d4grad[i] = 0.0;
   }
   info = get_dispersion(mol, realIdx, charge, d4, par, cutoff, energy, d4grad);
-  if (info != EXIT_SUCCESS) return info;
+  if (!info == EXIT_SUCCESS) return info;
 
   // check translational invariance of analytical gradient
   if (is_trans_invar(mol, d4grad) != EXIT_SUCCESS) return EXIT_FAILURE;
@@ -131,7 +131,7 @@ int test_pbed4_mb01() {
   TMolecule mol;
   int info =
     get_molecule(mb16_43_01_n, mb16_43_01_atoms, mb16_43_01_coord, mol);
-  if (info != EXIT_SUCCESS) return info;
+  if (!info == EXIT_SUCCESS) return info;
 
   return test_numgrad(mol, charge, par);
 };

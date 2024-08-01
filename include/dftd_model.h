@@ -44,6 +44,8 @@ class TD4Model {
       double wf_scale = wf_default
     );
 
+    virtual ~TD4Model() {};
+
     int weight_references(
       const TMolecule &mol,
       const TIVector &realIdx,
