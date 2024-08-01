@@ -273,7 +273,7 @@ static const double refcovcn1[2]{
   0.00000000000000,
   0.89422436546040,
 };
-static const double refq1[2]{
+static const double refq_eeq1[2]{
   0.00000000000000,
   0.00000000000000,
 };
@@ -311,7 +311,7 @@ static const int refc1[2]{
 static const double refcovcn2[1]{
   0.00000000000000,
 };
-static const double refq2[1]{
+static const double refq_eeq2[1]{
   0.00000000000000,
 };
 static const double refsq2[1]{
@@ -342,7 +342,7 @@ static const double refcovcn3[3]{
   0.80196797025252,
   4.55700000000000,
 };
-static const double refq3[3]{
+static const double refq_eeq3[3]{
   0.00000000000000,
   0.37061732228445,
   0.502335497838,
@@ -394,7 +394,7 @@ static const double refcovcn4[4]{
   1.75692293756846,
   8.44900000000000,
 };
-static const double refq4[4]{
+static const double refq_eeq4[4]{
   0.00000000000000,
   0.17355187691088,
   0.31121011558254,
@@ -457,7 +457,7 @@ static const double refcovcn5[5]{
   2.79150308430417,
   4.41327468359181,
 };
-static const double refq5[5]{
+static const double refq_eeq5[5]{
   0.00000000000000,
   -0.10464538187607,
   -0.20153708141000,
@@ -532,7 +532,7 @@ static const double refcovcn6[7]{
   2.91832701804388,
   0.85560990866661,
 };
-static const double refq6[7]{
+static const double refq_eeq6[7]{
   0.00000000000000,
   -0.17123705791311,
   -0.14210003554128,
@@ -624,7 +624,7 @@ static const double refcovcn7[5]{
   2.58039902538908,
   0.98085535554904,
 };
-static const double refq7[5]{
+static const double refq_eeq7[5]{
   0.00000000000000,
   -0.35298592555229,
   -0.30125788296606,
@@ -696,7 +696,7 @@ static const double refcovcn8[4]{
   1.61123940672270,
   0.97984400975835,
 };
-static const double refq8[4]{
+static const double refq_eeq8[4]{
   0.00000000000000,
   -0.35471470167212,
   -0.59881526060460,
@@ -756,7 +756,7 @@ static const double refcovcn9[2]{
   0.00000000000000,
   0.74076991274917,
 };
-static const double refq9[2]{
+static const double refq_eeq9[2]{
   0.00000000000000,
   -0.2477391549,
 };
@@ -794,7 +794,7 @@ static const int refc9[2]{
 static const double refcovcn10[1]{
   0.00000000000000,
 };
-static const double refq10[1]{
+static const double refq_eeq10[1]{
   0.0000000000,
 };
 static const double refsq10[1]{
@@ -825,7 +825,7 @@ static const double refcovcn11[3]{
   0.78077255822701,
   6.00100000000000,
 };
-static const double refq11[3]{
+static const double refq_eeq11[3]{
   0.00000000000000,
   0.37895090683878,
   0.543073552864,
@@ -877,7 +877,7 @@ static const double refcovcn12[4]{
   1.66972660811953,
   13.95600000000000,
 };
-static const double refq12[4]{
+static const double refq_eeq12[4]{
   0.00000000000000,
   0.32933884303798,
   0.51074920852765,
@@ -939,7 +939,7 @@ static const double refcovcn13[4]{
   1.73262223552501,
   2.61541321571983,
 };
-static const double refq13[4]{
+static const double refq_eeq13[4]{
   0.00000000000000,
   0.03709152257935,
   0.05079767549293,
@@ -1002,7 +1002,7 @@ static const double refcovcn14[5]{
   2.80029114356397,
   3.66675219599495,
 };
-static const double refq14[5]{
+static const double refq_eeq14[5]{
   0.00000000000000,
   0.01649127941162,
   -0.00640083798505,
@@ -1074,7 +1074,7 @@ static const double refcovcn15[4]{
   1.95559430261502,
   2.92666412421238,
 };
-static const double refq15[4]{
+static const double refq_eeq15[4]{
   0.00000000000000,
   -0.17987135979307,
   -0.12671124139840,
@@ -1135,7 +1135,7 @@ static const double refcovcn16[3]{
   0.92198495968462,
   1.84453813661707,
 };
-static const double refq16[3]{
+static const double refq_eeq16[3]{
   0.00000000000000,
   -0.16267234588041,
   -0.237751714488,
@@ -1185,7 +1185,7 @@ static const double refcovcn17[2]{
   0.00000000000000,
   0.84439969796621,
 };
-static const double refq17[2]{
+static const double refq_eeq17[2]{
   0.00000000000000,
   -0.1504505745,
 };
@@ -1224,7 +1224,7 @@ static const int refc17[2]{
 static const double refcovcn18[1]{
   0.00000000000000,
 };
-static const double refq18[1]{
+static const double refq_eeq18[1]{
   0.0000000000,
 };
 static const double refsq18[1]{
@@ -1255,7 +1255,7 @@ static const double refcovcn19[3]{
   0.77389074718844,
   11.45000000000000,
 };
-static const double refq19[3]{
+static const double refq_eeq19[3]{
   0.00000000000000,
   0.44376242787490,
   0.304000000000,
@@ -1307,7 +1307,7 @@ static const double refcovcn20[4]{
   1.57758711825521,
   15.14000000000000,
 };
-static const double refq20[4]{
+static const double refq_eeq20[4]{
   0.00000000000000,
   0.31814452979636,
   0.50078886624431,
@@ -1369,7 +1369,7 @@ static const double refcovcn21[4]{
   2.50274820582596,
   3.83500003814697,
 };
-static const double refq21[4]{
+static const double refq_eeq21[4]{
   0.00000000000000,
   0.50144727255861,
   0.62485373296540,
@@ -1431,7 +1431,7 @@ static const double refcovcn22[4]{
   3.43281247525220,
   4.43849000000000,
 };
-static const double refq22[4]{
+static const double refq_eeq22[4]{
   0.00000000000000,
   0.32259167829296,
   0.53505953733387,
@@ -1493,7 +1493,7 @@ static const double refcovcn23[4]{
   2.62026342999598,
   3.38800000000000,
 };
-static const double refq23[4]{
+static const double refq_eeq23[4]{
   0.00000000000000,
   0.30538713298844,
   0.39745931358650,
@@ -1555,7 +1555,7 @@ static const double refcovcn24[4]{
   9.59333666980809,
   5.09941611449080,
 };
-static const double refq24[4]{
+static const double refq_eeq24[4]{
   0.00000000000000,
   0.17721817570715,
   0.16754955881404,
@@ -1616,7 +1616,7 @@ static const double refcovcn25[3]{
   1.45861721080984,
   8.78012041793345,
 };
-static const double refq25[3]{
+static const double refq_eeq25[3]{
   0.00000000000000,
   0.26888428905691,
   -0.014387948072,
@@ -1667,7 +1667,7 @@ static const double refcovcn26[3]{
   1.52985788829933,
   8.47495927159456,
 };
-static const double refq26[3]{
+static const double refq_eeq26[3]{
   0.00000000000000,
   0.16108330144470,
   0.054932425134,
@@ -1719,7 +1719,7 @@ static const double refcovcn27[4]{
   2.73732238386544,
   7.27710111777824,
 };
-static const double refq27[4]{
+static const double refq_eeq27[4]{
   0.00000000000000,
   0.21568151580380,
   0.20590049778110,
@@ -1781,7 +1781,7 @@ static const double refcovcn28[4]{
   6.15501721386632,
   5.91752241519496,
 };
-static const double refq28[4]{
+static const double refq_eeq28[4]{
   0.00000000000000,
   0.09850839901243,
   0.02948298358915,
@@ -1841,7 +1841,7 @@ static const double refcovcn29[2]{
   0.00000000000000,
   0.89816244646957,
 };
-static const double refq29[2]{
+static const double refq_eeq29[2]{
   0.00000000000000,
   0.0545062888,
 };
@@ -1881,7 +1881,7 @@ static const double refcovcn30[2]{
   0.00000000000000,
   1.75336283145604,
 };
-static const double refq30[2]{
+static const double refq_eeq30[2]{
   0.00000000000000,
   0.2579691884,
 };
@@ -1922,7 +1922,7 @@ static const double refcovcn31[3]{
   0.88820287155353,
   1.78721228422408,
 };
-static const double refq31[3]{
+static const double refq_eeq31[3]{
   0.00000000000000,
   0.02870304944818,
   0.045114169232,
@@ -1976,7 +1976,7 @@ static const double refcovcn32[5]{
   2.78448725734282,
   3.71823460680579,
 };
-static const double refq32[5]{
+static const double refq_eeq32[5]{
   0.00000000000000,
   0.00938786608492,
   -0.00592798448224,
@@ -2048,7 +2048,7 @@ static const double refcovcn33[4]{
   1.93762986034873,
   2.90829444959119,
 };
-static const double refq33[4]{
+static const double refq_eeq33[4]{
   0.00000000000000,
   -0.09954248086481,
   -0.11896736577051,
@@ -2109,7 +2109,7 @@ static const double refcovcn34[3]{
   0.92195274896170,
   1.84493749809528,
 };
-static const double refq34[3]{
+static const double refq_eeq34[3]{
   0.00000000000000,
   -0.12327157100582,
   -0.175358037223,
@@ -2159,7 +2159,7 @@ static const double refcovcn35[2]{
   0.00000000000000,
   0.87141367228098,
 };
-static const double refq35[2]{
+static const double refq_eeq35[2]{
   0.00000000000000,
   -0.1449078212,
 };
@@ -2198,7 +2198,7 @@ static const int refc35[2]{
 static const double refcovcn36[1]{
   0.00000000000000,
 };
-static const double refq36[1]{
+static const double refq_eeq36[1]{
   0.0000000000,
 };
 static const double refsq36[1]{
@@ -2229,7 +2229,7 @@ static const double refcovcn37[3]{
   0.77155167960451,
   12.39000000000000,
 };
-static const double refq37[3]{
+static const double refq_eeq37[3]{
   0.00000000000000,
   0.44852683448077,
   0.416000000000,
@@ -2281,7 +2281,7 @@ static const double refcovcn38[4]{
   1.54805734413866,
   15.12100028991699,
 };
-static const double refq38[4]{
+static const double refq_eeq38[4]{
   0.00000000000000,
   0.42643340166796,
   0.64902814271780,
@@ -2342,7 +2342,7 @@ static const double refcovcn39[3]{
   1.61670701598223,
   2.43996146811665,
 };
-static const double refq39[3]{
+static const double refq_eeq39[3]{
   0.00000000000000,
   0.57618546114280,
   0.723128476321,
@@ -2394,7 +2394,7 @@ static const double refcovcn40[4]{
   3.35991209283567,
   6.09300000000000,
 };
-static const double refq40[4]{
+static const double refq_eeq40[4]{
   0.00000000000000,
   0.34661262612707,
   0.56547785565182,
@@ -2456,7 +2456,7 @@ static const double refcovcn41[4]{
   2.61865286219105,
   4.02900000000000,
 };
-static const double refq41[4]{
+static const double refq_eeq41[4]{
   0.00000000000000,
   0.42830519499403,
   0.56050948600940,
@@ -2518,7 +2518,7 @@ static const double refcovcn42[4]{
   10.77850977361032,
   5.59646145748005,
 };
-static const double refq42[4]{
+static const double refq_eeq42[4]{
   0.00000000000000,
   0.46738200215089,
   0.47338670395900,
@@ -2579,7 +2579,7 @@ static const double refcovcn43[3]{
   1.56460355314490,
   8.94426823783675,
 };
-static const double refq43[3]{
+static const double refq_eeq43[3]{
   0.00000000000000,
   0.24709379453256,
   0.181981739171,
@@ -2630,7 +2630,7 @@ static const double refcovcn44[3]{
   1.82293327778554,
   8.72336154530085,
 };
-static const double refq44[3]{
+static const double refq_eeq44[3]{
   0.00000000000000,
   0.32415456703039,
   0.363756744985,
@@ -2682,7 +2682,7 @@ static const double refcovcn45[4]{
   2.88090049147235,
   4.69798180984017,
 };
-static const double refq45[4]{
+static const double refq_eeq45[4]{
   0.00000000000000,
   0.14509956942986,
   0.18388211183689,
@@ -2743,7 +2743,7 @@ static const double refcovcn46[3]{
   1.82751376419277,
   5.62156480548985,
 };
-static const double refq46[3]{
+static const double refq_eeq46[3]{
   0.00000000000000,
   0.22956514930613,
   0.554449714293,
@@ -2793,7 +2793,7 @@ static const double refcovcn47[2]{
   0.00000000000000,
   0.91215552676727,
 };
-static const double refq47[2]{
+static const double refq_eeq47[2]{
   0.00000000000000,
   0.1067036177,
 };
@@ -2833,7 +2833,7 @@ static const double refcovcn48[2]{
   0.00000000000000,
   1.77531555102521,
 };
-static const double refq48[2]{
+static const double refq_eeq48[2]{
   0.00000000000000,
   0.2189854054,
 };
@@ -2875,7 +2875,7 @@ static const double refcovcn49[4]{
   1.78495637384615,
   2.70420959057537,
 };
-static const double refq49[4]{
+static const double refq_eeq49[4]{
   0.00000000000000,
   0.06391398485994,
   0.10806425732282,
@@ -2938,7 +2938,7 @@ static const double refcovcn50[5]{
   2.77047146659601,
   3.70466711294240,
 };
-static const double refq50[5]{
+static const double refq_eeq50[5]{
   0.00000000000000,
   0.03599066704066,
   0.04368851386536,
@@ -3010,7 +3010,7 @@ static const double refcovcn51[4]{
   1.87397783659382,
   2.81393944504634,
 };
-static const double refq51[4]{
+static const double refq_eeq51[4]{
   0.00000000000000,
   -0.01439446368141,
   -0.01543201581300,
@@ -3071,7 +3071,7 @@ static const double refcovcn52[3]{
   0.94900106848812,
   1.89954395376061,
 };
-static const double refq52[3]{
+static const double refq_eeq52[3]{
   0.00000000000000,
   -0.09115200126999,
   -0.096780033450,
@@ -3121,7 +3121,7 @@ static const double refcovcn53[2]{
   0.00000000000000,
   0.91239969640123,
 };
-static const double refq53[2]{
+static const double refq_eeq53[2]{
   0.00000000000000,
   -0.1374076768,
 };
@@ -3160,7 +3160,7 @@ static const int refc53[2]{
 static const double refcovcn54[1]{
   0.00000000000000,
 };
-static const double refq54[1]{
+static const double refq_eeq54[1]{
   0.0000000000,
 };
 static const double refsq54[1]{
@@ -3191,7 +3191,7 @@ static const double refcovcn55[3]{
   0.78131762864252,
   13.94000000000000,
 };
-static const double refq55[3]{
+static const double refq_eeq55[3]{
   0.00000000000000,
   0.46524059775602,
   0.492000000000,
@@ -3243,7 +3243,7 @@ static const double refcovcn56[4]{
   1.47819220471197,
   14.67700004577637,
 };
-static const double refq56[4]{
+static const double refq_eeq56[4]{
   0.00000000000000,
   0.42198236936188,
   0.63397117832958,
@@ -3304,7 +3304,7 @@ static const double refcovcn57[3]{
   1.60493415835961,
   2.41715875994685,
 };
-static const double refq57[3]{
+static const double refq_eeq57[3]{
   0.00000000000000,
   0.65599616057853,
   0.830848605303,
@@ -3353,7 +3353,7 @@ static const int refc57[3]{
 static const double refcovcn58[1]{
   2.32446531201143,
 };
-static const double refq58[1]{
+static const double refq_eeq58[1]{
   0.7873339331,
 };
 static const double refsq58[1]{
@@ -3383,7 +3383,7 @@ static const double refcovcn59[2]{
   0.00000000000000,
   2.44976242184767,
 };
-static const double refq59[2]{
+static const double refq_eeq59[2]{
   0.00000000000000,
   0.7825521412,
 };
@@ -3423,7 +3423,7 @@ static const double refcovcn60[2]{
   0.00000000000000,
   2.45621204848065,
 };
-static const double refq60[2]{
+static const double refq_eeq60[2]{
   0.00000000000000,
   0.7860843086,
 };
@@ -3463,7 +3463,7 @@ static const double refcovcn61[2]{
   0.00000000000000,
   2.45653273553474,
 };
-static const double refq61[2]{
+static const double refq_eeq61[2]{
   0.00000000000000,
   0.7912465341,
 };
@@ -3503,7 +3503,7 @@ static const double refcovcn62[2]{
   0.00000000000000,
   2.45472309204146,
 };
-static const double refq62[2]{
+static const double refq_eeq62[2]{
   0.00000000000000,
   0.7897250610,
 };
@@ -3543,7 +3543,7 @@ static const double refcovcn63[2]{
   0.00000000000000,
   1.53272635693059,
 };
-static const double refq63[2]{
+static const double refq_eeq63[2]{
   0.00000000000000,
   0.6532628141,
 };
@@ -3583,7 +3583,7 @@ static const double refcovcn64[2]{
   0.00000000000000,
   2.41754019361739,
 };
-static const double refq64[2]{
+static const double refq_eeq64[2]{
   0.00000000000000,
   0.7899444636,
 };
@@ -3623,7 +3623,7 @@ static const double refcovcn65[2]{
   0.00000000000000,
   2.45190848719608,
 };
-static const double refq65[2]{
+static const double refq_eeq65[2]{
   0.00000000000000,
   0.7946243928,
 };
@@ -3663,7 +3663,7 @@ static const double refcovcn66[2]{
   0.00000000000000,
   2.44535641509585,
 };
-static const double refq66[2]{
+static const double refq_eeq66[2]{
   0.00000000000000,
   0.7951810734,
 };
@@ -3703,7 +3703,7 @@ static const double refcovcn67[2]{
   0.00000000000000,
   2.47312888776754,
 };
-static const double refq67[2]{
+static const double refq_eeq67[2]{
   0.00000000000000,
   0.8093048024,
 };
@@ -3743,7 +3743,7 @@ static const double refcovcn68[2]{
   0.00000000000000,
   2.48043640078965,
 };
-static const double refq68[2]{
+static const double refq_eeq68[2]{
   0.00000000000000,
   0.8130673035,
 };
@@ -3783,7 +3783,7 @@ static const double refcovcn69[2]{
   0.00000000000000,
   2.48120800603580,
 };
-static const double refq69[2]{
+static const double refq_eeq69[2]{
   0.00000000000000,
   0.8140837048,
 };
@@ -3823,7 +3823,7 @@ static const double refcovcn70[2]{
   0.00000000000000,
   2.41884356027485,
 };
-static const double refq70[2]{
+static const double refq_eeq70[2]{
   0.00000000000000,
   0.7841584373,
 };
@@ -3863,7 +3863,7 @@ static const double refcovcn71[2]{
   0.00000000000000,
   2.48673110207243,
 };
-static const double refq71[2]{
+static const double refq_eeq71[2]{
   0.00000000000000,
   0.8226318727,
 };
@@ -3905,7 +3905,7 @@ static const double refcovcn72[4]{
   3.32095096313483,
   4.62300000000000,
 };
-static const double refq72[4]{
+static const double refq_eeq72[4]{
   0.00000000000000,
   0.44266476936835,
   0.68407375970491,
@@ -3967,7 +3967,7 @@ static const double refcovcn73[4]{
   2.55699041057149,
   3.96300000000000,
 };
-static const double refq73[4]{
+static const double refq_eeq73[4]{
   0.00000000000000,
   0.23523422154086,
   0.30980440015125,
@@ -4028,7 +4028,7 @@ static const double refcovcn74[3]{
   1.84852525804219,
   10.44998431099169,
 };
-static const double refq74[3]{
+static const double refq_eeq74[3]{
   0.00000000000000,
   0.31319918056428,
   0.230207052908,
@@ -4079,7 +4079,7 @@ static const double refcovcn75[3]{
   1.69673556648333,
   9.19053013143453,
 };
-static const double refq75[3]{
+static const double refq_eeq75[3]{
   0.00000000000000,
   0.10191716059118,
   -0.034513036233,
@@ -4130,7 +4130,7 @@ static const double refcovcn76[3]{
   1.85014246784508,
   8.97974115543403,
 };
-static const double refq76[3]{
+static const double refq_eeq76[3]{
   0.00000000000000,
   0.19864391765550,
   -0.064740208571,
@@ -4183,7 +4183,7 @@ static const double refcovcn77[5]{
   3.78801363268039,
   4.66121308138933,
 };
-static const double refq77[5]{
+static const double refq_eeq77[5]{
   0.00000000000000,
   -0.01399684403519,
   -0.04786532465344,
@@ -4254,7 +4254,7 @@ static const double refcovcn78[3]{
   1.86072268763509,
   6.46855936294889,
 };
-static const double refq78[3]{
+static const double refq_eeq78[3]{
   0.00000000000000,
   0.00248540621951,
   0.101118882988,
@@ -4304,7 +4304,7 @@ static const double refcovcn79[2]{
   0.00000000000000,
   0.91830179564855,
 };
-static const double refq79[2]{
+static const double refq_eeq79[2]{
   0.00000000000000,
   0.0256095212,
 };
@@ -4344,7 +4344,7 @@ static const double refcovcn80[2]{
   0.00000000000000,
   1.89515764632510,
 };
-static const double refq80[2]{
+static const double refq_eeq80[2]{
   0.00000000000000,
   0.1199114691,
 };
@@ -4386,7 +4386,7 @@ static const double refcovcn81[4]{
   1.73451304607259,
   2.64455909521743,
 };
-static const double refq81[4]{
+static const double refq_eeq81[4]{
   0.00000000000000,
   0.05732791283824,
   0.10187349213041,
@@ -4449,7 +4449,7 @@ static const double refcovcn82[5]{
   2.79951773292937,
   3.76444392234350,
 };
-static const double refq82[5]{
+static const double refq_eeq82[5]{
   0.00000000000000,
   0.11449566751294,
   0.16758459323190,
@@ -4521,7 +4521,7 @@ static const double refcovcn83[4]{
   1.87829610127455,
   2.81907131341312,
 };
-static const double refq83[4]{
+static const double refq_eeq83[4]{
   0.00000000000000,
   0.04276095694715,
   0.06545183973370,
@@ -4582,7 +4582,7 @@ static const double refcovcn84[3]{
   0.93512916979697,
   1.87110482058901,
 };
-static const double refq84[3]{
+static const double refq_eeq84[3]{
   0.00000000000000,
   -0.04479748091835,
   -0.022019956697,
@@ -4632,7 +4632,7 @@ static const double refcovcn85[2]{
   +0.00000000000000,
   +0.97711087656722,
 };
-static const double refq85[2]{
+static const double refq_eeq85[2]{
   +0.00000000000000,
   -0.07596582020000,
 };
@@ -4671,7 +4671,7 @@ static const int refc85[2]{
 static const double refcovcn86[1]{
   +0.00000000000000,
 };
-static const double refq86[1]{
+static const double refq_eeq86[1]{
   +0.00000000000000,
 };
 static const double refsq86[1]{
@@ -4701,7 +4701,7 @@ static const double refcovcn87[2]{
   +0.00000000000000,
   +0.76514673233032,
 };
-static const double refq87[2]{
+static const double refq_eeq87[2]{
   +0.00000000000000,
   +0.07920000000000,
 };
@@ -4742,7 +4742,7 @@ static const double refcovcn88[3]{
   +0.77520757913589,
   +1.54451191425323,
 };
-static const double refq88[3]{
+static const double refq_eeq88[3]{
   +0.00000000000000,
   +0.23880000000000,
   +0.30820000000000,
@@ -4797,7 +4797,7 @@ static const double refcovcn89[7]{
   +3.86818122863770,
   +4.60221958160400,
 };
-static const double refq89[7]{
+static const double refq_eeq89[7]{
   +0.00000000000000,
   +0.11750000000000,
   +0.18970000000000,
@@ -4889,7 +4889,7 @@ static const double refcovcn90[5]{
   +2.50573635101318,
   +3.33462429046631,
 };
-static const double refq90[5]{
+static const double refq_eeq90[5]{
   +0.00000000000000,
   +0.08840000000000,
   +0.15380000000000,
@@ -4963,7 +4963,7 @@ static const double refcovcn91[6]{
   +3.41472434997559,
   +4.33161783218384,
 };
-static const double refq91[6]{
+static const double refq_eeq91[6]{
   +0.00000000000000,
   +0.10670000000000,
   +0.18290000000000,
@@ -5048,7 +5048,7 @@ static const double refcovcn92[7]{
   +3.57048654556274,
   +5.12557458877563,
 };
-static const double refq92[7]{
+static const double refq_eeq92[7]{
   +0.00000000000000,
   +0.07960000000000,
   +0.00000000000000,
@@ -5142,7 +5142,7 @@ static const double refcovcn93[7]{
   +4.23597240447998,
   +5.09381914138794,
 };
-static const double refq93[7]{
+static const double refq_eeq93[7]{
   +0.00000000000000,
   +0.07660000000000,
   +0.13320000000000,
@@ -5236,7 +5236,7 @@ static const double refcovcn94[7]{
   +4.19367313385010,
   +5.02024745941162,
 };
-static const double refq94[7]{
+static const double refq_eeq94[7]{
   +0.00000000000000,
   +0.14950000000000,
   +0.24790000000000,
@@ -5330,7 +5330,7 @@ static const double refcovcn95[7]{
   +4.10353183746338,
   +4.94068670272827,
 };
-static const double refq95[7]{
+static const double refq_eeq95[7]{
   +0.00000000000000,
   +0.15100000000000,
   +0.24100000000000,
@@ -5424,7 +5424,7 @@ static const double refcovcn96[7]{
   +4.05759239196777,
   +4.85972309112549,
 };
-static const double refq96[7]{
+static const double refq_eeq96[7]{
   +0.00000000000000,
   +0.07640000000000,
   +0.13380000000000,
@@ -5516,7 +5516,7 @@ static const double refcovcn97[5]{
   +2.50224256515503,
   +3.36453199386597,
 };
-static const double refq97[5]{
+static const double refq_eeq97[5]{
   +0.00000000000000,
   +0.02210000000000,
   +0.04090000000000,
@@ -5591,7 +5591,7 @@ static const double refcovcn98[7]{
   +0.00000000000000,
   +4.98358106613159,
 };
-static const double refq98[7]{
+static const double refq_eeq98[7]{
   +0.00000000000000,
   +0.15350000000000,
   +0.25390000000000,
@@ -5685,7 +5685,7 @@ static const double refcovcn99[7]{
   +4.11455059051514,
   +4.89267015457153,
 };
-static const double refq99[7]{
+static const double refq_eeq99[7]{
   +0.00000000000000,
   +0.11350000000000,
   +0.19140000000000,
@@ -5779,7 +5779,7 @@ static const double refcovcn100[7]{
   +4.15018892288208,
   +4.97273159027100,
 };
-static const double refq100[7]{
+static const double refq_eeq100[7]{
   +0.00000000000000,
   +0.09860000000000,
   +0.16690000000000,
@@ -5871,7 +5871,7 @@ static const double refcovcn101[5]{
   +2.52414393424988,
   +3.36544203758240,
 };
-static const double refq101[5]{
+static const double refq_eeq101[5]{
   +0.00000000000000,
   +0.06780000000000,
   +0.11580000000000,
@@ -5946,7 +5946,7 @@ static const double refcovcn102[7]{
   +3.62583565711975,
   +3.85555744171143,
 };
-static const double refq102[7]{
+static const double refq_eeq102[7]{
   +0.00000000000000,
   +0.04800000000000,
   +0.08650000000000,
@@ -6040,7 +6040,7 @@ static const double refcovcn103[7]{
   +3.99956941604614,
   +4.77920246124268,
 };
-static const double refq103[7]{
+static const double refq_eeq103[7]{
   +0.00000000000000,
   +0.05050000000000,
   +0.08900000000000,
@@ -6148,19 +6148,19 @@ static const double *refcovcn[MAXELEMENT]{
   refcovcn96,  refcovcn97,  refcovcn98, refcovcn99, refcovcn100, refcovcn101,
   refcovcn102, refcovcn103,
 };
-static const double *refq[MAXELEMENT]{
-  nullptr, refq1,   refq2,   refq3,   refq4,   refq5,  refq6,  refq7,  refq8,
-  refq9,   refq10,  refq11,  refq12,  refq13,  refq14, refq15, refq16, refq17,
-  refq18,  refq19,  refq20,  refq21,  refq22,  refq23, refq24, refq25, refq26,
-  refq27,  refq28,  refq29,  refq30,  refq31,  refq32, refq33, refq34, refq35,
-  refq36,  refq37,  refq38,  refq39,  refq40,  refq41, refq42, refq43, refq44,
-  refq45,  refq46,  refq47,  refq48,  refq49,  refq50, refq51, refq52, refq53,
-  refq54,  refq55,  refq56,  refq57,  refq58,  refq59, refq60, refq61, refq62,
-  refq63,  refq64,  refq65,  refq66,  refq67,  refq68, refq69, refq70, refq71,
-  refq72,  refq73,  refq74,  refq75,  refq76,  refq77, refq78, refq79, refq80,
-  refq81,  refq82,  refq83,  refq84,  refq85,  refq86, refq87, refq88, refq89,
-  refq90,  refq91,  refq92,  refq93,  refq94,  refq95, refq96, refq97, refq98,
-  refq99,  refq100, refq101, refq102, refq103,
+static const double *refq_eeq[MAXELEMENT]{
+  nullptr, refq_eeq1,   refq_eeq2,   refq_eeq3,   refq_eeq4,   refq_eeq5,  refq_eeq6,  refq_eeq7,  refq_eeq8,
+  refq_eeq9,   refq_eeq10,  refq_eeq11,  refq_eeq12,  refq_eeq13,  refq_eeq14, refq_eeq15, refq_eeq16, refq_eeq17,
+  refq_eeq18,  refq_eeq19,  refq_eeq20,  refq_eeq21,  refq_eeq22,  refq_eeq23, refq_eeq24, refq_eeq25, refq_eeq26,
+  refq_eeq27,  refq_eeq28,  refq_eeq29,  refq_eeq30,  refq_eeq31,  refq_eeq32, refq_eeq33, refq_eeq34, refq_eeq35,
+  refq_eeq36,  refq_eeq37,  refq_eeq38,  refq_eeq39,  refq_eeq40,  refq_eeq41, refq_eeq42, refq_eeq43, refq_eeq44,
+  refq_eeq45,  refq_eeq46,  refq_eeq47,  refq_eeq48,  refq_eeq49,  refq_eeq50, refq_eeq51, refq_eeq52, refq_eeq53,
+  refq_eeq54,  refq_eeq55,  refq_eeq56,  refq_eeq57,  refq_eeq58,  refq_eeq59, refq_eeq60, refq_eeq61, refq_eeq62,
+  refq_eeq63,  refq_eeq64,  refq_eeq65,  refq_eeq66,  refq_eeq67,  refq_eeq68, refq_eeq69, refq_eeq70, refq_eeq71,
+  refq_eeq72,  refq_eeq73,  refq_eeq74,  refq_eeq75,  refq_eeq76,  refq_eeq77, refq_eeq78, refq_eeq79, refq_eeq80,
+  refq_eeq81,  refq_eeq82,  refq_eeq83,  refq_eeq84,  refq_eeq85,  refq_eeq86, refq_eeq87, refq_eeq88, refq_eeq89,
+  refq_eeq90,  refq_eeq91,  refq_eeq92,  refq_eeq93,  refq_eeq94,  refq_eeq95, refq_eeq96, refq_eeq97, refq_eeq98,
+  refq_eeq99,  refq_eeq100, refq_eeq101, refq_eeq102, refq_eeq103,
 };
 static const double *refsq[MAXELEMENT]{
   nullptr, refsq1,  refsq2,  refsq3,  refsq4,   refsq5,   refsq6,   refsq7,

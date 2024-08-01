@@ -75,6 +75,7 @@ int TD4Model::weight_references(
   const TIVector &realIdx,
   const TVector<double> &cn,
   const TVector<double> &q,
+  const TMatrix<double> &refq,
   TMatrix<double> &gwvec,
   TMatrix<double> &dgwdcn,
   TMatrix<double> &dgwdq,
@@ -127,13 +128,12 @@ int TD4Model::weight_references(
           }
         }
 
-        gwvec(iref, ii) = gwk * zeta(ga, gi, refq[izp][iref] + zi, q(ii) + zi);
-        dgwdq(iref, ii) = gwk * dzeta(ga, gi, refq[izp][iref] + zi, q(ii) + zi);
+        gwvec(iref, ii) = gwk * zeta(ga, gi, refq(iref, ii) + zi, q(ii) + zi);
+        dgwdq(iref, ii) = gwk * dzeta(ga, gi, refq(iref, ii) + zi, q(ii) + zi);
 
         dgwk = norm * (dexpw - expw * dnorm * norm);
         if (is_exceptional(dgwk)) { dgwk = 0.0; }
-        dgwdcn(iref, ii) =
-          dgwk * zeta(ga, gi, refq[izp][iref] + zi, q(ii) + zi);
+        dgwdcn(iref, ii) = dgwk * zeta(ga, gi, refq(iref, ii) + zi, q(ii) + zi);
       }
     }
   } else {
@@ -170,7 +170,7 @@ int TD4Model::weight_references(
           }
         }
 
-        gwvec(iref, ii) = gwk * zeta(ga, gi, refq[izp][iref] + zi, q(ii) + zi);
+        gwvec(iref, ii) = gwk * zeta(ga, gi, refq(iref, ii) + zi, q(ii) + zi);
       }
     }
   }
@@ -271,6 +271,18 @@ int TD4Model::get_atomic_c6(
   }
 
   alpha.DelMat();
+
+  return EXIT_SUCCESS;
+}
+
+int TD4Model::set_refq_eeq(const TMolecule &mol, TMatrix<double> &refq) const {
+  int izp;
+  for (int iat = 0; iat != mol.NAtoms; iat++) {
+    izp = mol.ATNO(iat);
+    for (int iref = 0; iref != refn[izp]; iref++) {
+      refq(iref, iat) = refq_eeq[izp][iref];
+    }
+  }
 
   return EXIT_SUCCESS;
 }
