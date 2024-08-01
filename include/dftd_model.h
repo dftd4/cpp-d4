@@ -44,6 +44,8 @@ class TD4Model {
       double wf_scale = wf_default
     );
 
+    virtual ~TD4Model() {};
+
     int weight_references(
       const TMolecule &mol,
       const TVector<double> &cn,
@@ -68,7 +70,8 @@ class TD4Model {
 
     virtual int set_refq_eeq(const TMolecule &mol, TMatrix<double> &refq) const;
 
-    virtual int set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha) const;
+    virtual int
+      set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha) const;
 };
 
 extern inline double trapzd(const double a[23], const double b[23]);

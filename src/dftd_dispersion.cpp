@@ -174,7 +174,8 @@ int get_dispersion(
       dc6dcn.NewMat(mol.NAtoms, mol.NAtoms);
       dc6dq.NewMat(mol.NAtoms, mol.NAtoms);
     }
-    info = d4.get_atomic_c6(mol, gwvec, dgwdcn, dgwdq, c6, dc6dcn, dc6dq, lgrad);
+    info =
+      d4.get_atomic_c6(mol, gwvec, dgwdcn, dgwdq, c6, dc6dcn, dc6dq, lgrad);
     if (!info == EXIT_SUCCESS) return info;
 
     gwvec.Delete();
