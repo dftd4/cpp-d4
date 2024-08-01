@@ -198,8 +198,8 @@ int TD4Model::get_atomic_c6(
   if (info != EXIT_SUCCESS) return info;
 
   TMatrix<double> alpha;
-  alpha.NewMat(mol.NAtoms, 23 * mref);
-  info = set_refalpha_eeq(mol, alpha);
+  alpha.NewMat(realIdx.Max() + 1, 23 * mref);
+  info = set_refalpha_eeq(mol, realIdx, alpha);
   if (info != EXIT_SUCCESS) return info;
 
   if (lgrad) {
@@ -224,7 +224,7 @@ int TD4Model::get_atomic_c6(
         for (int iref = 0; iref != refn[izp]; iref++) {
           for (int jref = 0; jref != refn[jzp]; jref++) {
             refc6 =
-              thopi * trapzd(&alpha[iat][23 * iref], &alpha[jat][23 * jref]);
+              thopi * trapzd(&alpha[ii][23 * iref], &alpha[jj][23 * jref]);
             dc6 += gwvec(iref, ii) * gwvec(jref, jj) * refc6;
 
             dc6dcni += dgwdcn(iref, ii) * gwvec(jref, jj) * refc6;
@@ -259,7 +259,7 @@ int TD4Model::get_atomic_c6(
         for (int iref = 0; iref != refn[izp]; iref++) {
           for (int jref = 0; jref != refn[jzp]; jref++) {
             refc6 =
-              thopi * trapzd(&alpha[iat][23 * iref], &alpha[jat][23 * jref]);
+              thopi * trapzd(&alpha[ii][23 * iref], &alpha[jj][23 * jref]);
             dc6 += gwvec(iref, ii) * gwvec(jref, jj) * refc6;
           }
         }
@@ -296,12 +296,18 @@ int TD4Model::set_refq_eeq(
   return EXIT_SUCCESS;
 }
 
-int TD4Model::set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha)
-  const {
-  int izp{0}, is{0};
+int TD4Model::set_refalpha_eeq(
+  const TMolecule &mol,
+  const TIVector &realIdx,
+  TMatrix<double> &alpha
+) const {
+  int izp{0}, ii{0}, is{0};
   double iz{0.0}, aiw{0.0};
 
   for (int iat = 0; iat != mol.NAtoms; iat++) {
+    ii = realIdx(iat);
+    if (ii < 0) continue;
+
     izp = mol.ATNO(iat);
     for (int ir = 0; ir != refn[izp]; ir++) {
       is = refsys[izp][ir];
@@ -311,7 +317,7 @@ int TD4Model::set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha)
       for (int k = 0; k != 23; k++) {
         aiw = secscale[is] * secalpha[is][k] *
               zeta(ga, gam[is] * gc, iz, refsq[izp][ir] + iz);
-        alpha(iat, 23 * ir + k) = std::max(
+        alpha(ii, 23 * ir + k) = std::max(
           0.0,
           refascale[izp][ir] *
             (refalpha[izp][23 * ir + k] - refscount[izp][ir] * aiw)

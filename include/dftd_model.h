@@ -76,8 +76,11 @@ class TD4Model {
       TMatrix<double> &refq
     ) const;
 
-    virtual int
-      set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha) const;
+    virtual int set_refalpha_eeq(
+      const TMolecule &mol,
+      const TIVector &realIdx,
+      TMatrix<double> &alpha
+    ) const;
 };
 
 extern inline double trapzd(const double a[23], const double b[23]);
