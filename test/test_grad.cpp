@@ -75,6 +75,8 @@ int test_numgrad(TMolecule &mol, const int charge, const dparam &par) {
     }
   }
 
+  delete[] d4grad;
+
   return EXIT_SUCCESS;
 }
 
