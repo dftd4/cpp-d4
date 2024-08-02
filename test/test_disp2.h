@@ -19,13 +19,13 @@
 #define TEST_DISP2_H
 
 extern int test_energy2(
-  const int n,
+  int n,
   const char atoms[][4],
   const double coord[],
-  const int charge,
-  const double ref
+  int charge,
+  double ref
 );
 
-extern int test_disp2(void);
+extern int test_disp2();
 
 #endif // TEST_DISP2_H

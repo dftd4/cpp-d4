@@ -190,12 +190,12 @@ int TD4Model::get_atomic_c6(
   // maximum number of reference systems
   int mref{0};
   info = get_max_ref(mol, mref);
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   TMatrix<double> alpha;
   alpha.NewMat(mol.NAtoms, 23 * mref);
   info = set_refalpha_eeq(mol, alpha);
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   if (lgrad) {
     double dc6dcni{0.0}, dc6dcnj{0.0}, dc6dqi{0.0}, dc6dqj{0.0};

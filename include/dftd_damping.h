@@ -37,6 +37,6 @@ namespace dftd4 {
  * @returns Exit status.
  */
 extern int
-  d4par(const std::string func, dftd4::dparam &par, const bool latm = true);
+  d4par(const std::string func, dftd4::dparam &par, bool latm = true);
 
 } // namespace dftd4

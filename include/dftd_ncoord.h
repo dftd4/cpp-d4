@@ -51,7 +51,7 @@ extern int calc_distances(const TMolecule &mol, TMatrix<double> &dist);
 extern int get_ncoord_erf(
   const TMolecule &mol,
   const TMatrix<double> &dist,
-  const double cutoff,
+  double cutoff,
   TVector<double> &cn,
   TMatrix<double> &dcndr,
   bool lgrad = false
@@ -69,7 +69,7 @@ extern int get_ncoord_erf(
 extern int ncoord_erf(
   const TMolecule &mol,
   const TMatrix<double> &dist,
-  const double cutoff,
+  double cutoff,
   TVector<double> &cn
 );
 
@@ -87,7 +87,7 @@ extern int ncoord_erf(
 extern int dncoord_erf(
   const TMolecule &mol,
   const TMatrix<double> &dist,
-  const double cutoff,
+  double cutoff,
   TVector<double> &cn,
   TMatrix<double> &dcndr
 );
@@ -104,7 +104,7 @@ extern int dncoord_erf(
 extern int get_ncoord_d4(
   const TMolecule &mol,
   const TMatrix<double> &dist,
-  const double cutoff,
+  double cutoff,
   TVector<double> &cn,
   TMatrix<double> &dcndr,
   bool lgrad = false
@@ -122,7 +122,7 @@ extern int get_ncoord_d4(
 extern int ncoord_d4(
   const TMolecule &mol,
   const TMatrix<double> &dist,
-  const double cutoff,
+  double cutoff,
   TVector<double> &cn
 );
 
@@ -140,7 +140,7 @@ extern int ncoord_d4(
 extern int dncoord_d4(
   const TMolecule &mol,
   const TMatrix<double> &dist,
-  const double cutoff,
+  double cutoff,
   TVector<double> &cn,
   TMatrix<double> &dcndr
 );
@@ -173,14 +173,14 @@ extern double derf_count(double k, double rr);
  * @param lgrad Flag for gradient.
  */
 extern int cut_coordination_number(
-  const double cn_max,
+  double cn_max,
   TVector<double> &cn,
   TMatrix<double> &dcndr,
   bool lgrad
 );
 
-extern inline double log_cn_cut(const double cn_max, const double cn);
+extern inline double log_cn_cut(double cn_max, double cn);
 
-extern inline double dlog_cn_cut(const double cn_max, const double cn);
+extern inline double dlog_cn_cut(double cn_max, double cn);
 
 }; // namespace dftd4

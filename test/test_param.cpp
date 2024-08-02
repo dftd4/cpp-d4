@@ -40,7 +40,7 @@ int test_rational_damping(const double ref[], TCutoff cutoff) {
   int charge = upu23_0a_charge;
   TMolecule mol;
   info = get_molecule(upu23_0a_n, upu23_0a_atoms, upu23_0a_coord, mol);
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   // create default D4 model
   TD4Model d4;
@@ -51,7 +51,7 @@ int test_rational_damping(const double ref[], TCutoff cutoff) {
 
     energy = 0.0;
     info = get_dispersion(mol, charge, d4, par, cutoff, energy, nullptr);
-    if (!info == EXIT_SUCCESS) return info;
+    if (info != EXIT_SUCCESS) return info;
 
     if (check(energy, ref[i]) == EXIT_FAILURE) {
       print_fail(funcs[i], energy, ref[i]);
@@ -67,13 +67,13 @@ int test_param() {
 
   TCutoff cutoff = TCutoff(disp2_default, 15.0);
   info = test_rational_damping(ref, cutoff);
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   // do not use cutoffs
   double huge = std::numeric_limits<double>::max();
   TCutoff no_cutoff = TCutoff(huge, huge, huge, huge);
   info = test_rational_damping(ref_no_cutoff, no_cutoff);
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   return EXIT_SUCCESS;
 }

@@ -24,15 +24,15 @@
 
 namespace dftd4 {
 
-extern inline double fdmpr_bj(const int n, const double r, const double c);
-extern inline double fdmprdr_bj(const int n, const double r, const double c);
+extern inline double fdmpr_bj(int n, double r, double c);
+extern inline double fdmprdr_bj(int n, double r, double c);
 
 // Generic wrappers for two- and three-body dispersion
 
 extern int get_dispersion2(
   const TMolecule &mol,
   const TMatrix<double> &dist,
-  const double cutoff,
+  double cutoff,
   const dparam &par,
   const TMatrix<double> &c6,
   const TMatrix<double> &dc6dcn,
@@ -47,7 +47,7 @@ extern int get_dispersion2(
 extern int get_dispersion3(
   const TMolecule &mol,
   const TMatrix<double> &dist,
-  const double cutoff,
+  double cutoff,
   const dparam &par,
   const TMatrix<double> &c6,
   const TMatrix<double> &dc6dcn,
@@ -64,7 +64,7 @@ extern int get_dispersion3(
 extern int get_dispersion2_energy(
   const TMolecule &mol,
   const TMatrix<double> &dist,
-  const double cutoff,
+  double cutoff,
   const dparam &par,
   const TMatrix<double> &c6,
   TVector<double> &energy
@@ -73,7 +73,7 @@ extern int get_dispersion2_energy(
 extern int get_dispersion2_derivs(
   const TMolecule &mol,
   const TMatrix<double> &dist,
-  const double cutoff,
+  double cutoff,
   const dparam &par,
   const TMatrix<double> &c6,
   const TMatrix<double> &dc6dcn,

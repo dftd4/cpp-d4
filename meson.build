@@ -22,6 +22,7 @@ project(
   license: 'LGPL3-or-later',
   meson_version: '>=0.51',
   default_options: [
+    'cpp_std=c++11',
     'default_library=both',
   ],
 )

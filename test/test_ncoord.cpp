@@ -39,7 +39,7 @@ int test_cn(
   // assemble molecule
   TMolecule mol;
   info = get_molecule(n, atoms, coord, mol);
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   // get reference
   TVector<double> ref;
@@ -58,7 +58,7 @@ int test_cn(
   TMatrix<double> dcndr; // empty because no gradient needed
   cn.New(n);
   info = get_ncoord_d4(mol, dist, 9999.9, cn, dcndr, false);
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   // compare to ref
   for (int i = 0; i != n; i++) {
@@ -76,12 +76,12 @@ int test_ncoord() {
   info = test_cn(
     mb16_43_01_n, mb16_43_01_atoms, mb16_43_01_coord, mb16_43_01_ref_cn
   );
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   info = test_cn(
     rost61_m1_n, rost61_m1_atoms, rost61_m1_coord, rost61_m1_ref_cn
   );
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   return EXIT_SUCCESS;
 }
