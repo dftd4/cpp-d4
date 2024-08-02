@@ -191,7 +191,7 @@ template <class T> class TMatrix {
     std::memcpy(p, m.p, mem);
   }
 
-  void Print(char name[] = "unknown") {
+  void Print(const char name[] = "unknown") {
     printf("Matrix printed: %s (%d, %d)\n", name, rows, cols);
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < cols; j++) {
