@@ -50,9 +50,9 @@ bool check(
   double diff;
 
   if (rel) {
-    diff = fabs(actual - expected) / expected;
+    diff = std::fabs(actual - expected) / expected;
   } else {
-    diff = fabs(actual - expected);
+    diff = std::fabs(actual - expected);
   }
 
   if (diff > epsilon) {
@@ -70,9 +70,9 @@ bool check(
   float diff;
 
   if (rel) {
-    diff = fabs(actual - expected) / expected;
+    diff = std::fabs(actual - expected) / expected;
   } else {
-    diff = fabs(actual - expected);
+    diff = std::fabs(actual - expected);
   }
 
   if (diff > epsilon) {
