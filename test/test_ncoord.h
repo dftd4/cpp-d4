@@ -39,7 +39,7 @@ static const double rost61_m1_ref_cn[22] {
 };
 
 extern int test_cn(
-  const int n,
+  int n,
   const char atoms[][3],
   const double coord[],
   const double ref_cn[]
