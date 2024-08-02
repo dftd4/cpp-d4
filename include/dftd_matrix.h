@@ -58,7 +58,7 @@ template <class T> class TVector {
   void New(int VectorLength) { return NewVector(VectorLength); }
   void NewVec(int VectorLength) { return NewVector(VectorLength); }
 
-  void Delete(void) {
+  void Delete() {
     if (p != nullptr && N != 0) { delete[] p; }
     p = nullptr;
     N = 0;
@@ -73,7 +73,7 @@ template <class T> class TVector {
     mem = (long int)N * ElementSize;
     std::memcpy(p, v.p, mem);
   }
-  void Init(void) {
+  void Init() {
     if (p != nullptr) {
       long int mem = (long int)N * ElementSize;
       std::memset(p, 0, mem);
@@ -136,14 +136,14 @@ template <class T> class TMatrix {
   void New(int r, int c) { return NewMatrix(r, c); }
   void NewMat(int r, int c) { return NewMatrix(r, c); }
 
-  void Delete(void) {
+  void Delete() {
     if (p != nullptr && rows * cols != 0) { delete[] p; }
     rows = 0;
     cols = 0;
     p = nullptr;
   }
 
-  void Init(void) {
+  void Init() {
     long int mem;
     if (p != nullptr) {
       mem = (long int)cols * (long int)rows * ElementSize;
@@ -151,7 +151,7 @@ template <class T> class TMatrix {
     }
   }
 
-  void Transpose(void) {
+  void Transpose() {
     T x;
     int i, j;
 

@@ -26,6 +26,6 @@ extern int test_energy2(
   const double ref
 );
 
-extern int test_disp2(void);
+extern int test_disp2();
 
 #endif // TEST_DISP2_H

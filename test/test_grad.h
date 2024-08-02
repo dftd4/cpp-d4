@@ -26,10 +26,10 @@ using namespace dftd4;
 extern int test_numgrad(TMolecule &mol, const int charge, const dparam &par);
 extern int is_trans_invar(const TMolecule &mol, double gradient[]);
 
-extern int test_bp86d4atm_water(void);
-extern int test_pbed4_mb01(void);
-extern int test_tpss0d4mbd_rost61m1(void);
+extern int test_bp86d4atm_water();
+extern int test_pbed4_mb01();
+extern int test_tpss0d4mbd_rost61m1();
 
-extern int test_grad(void);
+extern int test_grad();
 
 #endif // TEST_GRAD_H

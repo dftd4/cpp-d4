@@ -45,6 +45,6 @@ extern int test_cn(
   const double ref_cn[]
 );
 
-extern int test_ncoord(void);
+extern int test_ncoord();
 
 #endif // TEST_NCOORD_H
