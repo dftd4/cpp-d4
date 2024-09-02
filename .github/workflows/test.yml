@@ -68,8 +68,9 @@ jobs:
 
       - name: Install GCC (Linux)
         run: |
-          sudo apt update
-          sudo apt install gcc-${{ env.GCC_V }} g++-${{ env.GCC_V }} gfortran-${{ env.GCC_V }} gcov-${{ env.GCC_V }}
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+          sudo apt-get update
+          sudo apt-get install gcc-${{ env.GCC_V }} g++-${{ env.GCC_V }} gfortran-${{ env.GCC_V }}
 
       - name: Set GCC Version (Linux)
         if: contains(matrix.os, 'ubuntu')
@@ -81,7 +82,7 @@ jobs:
 
       - name: Install CBLAS and LAPACKE
         if: contains(matrix.os, 'ubuntu')
-        run: sudo apt install libopenblas-dev liblapacke liblapacke-dev libatlas-base-dev
+        run: sudo apt-get install libopenblas-dev liblapacke liblapacke-dev libatlas-base-dev
 
       - name: Install meson and test dependencies
         run: pip3 install ${{ env.PIP_PACKAGES }}
