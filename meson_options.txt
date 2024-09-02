@@ -1,0 +1,8 @@
+option(
+  'sanitizer',
+  type: 'combo',
+  choices: ['none', 'asan', 'msan', 'tsan'],
+  value: 'none',
+  description:
+  'Choose a set of sanitizers to enable'
+)
