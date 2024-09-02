@@ -67,6 +67,11 @@ jobs:
           ln -s /usr/local/bin/g++-${{ env.GCC_V }} /usr/local/bin/g++
 
       - name: Install GCC (Linux)
+        - run:   |
+          sudo apt update
+          sudo apt install gcc-${{ env.GCC_V }} g++-${{ env.GCC_V }} gfortran-${{ env.GCC_V }}
+
+      - name: Install GCC (Linux)
         if: contains(matrix.os, 'ubuntu')
         run: >-
           sudo update-alternatives
