@@ -34,6 +34,14 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         gcc_v: [9, 10, 11, 12]
+        sanitizer: [none, asan, msan, tsan]
+        buildtype: [debug]
+
+        include:
+          - os: ubuntu-latest
+            gcc_v: 12
+            sanitizer: none
+            buildtype: release
 
     env:
       FC: gfortran
@@ -76,10 +84,11 @@ jobs:
       - name: Configure build
         run: >-
           meson setup ${{ env.M_BUILD_DIR }}
-          --buildtype=debug
+          --buildtype=${{ matrix.buildtype }}
           --prefix=$PWD/_dist
           --libdir=lib
           --warnlevel=0
+          --Dsanitizer=${{ matrix.sanitizer }}
           -Db_coverage=${{ env.COVERAGE }}
         env:
           COVERAGE: ${{ contains(matrix.os, 'ubuntu') && 'true' || 'false' }}

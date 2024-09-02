@@ -23,10 +23,48 @@ project(
   meson_version: '>=0.51',
   default_options: [
     'default_library=both',
+    'warning_level=3',
   ],
 )
 
 cxx = meson.get_compiler('cpp')
+
+
+if get_option('buildtype') == 'debug'
+  add_project_arguments(
+    [
+      '-Wzero-as-null-pointer-constant',
+      '-Wlogical-not-parentheses',
+      '-Db_sanitize=address,undefined'
+    ],
+    language: 'cpp'
+  )
+
+  add_project_arguments('-fno-omit-frame-pointer', language: 'cpp')
+  add_project_link_arguments('-fno-omit-frame-pointer', language: 'cpp')
+  
+  sanitizer = get_option('sanitizer')
+  if sanitizer == 'asan'
+    message('Enabling ASan + UBSan + LSan')
+    add_project_arguments('-Db_sanitize=address,undefined', language: 'cpp')
+
+    message('Adding "-fsanitize-address-use-after-scope" argument (ignore the subsequent warnings).')
+    add_project_arguments('-fsanitize-address-use-after-scope', language: 'cpp')
+    add_project_link_arguments('-fsanitize-address-use-after-scope', '-fno-omit-frame-pointer', language: 'cpp')
+
+  elif sanitizer == 'msan'
+      message('Enabling Memory Sanitizer (MSan)')
+      add_project_arguments('-Db_sanitize=memory', language: 'cpp')
+      
+  elif sanitizer == 'tsan'
+      message('Enabling Thread Sanitizer (TSan)')
+      add_project_arguments('-Db_sanitize=thread', language: 'cpp')
+      
+  else
+      message('No sanitizers enabled')
+  endif
+endif
+
 
 deps = []
 foreach lib: ['cblas', 'lapacke']
