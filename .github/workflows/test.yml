@@ -32,13 +32,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-24.04]
         gcc_v: [9, 10, 11, 12, 13]
         sanitizer: [none, asan, msan, tsan]
         buildtype: [debug]
 
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             gcc_v: 12
             sanitizer: none
             buildtype: release
