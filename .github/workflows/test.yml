@@ -88,7 +88,7 @@ jobs:
           --prefix=$PWD/_dist
           --libdir=lib
           --warnlevel=0
-          --Dsanitizer=${{ matrix.sanitizer }}
+          -Dsanitizer=${{ matrix.sanitizer }}
           -Db_coverage=${{ env.COVERAGE }}
         env:
           COVERAGE: ${{ contains(matrix.os, 'ubuntu') && 'true' || 'false' }}
