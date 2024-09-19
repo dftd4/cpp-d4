@@ -29,13 +29,13 @@ static const double amf3_ref_energy{-2.9119716615478E-03};
 static const double actinides_ref_energy{-2.836190476292469E-01};
 
 extern int test_energy(
-  const int n,
+  int n,
   const char atoms[][4],
   const double coord[],
-  const int charge,
-  const double ref
+  int charge,
+  double ref
 );
 
-extern int test_disp(void);
+extern int test_disp();
 
 #endif // TEST_DISP_H

@@ -44,14 +44,14 @@ int test_energy(
   // assemble molecule
   TMolecule mol;
   info = get_molecule(n, atoms, coord, mol);
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   TCutoff cutoff;
   TD4Model d4;
 
   // dispersion main function
   info = get_dispersion(mol, charge, d4, par, cutoff, energy, nullptr);
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   if (check(energy, ref) == EXIT_FAILURE) {
     print_fail("BP86-D4-ATM", energy, ref);
@@ -67,7 +67,7 @@ int test_disp() {
   info = test_energy(
     water_n, water_atoms, water_coord, water_charge, water_ref_energy
   );
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   info = test_energy(
     mb16_43_01_n,
@@ -76,7 +76,7 @@ int test_disp() {
     mb16_43_01_charge,
     mb16_43_01_ref_energy
   );
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   info = test_energy(
     rost61_m1_n,
@@ -85,11 +85,11 @@ int test_disp() {
     rost61_m1_charge,
     rost61_m1_ref_energy
   );
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   info =
     test_energy(amf3_n, amf3_atoms, amf3_coord, amf3_charge, amf3_ref_energy);
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   info = test_energy(
     actinides_n,
@@ -98,7 +98,7 @@ int test_disp() {
     actinides_charge,
     actinides_ref_energy
   );
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   return EXIT_SUCCESS;
 }

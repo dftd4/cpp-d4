@@ -24,7 +24,7 @@
 
 using namespace dftd4;
 
-extern int test_param(void);
+extern int test_param();
 extern int test_rational_damping(const double ref[], TCutoff cutoff);
 
 static const int nfuncs = 97;

@@ -38,7 +38,7 @@ class TMolecule {
       at.New(NAtoms);
     }
 
-    void FreeMemory(void) {
+    void FreeMemory() {
       xyz.Delete();
       at.Delete();
     }

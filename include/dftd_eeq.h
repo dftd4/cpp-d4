@@ -30,8 +30,8 @@ namespace dftd4 {
 extern int get_charges(
   const TMolecule &mol,
   const TMatrix<double> &dist,
-  const int charge,
-  const double cutoff,
+  int charge,
+  double cutoff,
   TVector<double> &q,
   TMatrix<double> &dqdr,
   bool lgrad

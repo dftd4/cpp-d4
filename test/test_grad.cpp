@@ -62,7 +62,7 @@ int test_numgrad(TMolecule &mol, const int charge, const dparam &par) {
     d4grad[i] = 0.0;
   }
   info = get_dispersion(mol, charge, d4, par, cutoff, energy, d4grad);
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   // check translational invariance of analytical gradient
   if (is_trans_invar(mol, d4grad) != EXIT_SUCCESS) return EXIT_FAILURE;
@@ -123,7 +123,7 @@ int test_pbed4_mb01() {
   TMolecule mol;
   int info =
     get_molecule(mb16_43_01_n, mb16_43_01_atoms, mb16_43_01_coord, mol);
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   return test_numgrad(mol, charge, par);
 };
@@ -137,7 +137,7 @@ int test_bp86d4atm_water() {
   int charge = water_charge;
   TMolecule mol;
   int info = get_molecule(water_n, water_atoms, water_coord, mol);
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   return test_numgrad(mol, charge, par);
 }
@@ -151,7 +151,7 @@ int test_tpss0d4mbd_rost61m1() {
   int charge = rost61_m1_charge;
   TMolecule mol;
   int info = get_molecule(rost61_m1_n, rost61_m1_atoms, rost61_m1_coord, mol);
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   return test_numgrad(mol, charge, par);
 }
@@ -160,13 +160,13 @@ int test_grad() {
   int info{0};
 
   info = test_pbed4_mb01();
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   info = test_bp86d4atm_water();
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   info = test_tpss0d4mbd_rost61m1();
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   return EXIT_SUCCESS;
 };

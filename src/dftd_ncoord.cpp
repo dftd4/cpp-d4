@@ -262,10 +262,10 @@ int get_ncoord_erf(
   } else {
     info = ncoord_erf(mol, dist, cutoff, cn);
   }
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   info = cut_coordination_number(cn_max, cn, dcndr, lgrad);
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   return EXIT_SUCCESS;
 };

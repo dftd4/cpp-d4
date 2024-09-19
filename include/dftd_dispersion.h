@@ -52,10 +52,10 @@ class dparam {
  */
 extern int get_dispersion(
   const TMolecule &mol,
-  const int charge,
+  int charge,
   const TD4Model &d4,
   const dparam &par,
-  const TCutoff cutoff,
+  TCutoff cutoff,
   double &energy,
   double *GRAD
 );
