@@ -184,8 +184,8 @@ template <class T> class TMatrix {
               p[i * cols + j] = p[j * cols + i];
               p[j * cols + i] = x;
             } // j
-          }   // i
-        }     // if NxN
+          } // i
+        } // if NxN
         else {
           // for non-square matrix, we need an additional copy
           TMatrix<T> temp;
@@ -195,10 +195,10 @@ template <class T> class TMatrix {
             for (j = 0; j < cols; j++) {
               p[i * cols + j] = temp.p[j * cols + i];
             } // j
-          }   // i
+          } // i
         }
       } // if data is loaded
-    }   // for NxN matrices transpose elements
+    } // for NxN matrices transpose elements
 
     void CopyMat(const TMatrix &m) {
       long int mem;
