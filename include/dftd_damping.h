@@ -36,7 +36,6 @@ namespace dftd4 {
  * @param latm Switch for D4-ATM (true) or D4-MBD (false) parameters.
  * @returns Exit status.
  */
-extern int
-  d4par(const std::string func, dftd4::dparam &par, bool latm = true);
+extern int d4par(const std::string func, dftd4::dparam &par, bool latm = true);
 
 } // namespace dftd4

@@ -27,14 +27,18 @@
 
 using namespace dftd4;
 
-
-int get_molecule(int n, const char atoms[][4], const double coord[], TMolecule& mol) {
+int get_molecule(
+  int n,
+  const char atoms[][4],
+  const double coord[],
+  TMolecule &mol
+) {
   ;
   mol.GetMemory(n);
   for (int i = 0; i != n; i++) {
-    mol.xyz(i, 0) = coord[3*i];
-    mol.xyz(i, 1) = coord[3*i+1];
-    mol.xyz(i, 2) = coord[3*i+2];
+    mol.xyz(i, 0) = coord[3 * i];
+    mol.xyz(i, 1) = coord[3 * i + 1];
+    mol.xyz(i, 2) = coord[3 * i + 2];
     mol.at(i) = element(atoms[i]);
   }
 
@@ -55,9 +59,7 @@ bool check(
     diff = std::fabs(actual - expected);
   }
 
-  if (diff > epsilon) {
-    return EXIT_FAILURE;
-  } 
+  if (diff > epsilon) { return EXIT_FAILURE; }
   return EXIT_SUCCESS;
 };
 
@@ -75,12 +77,9 @@ bool check(
     diff = std::fabs(actual - expected);
   }
 
-  if (diff > epsilon) {
-    return EXIT_FAILURE;
-  } 
+  if (diff > epsilon) { return EXIT_FAILURE; }
   return EXIT_SUCCESS;
 };
-
 
 void print_fail(const char specifier[32], double obtained, double expected) {
   printf("Failed for: '%s'\n", specifier);
@@ -89,20 +88,19 @@ void print_fail(const char specifier[32], double obtained, double expected) {
   printf("  - Diff (abs)  %.16f\n", fabs(expected - obtained));
 }
 
-
-int element(const std::string& sym) {
+int element(const std::string &sym) {
   char elem[3]{"  "};
   char pse[118][3]{
-      "h ", "he", "li", "be", "b ", "c ", "n ", "o ", "f ", "ne", "na", "mg",
-      "al", "si", "p ", "s ", "cl", "ar", "k ", "ca", "sc", "ti", "v ", "cr",
-      "mn", "fe", "co", "ni", "cu", "zn", "ga", "ge", "as", "se", "br", "kr",
-      "rb", "sr", "y ", "zr", "nb", "mo", "tc", "ru", "rh", "pd", "ag", "cd",
-      "in", "sn", "sb", "te", "i ", "xe", "cs", "ba", "la", "ce", "pr", "nd",
-      "pm", "sm", "eu", "gd", "tb", "dy", "ho", "er", "tm", "yb", "lu", "hf",
-      "ta", "w ", "re", "os", "ir", "pt", "au", "hg", "tl", "pb", "bi", "po",
-      "at", "rn", "fr", "ra", "ac", "th", "pa", "u ", "np", "pu", "am", "cm",
-      "bk", "cf", "es", "fm", "md", "no", "lr", "rf", "db", "sg", "bh", "hs",
-      "mt", "ds", "rg", "cn", "nh", "fl", "mc", "lv", "ts", "og",
+    "h ", "he", "li", "be", "b ", "c ", "n ", "o ", "f ", "ne", "na", "mg",
+    "al", "si", "p ", "s ", "cl", "ar", "k ", "ca", "sc", "ti", "v ", "cr",
+    "mn", "fe", "co", "ni", "cu", "zn", "ga", "ge", "as", "se", "br", "kr",
+    "rb", "sr", "y ", "zr", "nb", "mo", "tc", "ru", "rh", "pd", "ag", "cd",
+    "in", "sn", "sb", "te", "i ", "xe", "cs", "ba", "la", "ce", "pr", "nd",
+    "pm", "sm", "eu", "gd", "tb", "dy", "ho", "er", "tm", "yb", "lu", "hf",
+    "ta", "w ", "re", "os", "ir", "pt", "au", "hg", "tl", "pb", "bi", "po",
+    "at", "rn", "fr", "ra", "ac", "th", "pa", "u ", "np", "pu", "am", "cm",
+    "bk", "cf", "es", "fm", "md", "no", "lr", "rf", "db", "sg", "bh", "hs",
+    "mt", "ds", "rg", "cn", "nh", "fl", "mc", "lv", "ts", "og",
   };
 
   std::transform(sym.begin(), sym.end(), elem, ::tolower);

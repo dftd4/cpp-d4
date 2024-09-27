@@ -76,13 +76,10 @@ class TD4Model {
 
 extern inline double trapzd(const double a[23], const double b[23]);
 
-extern inline double
-  weight_cn(double wf, double cn, double cnref);
+extern inline double weight_cn(double wf, double cn, double cnref);
 
-extern inline double
-  zeta(double a, double c, double qref, double qmod);
-extern inline double
-  dzeta(double a, double c, double qref, double qmod);
+extern inline double zeta(double a, double c, double qref, double qmod);
+extern inline double dzeta(double a, double c, double qref, double qmod);
 
 extern int get_max_ref(const TMolecule &mol, int &mref);
 

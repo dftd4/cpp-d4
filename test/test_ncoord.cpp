@@ -27,7 +27,6 @@
 
 using namespace dftd4;
 
-
 int test_cn(
   const int n,
   const char atoms[][4],
@@ -49,7 +48,7 @@ int test_cn(
   }
 
   // distances
-  TMatrix<double> dist;      
+  TMatrix<double> dist;
   dist.New(n, n);
   calc_distances(mol, dist);
 
@@ -62,9 +61,7 @@ int test_cn(
 
   // compare to ref
   for (int i = 0; i != n; i++) {
-    if (check(cn(i), ref(i)) == EXIT_FAILURE) {
-      return EXIT_FAILURE;
-    }
+    if (check(cn(i), ref(i)) == EXIT_FAILURE) { return EXIT_FAILURE; }
   }
 
   return EXIT_SUCCESS;
@@ -72,15 +69,14 @@ int test_cn(
 
 int test_ncoord() {
   int info;
-  
+
   info = test_cn(
     mb16_43_01_n, mb16_43_01_atoms, mb16_43_01_coord, mb16_43_01_ref_cn
   );
   if (info != EXIT_SUCCESS) return info;
 
-  info = test_cn(
-    rost61_m1_n, rost61_m1_atoms, rost61_m1_coord, rost61_m1_ref_cn
-  );
+  info =
+    test_cn(rost61_m1_n, rost61_m1_atoms, rost61_m1_coord, rost61_m1_ref_cn);
   if (info != EXIT_SUCCESS) return info;
 
   return EXIT_SUCCESS;

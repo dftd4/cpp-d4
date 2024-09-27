@@ -18,16 +18,15 @@
 
 #include <cmath>
 
+#include "damping/dftd_atm.h"
+#include "damping/dftd_rational.h"
 #include "dftd_cblas.h"
-#include "dftd_eeq.h"
 #include "dftd_dispersion.h"
+#include "dftd_eeq.h"
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
 #include "dftd_ncoord.h"
 #include "dftd_parameters.h"
-#include "damping/dftd_atm.h"
-#include "damping/dftd_rational.h"
-
 
 namespace dftd4 {
 
@@ -39,17 +38,17 @@ inline double fdmprdr_bj(const int n, const double r, const double c) {
 }
 
 int get_dispersion2(
-  const TMolecule& mol,
-  const TMatrix<double>& dist,
+  const TMolecule &mol,
+  const TMatrix<double> &dist,
   const double cutoff,
-  const dparam& par,
-  const TMatrix<double>& c6,
-  const TMatrix<double>& dc6dcn,
-  const TMatrix<double>& dc6dq,
-  TVector<double>& energy,
-  TVector<double>& dEdcn,
-  TVector<double>& dEdq,
-  TVector<double>& gradient,
+  const dparam &par,
+  const TMatrix<double> &c6,
+  const TMatrix<double> &dc6dcn,
+  const TMatrix<double> &dc6dq,
+  TVector<double> &energy,
+  TVector<double> &dEdcn,
+  TVector<double> &dEdq,
+  TVector<double> &gradient,
   bool lgrad /*= false*/
 ) {
   int info{0};
@@ -66,12 +65,12 @@ int get_dispersion2(
 }
 
 int get_dispersion2_energy(
-  const TMolecule& mol,
-  const TMatrix<double>& dist,
+  const TMolecule &mol,
+  const TMatrix<double> &dist,
   const double cutoff,
-  const dparam& par,
-  const TMatrix<double>& c6,
-  TVector<double>& energy
+  const dparam &par,
+  const TMatrix<double> &c6,
+  TVector<double> &energy
 ) {
   int izp{0}, jzp{0};
   double r{0.0}, r0ij{0.0}, r4r2ij{0.0}, c6ij{0.0};
@@ -84,7 +83,7 @@ int get_dispersion2_energy(
       jzp = mol.at(jat);
       r = dist(iat, jat);
       if (r > cutoff) continue;
-      
+
       r4r2ij = 3.0 * r4r2[izp] * r4r2[jzp];
       r0ij = par.a1 * sqrt(r4r2ij) + par.a2;
       c6ij = c6(iat, jat);
@@ -99,7 +98,7 @@ int get_dispersion2_energy(
         edisp += par.s10 * 49.0 / 40.0 * pow(r4r2ij, 2) * t10;
       }
 
-      e = -c6ij*edisp * 0.5;
+      e = -c6ij * edisp * 0.5;
       energy(iat) += e;
       energy(jat) += e;
     }
@@ -109,17 +108,17 @@ int get_dispersion2_energy(
 }
 
 int get_dispersion2_derivs(
-  const TMolecule& mol,
-  const TMatrix<double>& dist,
+  const TMolecule &mol,
+  const TMatrix<double> &dist,
   const double cutoff,
-  const dparam& par,
-  const TMatrix<double>& c6,
-  const TMatrix<double>& dc6dcn,
-  const TMatrix<double>& dc6dq,
-  TVector<double>& energy,
-  TVector<double>& dEdcn,
-  TVector<double>& dEdq,
-  TVector<double>& gradient
+  const dparam &par,
+  const TMatrix<double> &c6,
+  const TMatrix<double> &dc6dcn,
+  const TMatrix<double> &dc6dq,
+  TVector<double> &energy,
+  TVector<double> &dEdcn,
+  TVector<double> &dEdq,
+  TVector<double> &gradient
 ) {
   int izp{0}, jzp{0};
   double r{0.0}, r0ij{0.0}, r4r2ij{0.0}, c6ij{0.0};
@@ -135,7 +134,7 @@ int get_dispersion2_derivs(
       jzp = mol.at(jat);
       r = dist(iat, jat);
       if (r > cutoff) continue;
-      
+
       r4r2ij = 3.0 * r4r2[izp] * r4r2[jzp];
       r0ij = par.a1 * sqrt(r4r2ij) + par.a2;
       c6ij = c6(iat, jat);
@@ -156,7 +155,7 @@ int get_dispersion2_derivs(
         gdisp += par.s10 * 49.0 / 40.0 * pow(r4r2ij, 2) * dt10;
       }
 
-      e = -c6ij*edisp * 0.5;
+      e = -c6ij * edisp * 0.5;
       energy(iat) += e;
       energy(jat) += e;
 
@@ -173,36 +172,48 @@ int get_dispersion2_derivs(
       dEdq(iat) -= dc6dq(iat, jat) * edisp;
       dEdq(jat) -= dc6dq(jat, iat) * edisp;
 
-      gradient(3*iat) += dgx;
-      gradient(3*iat + 1) += dgy;
-      gradient(3*iat + 2) += dgz;
-      gradient(3*jat) -= dgx;
-      gradient(3*jat + 1) -= dgy;
-      gradient(3*jat + 2) -= dgz;
+      gradient(3 * iat) += dgx;
+      gradient(3 * iat + 1) += dgy;
+      gradient(3 * iat + 2) += dgz;
+      gradient(3 * jat) -= dgx;
+      gradient(3 * jat + 1) -= dgy;
+      gradient(3 * jat + 2) -= dgz;
     }
   }
   return EXIT_SUCCESS;
 }
 
-
 int get_dispersion3(
-  const TMolecule& mol,
-  const TMatrix<double>& dist,
+  const TMolecule &mol,
+  const TMatrix<double> &dist,
   const double cutoff,
-  const dparam& par,
-  const TMatrix<double>& c6,
-  const TMatrix<double>& dc6dcn,
-  const TMatrix<double>& dc6dq,
-  TVector<double>& energy,
-  TVector<double>& dEdcn,
-  TVector<double>& dEdq,
-  TVector<double>& gradient,
+  const dparam &par,
+  const TMatrix<double> &c6,
+  const TMatrix<double> &dc6dcn,
+  const TMatrix<double> &dc6dq,
+  TVector<double> &energy,
+  TVector<double> &dEdcn,
+  TVector<double> &dEdq,
+  TVector<double> &gradient,
   bool lgrad /*= false*/
 ) {
   return get_atm_dispersion(
-    mol, dist, cutoff, par.s9, par.a1, par.a2, par.alp, c6, dc6dcn, dc6dq,
-    energy, dEdcn, dEdq, gradient, lgrad
+    mol,
+    dist,
+    cutoff,
+    par.s9,
+    par.a1,
+    par.a2,
+    par.alp,
+    c6,
+    dc6dcn,
+    dc6dq,
+    energy,
+    dEdcn,
+    dEdq,
+    gradient,
+    lgrad
   );
 }
 
-}  // namespace dftd4
+} // namespace dftd4

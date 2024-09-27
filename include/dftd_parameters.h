@@ -48,7 +48,6 @@ static const double zeff[119]{
     9,10,11,30,31,32,33,34,35,36,37,38,39,40,41,42,43,     //  Fr-Lr
    12,13,14,15,16,17,18,19,20,21,22,23,24,25,26            //  Rf-Og
 };
-// clang-format on
 
 /**
  * PBE0/def2-QZVP atomic values calculated by S. Grimme in Gaussian (2010)
@@ -63,10 +62,10 @@ static const double zeff[119]{
  * These values are actually never used in the code. Only r4r2 is used.
  */
 static const double r2r4[119]{
-  0.0,             //  dummy
-  8.0589,  3.4698, //  H,He
+  0.0,                                                           //  dummy
+  8.0589,  3.4698,                                               //  H,He
   29.0974, 14.8517, 11.8799, 7.8715,  5.5588,  4.7566,  3.8025,
-  3.1036, //  Li-Ne
+  3.1036,                                                        //  Li-Ne
   26.1552, 17.2304, 17.7210, 12.7442, 9.5361,  8.1652,  6.7463,
   5.6004,                                                        //  Na-Ar
   29.2012, 22.3934,                                              //  K,Ca
@@ -90,6 +89,7 @@ static const double r2r4[119]{
   7.5667,  6.9456,  6.3946,  5.9159,  5.4929,                    // -Cn
   6.7286,  6.5144,  10.9169, 10.3600, 9.4723,  8.6641            // Nh-Og
 };
+// clang-format on
 
 // r4/r2 expectation value
 static const double r4r2[119] = {
@@ -6149,18 +6149,24 @@ static const double *refcovcn[MAXELEMENT]{
   refcovcn102, refcovcn103,
 };
 static const double *refq_eeq[MAXELEMENT]{
-  nullptr, refq_eeq1,   refq_eeq2,   refq_eeq3,   refq_eeq4,   refq_eeq5,  refq_eeq6,  refq_eeq7,  refq_eeq8,
-  refq_eeq9,   refq_eeq10,  refq_eeq11,  refq_eeq12,  refq_eeq13,  refq_eeq14, refq_eeq15, refq_eeq16, refq_eeq17,
-  refq_eeq18,  refq_eeq19,  refq_eeq20,  refq_eeq21,  refq_eeq22,  refq_eeq23, refq_eeq24, refq_eeq25, refq_eeq26,
-  refq_eeq27,  refq_eeq28,  refq_eeq29,  refq_eeq30,  refq_eeq31,  refq_eeq32, refq_eeq33, refq_eeq34, refq_eeq35,
-  refq_eeq36,  refq_eeq37,  refq_eeq38,  refq_eeq39,  refq_eeq40,  refq_eeq41, refq_eeq42, refq_eeq43, refq_eeq44,
-  refq_eeq45,  refq_eeq46,  refq_eeq47,  refq_eeq48,  refq_eeq49,  refq_eeq50, refq_eeq51, refq_eeq52, refq_eeq53,
-  refq_eeq54,  refq_eeq55,  refq_eeq56,  refq_eeq57,  refq_eeq58,  refq_eeq59, refq_eeq60, refq_eeq61, refq_eeq62,
-  refq_eeq63,  refq_eeq64,  refq_eeq65,  refq_eeq66,  refq_eeq67,  refq_eeq68, refq_eeq69, refq_eeq70, refq_eeq71,
-  refq_eeq72,  refq_eeq73,  refq_eeq74,  refq_eeq75,  refq_eeq76,  refq_eeq77, refq_eeq78, refq_eeq79, refq_eeq80,
-  refq_eeq81,  refq_eeq82,  refq_eeq83,  refq_eeq84,  refq_eeq85,  refq_eeq86, refq_eeq87, refq_eeq88, refq_eeq89,
-  refq_eeq90,  refq_eeq91,  refq_eeq92,  refq_eeq93,  refq_eeq94,  refq_eeq95, refq_eeq96, refq_eeq97, refq_eeq98,
-  refq_eeq99,  refq_eeq100, refq_eeq101, refq_eeq102, refq_eeq103,
+  nullptr,     refq_eeq1,   refq_eeq2,  refq_eeq3,  refq_eeq4,   refq_eeq5,
+  refq_eeq6,   refq_eeq7,   refq_eeq8,  refq_eeq9,  refq_eeq10,  refq_eeq11,
+  refq_eeq12,  refq_eeq13,  refq_eeq14, refq_eeq15, refq_eeq16,  refq_eeq17,
+  refq_eeq18,  refq_eeq19,  refq_eeq20, refq_eeq21, refq_eeq22,  refq_eeq23,
+  refq_eeq24,  refq_eeq25,  refq_eeq26, refq_eeq27, refq_eeq28,  refq_eeq29,
+  refq_eeq30,  refq_eeq31,  refq_eeq32, refq_eeq33, refq_eeq34,  refq_eeq35,
+  refq_eeq36,  refq_eeq37,  refq_eeq38, refq_eeq39, refq_eeq40,  refq_eeq41,
+  refq_eeq42,  refq_eeq43,  refq_eeq44, refq_eeq45, refq_eeq46,  refq_eeq47,
+  refq_eeq48,  refq_eeq49,  refq_eeq50, refq_eeq51, refq_eeq52,  refq_eeq53,
+  refq_eeq54,  refq_eeq55,  refq_eeq56, refq_eeq57, refq_eeq58,  refq_eeq59,
+  refq_eeq60,  refq_eeq61,  refq_eeq62, refq_eeq63, refq_eeq64,  refq_eeq65,
+  refq_eeq66,  refq_eeq67,  refq_eeq68, refq_eeq69, refq_eeq70,  refq_eeq71,
+  refq_eeq72,  refq_eeq73,  refq_eeq74, refq_eeq75, refq_eeq76,  refq_eeq77,
+  refq_eeq78,  refq_eeq79,  refq_eeq80, refq_eeq81, refq_eeq82,  refq_eeq83,
+  refq_eeq84,  refq_eeq85,  refq_eeq86, refq_eeq87, refq_eeq88,  refq_eeq89,
+  refq_eeq90,  refq_eeq91,  refq_eeq92, refq_eeq93, refq_eeq94,  refq_eeq95,
+  refq_eeq96,  refq_eeq97,  refq_eeq98, refq_eeq99, refq_eeq100, refq_eeq101,
+  refq_eeq102, refq_eeq103,
 };
 static const double *refsq[MAXELEMENT]{
   nullptr, refsq1,  refsq2,  refsq3,  refsq4,   refsq5,   refsq6,   refsq7,
