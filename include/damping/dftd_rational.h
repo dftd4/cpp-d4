@@ -31,6 +31,7 @@ extern inline double fdmprdr_bj(int n, double r, double c);
 
 extern int get_dispersion2(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   double cutoff,
   const dparam &par,
@@ -46,6 +47,7 @@ extern int get_dispersion2(
 
 extern int get_dispersion3(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   double cutoff,
   const dparam &par,
@@ -63,6 +65,7 @@ extern int get_dispersion3(
 
 extern int get_dispersion2_energy(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   double cutoff,
   const dparam &par,
@@ -72,6 +75,7 @@ extern int get_dispersion2_energy(
 
 extern int get_dispersion2_derivs(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   double cutoff,
   const dparam &par,

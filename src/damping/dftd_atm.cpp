@@ -23,7 +23,6 @@
 #include <cmath>
 
 #include "damping/dftd_atm.h"
-#include "dftd_cblas.h"
 #include "dftd_dispersion.h"
 #include "dftd_eeq.h"
 #include "dftd_geometry.h"
@@ -35,6 +34,7 @@ namespace dftd4 {
 
 int get_atm_dispersion(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   const double cutoff,
   const double s9,
@@ -55,6 +55,7 @@ int get_atm_dispersion(
   if (lgrad) {
     info = get_atm_dispersion_derivs(
       mol,
+      realIdx,
       dist,
       cutoff,
       s9,
@@ -70,8 +71,9 @@ int get_atm_dispersion(
       gradient
     );
   } else {
-    info =
-      get_atm_dispersion_energy(mol, dist, cutoff, s9, a1, a2, alp, c6, energy);
+    info = get_atm_dispersion_energy(
+      mol, realIdx, dist, cutoff, s9, a1, a2, alp, c6, energy
+    );
   }
 
   return info;
@@ -79,6 +81,7 @@ int get_atm_dispersion(
 
 int get_atm_dispersion_energy(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   const double cutoff,
   const double s9,
@@ -97,35 +100,44 @@ int get_atm_dispersion_energy(
   double rijk{0.0}, r2ijk{0.0}, r3ijk{0.0};
   double ang{0.0}, fdmp{0.0};
 
-  for (int iat = 0; iat != mol.NAtoms; iat++) {
-    izp = mol.at(iat);
-    for (int jat = 0; jat != iat; jat++) {
-      rij = dist(iat, jat);
+  for (int iat = 0, ii = 0; iat != mol.NAtoms; iat++) {
+    ii = realIdx(iat);
+    if (ii < 0) continue;
+
+    izp = mol.ATNO(iat);
+    for (int jat = 0, jj = 0; jat != iat; jat++) {
+      jj = realIdx(jat);
+      if (jj < 0) continue;
+
+      rij = dist(ii, jj);
       if (rij > cutoff) continue;
       r2ij = pow(rij, 2);
 
-      jzp = mol.at(jat);
+      jzp = mol.ATNO(jat);
       r0ij = a1 * sqrt(3.0 * r4r2[izp] * r4r2[jzp]) + a2;
-      c6ij = c6(iat, jat);
+      c6ij = c6(ii, jj);
 
-      for (int kat = 0; kat != jat; kat++) {
-        rik = dist(iat, kat);
+      for (int kat = 0, kk = 0; kat != jat; kat++) {
+        kk = realIdx(kat);
+        if (kk < 0) continue;
+
+        rik = dist(ii, kk);
         if (rik > cutoff) continue;
-        rjk = dist(jat, kat);
+        rjk = dist(jj, kk);
         if (rjk > cutoff) continue;
 
-        triple = triple_scale(iat, jat, kat);
+        triple = triple_scale(ii, jj, kk);
 
         r2ik = pow(rik, 2);
         r2jk = pow(rjk, 2);
 
-        kzp = mol.at(kat);
+        kzp = mol.ATNO(kat);
         r0ik = a1 * sqrt(3.0 * r4r2[izp] * r4r2[kzp]) + a2;
         r0jk = a1 * sqrt(3.0 * r4r2[jzp] * r4r2[kzp]) + a2;
         r0ijk = r0ij * r0ik * r0jk;
 
-        c6ik = c6(iat, kat);
-        c6jk = c6(jat, kat);
+        c6ik = c6(ii, kk);
+        c6jk = c6(jj, kk);
         c9ijk = s9 * sqrt(fabs(c6ij * c6ik * c6jk));
 
         rijk = rij * rik * rjk;
@@ -139,9 +151,10 @@ int get_atm_dispersion_energy(
               r3ijk;
 
         e = ang * fdmp * c9ijk / 3.0 * triple;
-        energy(iat) += e;
-        energy(jat) += e;
-        energy(kat) += e;
+
+        energy(ii) += e;
+        energy(jj) += e;
+        energy(kk) += e;
       }
     }
   }
@@ -151,6 +164,7 @@ int get_atm_dispersion_energy(
 
 int get_atm_dispersion_derivs(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   const double cutoff,
   const double s9,
@@ -181,21 +195,30 @@ int get_atm_dispersion_derivs(
   double ang{0.0}, dang{0.0}, fdmp{0.0}, dfdmp{0.0};
   double tmp{0.0};
 
-  for (int iat = 0; iat != mol.NAtoms; iat++) {
-    izp = mol.at(iat);
-    for (int jat = 0; jat != iat; jat++) {
-      rij = dist(iat, jat);
+  for (int iat = 0, ii = 0; iat != mol.NAtoms; iat++) {
+    ii = realIdx(iat);
+    if (ii < 0) continue;
+
+    izp = mol.ATNO(iat);
+    for (int jat = 0, jj = 0; jat != iat; jat++) {
+      jj = realIdx(jat);
+      if (jj < 0) continue;
+
+      rij = dist(ii, jj);
       if (rij > cutoff) continue;
       r2ij = pow(rij, 2);
 
-      jzp = mol.at(jat);
+      jzp = mol.ATNO(jat);
       r0ij = a1 * sqrt(3.0 * r4r2[izp] * r4r2[jzp]) + a2;
-      c6ij = c6(iat, jat);
+      c6ij = c6(ii, jj);
 
-      for (int kat = 0; kat != jat; kat++) {
-        rik = dist(iat, kat);
+      for (int kat = 0, kk = 0; kat != jat; kat++) {
+        kk = realIdx(kat);
+        if (kk < 0) continue;
+
+        rik = dist(ii, kk);
         if (rik > cutoff) continue;
-        rjk = dist(jat, kat);
+        rjk = dist(jj, kk);
         if (rjk > cutoff) continue;
 
         triple = triple_scale(iat, jat, kat);
@@ -203,13 +226,13 @@ int get_atm_dispersion_derivs(
         r2ik = pow(rik, 2);
         r2jk = pow(rjk, 2);
 
-        kzp = mol.at(kat);
+        kzp = mol.ATNO(kat);
         r0ik = a1 * sqrt(3.0 * r4r2[izp] * r4r2[kzp]) + a2;
         r0jk = a1 * sqrt(3.0 * r4r2[jzp] * r4r2[kzp]) + a2;
         r0ijk = r0ij * r0ik * r0jk;
 
-        c6ik = c6(iat, kat);
-        c6jk = c6(jat, kat);
+        c6ik = c6(ii, kk);
+        c6jk = c6(jj, kk);
         c9ijk = -s9 * sqrt(fabs(c6ij * c6ik * c6jk));
 
         rijk = rij * rik * rjk;
@@ -225,22 +248,22 @@ int get_atm_dispersion_derivs(
               r3ijk;
 
         e = ang * fdmp * c9ijk * triple;
-        energy(iat) -= e / 3.0;
-        energy(jat) -= e / 3.0;
-        energy(kat) -= e / 3.0;
+        energy(ii) -= e / 3.0;
+        energy(jj) -= e / 3.0;
+        energy(kk) -= e / 3.0;
 
         // --------
         // Gradient
         // --------
-        xij = (mol.xyz(jat, 0) - mol.xyz(iat, 0));
-        yij = (mol.xyz(jat, 1) - mol.xyz(iat, 1));
-        zij = (mol.xyz(jat, 2) - mol.xyz(iat, 2));
-        xik = (mol.xyz(kat, 0) - mol.xyz(iat, 0));
-        yik = (mol.xyz(kat, 1) - mol.xyz(iat, 1));
-        zik = (mol.xyz(kat, 2) - mol.xyz(iat, 2));
-        xjk = (mol.xyz(kat, 0) - mol.xyz(jat, 0));
-        yjk = (mol.xyz(kat, 1) - mol.xyz(jat, 1));
-        zjk = (mol.xyz(kat, 2) - mol.xyz(jat, 2));
+        xij = (mol.CC(jat, 0) - mol.CC(iat, 0));
+        yij = (mol.CC(jat, 1) - mol.CC(iat, 1));
+        zij = (mol.CC(jat, 2) - mol.CC(iat, 2));
+        xik = (mol.CC(kat, 0) - mol.CC(iat, 0));
+        yik = (mol.CC(kat, 1) - mol.CC(iat, 1));
+        zik = (mol.CC(kat, 2) - mol.CC(iat, 2));
+        xjk = (mol.CC(kat, 0) - mol.CC(jat, 0));
+        yjk = (mol.CC(kat, 1) - mol.CC(jat, 1));
+        zjk = (mol.CC(kat, 2) - mol.CC(jat, 2));
 
         dfdmp = -2.0 * alp * tmp * pow(fdmp, 2);
 
@@ -277,29 +300,23 @@ int get_atm_dispersion_derivs(
         dgyjk = c9ijk * (-dang * fdmp + ang * dfdmp) / r2jk * yjk;
         dgzjk = c9ijk * (-dang * fdmp + ang * dfdmp) / r2jk * zjk;
 
-        gradient(3 * iat + 0) += -dgxij - dgxik;
-        gradient(3 * iat + 1) += -dgyij - dgyik;
-        gradient(3 * iat + 2) += -dgzij - dgzik;
-        gradient(3 * jat + 0) += dgxij - dgxjk;
-        gradient(3 * jat + 1) += dgyij - dgyjk;
-        gradient(3 * jat + 2) += dgzij - dgzjk;
-        gradient(3 * kat + 0) += dgxik + dgxjk;
-        gradient(3 * kat + 1) += dgyik + dgyjk;
-        gradient(3 * kat + 2) += dgzik + dgzjk;
+        gradient(3 * ii + 0) += -dgxij - dgxik;
+        gradient(3 * ii + 1) += -dgyij - dgyik;
+        gradient(3 * ii + 2) += -dgzij - dgzik;
+        gradient(3 * jj + 0) += dgxij - dgxjk;
+        gradient(3 * jj + 1) += dgyij - dgyjk;
+        gradient(3 * jj + 2) += dgzij - dgzjk;
+        gradient(3 * kk + 0) += dgxik + dgxjk;
+        gradient(3 * kk + 1) += dgyik + dgyjk;
+        gradient(3 * kk + 2) += dgzik + dgzjk;
 
-        dEdcn(iat) -=
-          e * 0.5 * (dc6dcn(iat, jat) / c6ij + dc6dcn(iat, kat) / c6ik);
-        dEdcn(jat) -=
-          e * 0.5 * (dc6dcn(jat, iat) / c6ij + dc6dcn(jat, kat) / c6jk);
-        dEdcn(kat) -=
-          e * 0.5 * (dc6dcn(kat, iat) / c6ik + dc6dcn(kat, jat) / c6jk);
+        dEdcn(ii) -= e * 0.5 * (dc6dcn(ii, jj) / c6ij + dc6dcn(ii, kk) / c6ik);
+        dEdcn(jj) -= e * 0.5 * (dc6dcn(jj, ii) / c6ij + dc6dcn(jj, kk) / c6jk);
+        dEdcn(kk) -= e * 0.5 * (dc6dcn(kk, ii) / c6ik + dc6dcn(kk, jj) / c6jk);
 
-        dEdq(iat) -=
-          e * 0.5 * (dc6dq(iat, jat) / c6ij + dc6dq(iat, kat) / c6ik);
-        dEdq(jat) -=
-          e * 0.5 * (dc6dq(jat, iat) / c6ij + dc6dq(jat, kat) / c6jk);
-        dEdq(kat) -=
-          e * 0.5 * (dc6dq(kat, iat) / c6ik + dc6dq(kat, jat) / c6jk);
+        dEdq(ii) -= e * 0.5 * (dc6dq(ii, jj) / c6ij + dc6dq(ii, kk) / c6ik);
+        dEdq(jj) -= e * 0.5 * (dc6dq(jj, ii) / c6ij + dc6dq(jj, kk) / c6jk);
+        dEdq(kk) -= e * 0.5 * (dc6dq(kk, ii) / c6ik + dc6dq(kk, jj) / c6jk);
       }
     }
   }

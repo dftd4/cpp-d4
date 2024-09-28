@@ -27,8 +27,8 @@
 using namespace dftd4;
 
 int test_energy2(
-  const int n,
-  const char atoms[][4],
+  int n,
+  const char atoms[][3],
   const double coord[],
   const int charge,
   const double ref
@@ -50,8 +50,17 @@ int test_energy2(
   TCutoff cutoff;
   TD4Model d4;
 
+  // masking (nothing excluded)
+  TVector<int> realIdx;
+  realIdx.NewVec(mol.NAtoms);
+  int nat = 0;
+  for (int i = 0; i != mol.NAtoms; i++) {
+    realIdx(i) = nat;
+    nat++;
+  }
+
   // dispersion main function
-  info = get_dispersion(mol, charge, d4, par, cutoff, energy, nullptr);
+  info = get_dispersion(mol, realIdx, charge, d4, par, cutoff, energy, nullptr);
   if (info != EXIT_SUCCESS) return info;
 
   if (check(energy, ref, 1e-8) == EXIT_FAILURE) {
@@ -71,11 +80,11 @@ int test_disp2() {
   if (info != EXIT_SUCCESS) return info;
 
   info = test_energy2(
-    mb16_43_01_n,
-    mb16_43_01_atoms,
-    mb16_43_01_coord,
-    mb16_43_01_charge,
-    -2.5912431304617E-02
+    actinides_n,
+    actinides_atoms,
+    actinides_coord,
+    actinides_charge,
+    -2.8381803698606716E-01
   );
   if (info != EXIT_SUCCESS) return info;
 

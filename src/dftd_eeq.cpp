@@ -131,6 +131,7 @@ static const double sqrt2pi = std::sqrt(2.0 / pi);
 
 int get_charges(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   const int charge,
   const double cutoff,
@@ -140,29 +141,32 @@ int get_charges(
 ) {
   int info{0};
   bool lverbose{false};
+  int nat = realIdx.Max() + 1;
 
   TVector<double> cn;    // EEQ cordination number
   TMatrix<double> dcndr; // Derivative of EEQ-CN
 
-  cn.NewVec(mol.NAtoms);
-  if (lgrad) dcndr.NewMat(mol.NAtoms, 3 * mol.NAtoms);
+  cn.NewVec(nat);
+  if (lgrad) dcndr.NewMat(nat, 3 * nat);
 
   // get the EEQ coordination number
-  info = get_ncoord_erf(mol, dist, cutoff, cn, dcndr, lgrad);
+  info = get_ncoord_erf(mol, realIdx, dist, cutoff, cn, dcndr, lgrad);
   if (info != EXIT_SUCCESS) return info;
 
   // corresponds to model%solve in Fortran
-  info = eeq_chrgeq(mol, dist, charge, cn, q, dcndr, dqdr, lgrad, lverbose);
+  info =
+    eeq_chrgeq(mol, realIdx, dist, charge, cn, q, dcndr, dqdr, lgrad, lverbose);
   if (info != EXIT_SUCCESS) return info;
 
-  dcndr.Delete();
-  cn.Delete();
+  dcndr.DelMat();
+  cn.DelVec();
 
   return EXIT_SUCCESS;
 };
 
 int get_vrhs(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const int &charge,
   const TVector<double> &cn,
   TVector<double> &Xvec,
@@ -171,63 +175,80 @@ int get_vrhs(
 ) {
   double tmp{0.0};
   int izp;
+  int nat = realIdx.Max() + 1;
 
   if (lgrad) {
-    for (int i = 0; i != mol.NAtoms; i++) {
-      izp = mol.at(i);
-      tmp = kappa[izp] / std::sqrt(cn(i) + small);
-      Xvec(i) = -xi[izp] + tmp * cn(i);
-      dXvec(i) = 0.5 * tmp;
+    for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
+      ii = realIdx(i);
+      if (ii < 0) continue;
+
+      izp = mol.ATNO(i);
+      tmp = kappa[izp] / std::sqrt(cn(ii) + small);
+      Xvec(ii) = -xi[izp] + tmp * cn(ii);
+      dXvec(ii) = 0.5 * tmp;
     }
-    dXvec(mol.NAtoms) = 0.0;
+    dXvec(nat) = 0.0;
   } else {
-    for (int i = 0; i != mol.NAtoms; i++) {
-      izp = mol.at(i);
-      tmp = kappa[izp] / std::sqrt(cn(i) + small);
-      Xvec(i) = -xi[izp] + tmp * cn(i);
+    for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
+      ii = realIdx(i);
+      if (ii < 0) continue;
+
+      izp = mol.ATNO(i);
+      tmp = kappa[izp] / std::sqrt(cn(ii) + small);
+      Xvec(ii) = -xi[izp] + tmp * cn(ii);
     }
   }
 
-  Xvec(mol.NAtoms) = charge;
+  // place charge at last index of xvec
+  Xvec(nat) = charge;
 
   return EXIT_SUCCESS;
 };
 
 int get_amat_0d(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   TMatrix<double> &Amat
 ) {
   double gamij = 0.0;
+  int mm = realIdx.Max() + 1;
   int izp, jzp;
   double alphai, alphaj;
   double tmp, r;
 
-  for (int i = 0; i != mol.NAtoms; i++) {
-    izp = mol.at(i);
+  for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
+    ii = realIdx(i);
+    if (ii < 0) continue;
+
+    izp = mol.ATNO(i);
     alphai = pow(alp[izp], 2);
-    for (int j = 0; j != i; j++) {
-      jzp = mol.at(j);
+    for (int j = 0, jj = 0; j != i; j++) {
+      jj = realIdx(j);
+      if (jj < 0) continue;
+
+      jzp = mol.ATNO(j);
       alphaj = pow(alp[jzp], 2);
 
-      r = dist(i, j);
+      r = dist(ii, jj);
       gamij = 1.0 / std::sqrt(alphai + alphaj);
       tmp = std::erf(gamij * r) / r;
-      Amat(i, j) = tmp;
-      Amat(j, i) = tmp;
+      Amat(ii, jj) = tmp;
+      Amat(jj, ii) = tmp;
     }
-    gamij = gam[mol.at(i)];
-    Amat(i, i) = gamij + sqrt2pi / alp[izp];
-    Amat(i, mol.NAtoms) = 1.0;
-    Amat(mol.NAtoms, i) = 1.0;
+    gamij = gam[izp];
+    Amat(ii, ii) = gamij + sqrt2pi / alp[izp];
+    Amat(ii, mm) = 1.0;
+    Amat(mm, ii) = 1.0;
   }
-  Amat(mol.NAtoms, mol.NAtoms) = 0.0;
+  Amat(mm, mm) = 0.0;
 
   return EXIT_SUCCESS;
 };
 
 int get_damat_0d(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   const TVector<double> &q,
   const TMatrix<double> &Amat,
@@ -239,37 +260,43 @@ int get_damat_0d(
   double arg, gam, dtmp;
   double dgx, dgy, dgz;
 
-  for (int i = 0; i != mol.NAtoms; i++) {
-    alphai = pow(alp[mol.at(i)], 2);
+  for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
+    ii = realIdx(i);
+    if (ii < 0) continue;
 
-    for (int j = 0; j != i; j++) {
-      alphaj = pow(alp[mol.at(j)], 2);
+    alphai = pow(alp[mol.ATNO(i)], 2);
 
-      rx = mol.xyz(i, 0) - mol.xyz(j, 0);
-      ry = mol.xyz(i, 1) - mol.xyz(j, 1);
-      rz = mol.xyz(i, 2) - mol.xyz(j, 2);
-      r2 = pow(dist(i, j), 2);
+    for (int j = 0, jj = 0; j != i; j++) {
+      jj = realIdx(j);
+      if (jj < 0) continue;
+
+      alphaj = pow(alp[mol.ATNO(j)], 2);
+
+      rx = mol.CC(i, 0) - mol.CC(j, 0);
+      ry = mol.CC(i, 1) - mol.CC(j, 1);
+      rz = mol.CC(i, 2) - mol.CC(j, 2);
+      r2 = pow(dist(ii, jj), 2);
 
       gam = 1.0 / std::sqrt((alphai + alphaj));
       arg = gam * gam * r2;
-      dtmp = 2.0 * gam * std::exp(-arg) / (sqrtpi * r2) - Amat(j, i) / r2;
+      dtmp = 2.0 * gam * std::exp(-arg) / (sqrtpi * r2) - Amat(jj, ii) / r2;
       dgx = dtmp * rx;
       dgy = dtmp * ry;
       dgz = dtmp * rz;
 
-      atrace(i, 0) += dgx * q(j);
-      atrace(i, 1) += dgy * q(j);
-      atrace(i, 2) += dgz * q(j);
-      atrace(j, 0) -= dgx * q(i);
-      atrace(j, 1) -= dgy * q(i);
-      atrace(j, 2) -= dgz * q(i);
+      atrace(ii, 0) += dgx * q(jj);
+      atrace(ii, 1) += dgy * q(jj);
+      atrace(ii, 2) += dgz * q(jj);
+      atrace(jj, 0) -= dgx * q(ii);
+      atrace(jj, 1) -= dgy * q(ii);
+      atrace(jj, 2) -= dgz * q(ii);
 
-      dAmat(3 * i, j) = dgx * q(i);
-      dAmat(3 * i + 1, j) = dgy * q(i);
-      dAmat(3 * i + 2, j) = dgz * q(i);
-      dAmat(3 * j, i) = -dgx * q(j);
-      dAmat(3 * j + 1, i) = -dgy * q(j);
-      dAmat(3 * j + 2, i) = -dgz * q(j);
+      dAmat(3 * ii, jj) = dgx * q(ii);
+      dAmat(3 * ii + 1, jj) = dgy * q(ii);
+      dAmat(3 * ii + 2, jj) = dgz * q(ii);
+      dAmat(3 * jj, ii) = -dgx * q(jj);
+      dAmat(3 * jj + 1, ii) = -dgy * q(jj);
+      dAmat(3 * jj + 2, ii) = -dgz * q(jj);
     }
   }
 
@@ -278,6 +305,7 @@ int get_damat_0d(
 
 int eeq_chrgeq(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &dist,
   const int &charge,
   const TVector<double> &cn,
@@ -289,8 +317,8 @@ int eeq_chrgeq(
 ) {
   double qtotal = 0.0;
   int info = 0;
-  int m = mol.NAtoms + 1;
-  int mm = mol.NAtoms;
+  int n = realIdx.Max() + 1;
+  int m = n + 1;
 
   TMatrix<double> Amat; // Coulomb matrix
   TVector<double> xvec; // x (chi) vector
@@ -300,10 +328,10 @@ int eeq_chrgeq(
   TVector<double> dxdcn; // Derivative of chi vector w.r.t. CN
   if (lgrad) dxdcn.NewVec(m);
 
-  info = get_vrhs(mol, charge, cn, xvec, dxdcn, lgrad);
+  info = get_vrhs(mol, realIdx, charge, cn, xvec, dxdcn, lgrad);
   if (info != EXIT_SUCCESS) return info;
 
-  info = get_amat_0d(mol, dist, Amat);
+  info = get_amat_0d(mol, realIdx, dist, Amat);
   if (info != EXIT_SUCCESS) return info;
 
   TVector<double> vrhs;
@@ -316,20 +344,22 @@ int eeq_chrgeq(
   // solve: A Q = X (Eq.4) -> Q = Ainv X
   info = BLAS_InvertMatrix(Ainv);
   if (info != EXIT_SUCCESS) return info;
-  info = BLAS_Add_Mat_x_Vec(vrhs, Ainv, xvec, false, 1.0);
-  if (info != EXIT_SUCCESS) return info;
 
-  // remove charge constraint (make vector smaller by one)
-  for (int i = 0; i != mm; i++) {
-    qvec(i) = vrhs(i);
+  // no return in ORCA
+  BLAS_Add_Mat_x_Vec(vrhs, Ainv, xvec, false, 1.0);
+  // if (info != EXIT_SUCCESS) return info;
+
+  // remove charge constraint (make vector smaller by one) and total charge
+  qtotal = 0.0;
+  for (int iat = 0, ii = 0; iat != mol.NAtoms; iat++) {
+    ii = realIdx(iat);
+    if (ii < 0) continue;
+
+    qvec(ii) = vrhs(ii);
+    qtotal += qvec(ii);
   }
 
   // check total charge and additional printout
-  qtotal = 0.0;
-  for (int i = 0; i != qvec.N; i++) {
-    qtotal += qvec(i);
-  }
-
   if (fabs(qtotal - charge) > 1.0e-8) {
     printf(
       "DFT-D4: EEQ charge constraint error: %14.8f vs. %14d\n", qtotal, charge
@@ -338,45 +368,51 @@ int eeq_chrgeq(
 
   if (lverbose) {
     printf("    #   sym             EN              q            Aii\n");
-    for (int i = 0; i != mol.NAtoms; i++) {
+    for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
+      ii = realIdx(i);
+      if (ii < 0) continue;
       printf(
         "%5d %5d %14.8f %14.8f %14.8f\n",
         i,
-        mol.at(i),
-        -xvec(i),
-        qvec(i),
-        Amat(i, i)
+        mol.ATNO(i),
+        -xvec(ii),
+        qvec(ii),
+        Amat(ii, ii)
       );
     }
   }
 
   // Gradient (note that the corresponding gradient flag in Fortran is `cpq`)
   if (lgrad) {
-    int ThreeN = 3 * mol.NAtoms;
-
     TMatrix<double> dAmat;
-    dAmat.NewMat(ThreeN, m);
+    dAmat.NewMat(3 * n, m);
     TMatrix<double> atrace;
     atrace.NewMat(m, 3);
 
-    info = get_damat_0d(mol, dist, vrhs, Amat, dAmat, atrace);
+    info = get_damat_0d(mol, realIdx, dist, vrhs, Amat, dAmat, atrace);
     if (info != EXIT_SUCCESS) return info;
 
-    for (int i = 0; i != mol.NAtoms; i++) {
-      dAmat(3 * i, i) += atrace(i, 0);
-      dAmat(3 * i + 1, i) += atrace(i, 1);
-      dAmat(3 * i + 2, i) += atrace(i, 2);
+    for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
+      ii = realIdx(i);
+      if (ii < 0) continue;
 
-      for (int j = 0; j != mol.NAtoms; j++) {
-        dAmat(3 * j, i) -= dcndr(j, 3 * i) * dxdcn(i);
-        dAmat(3 * j + 1, i) -= dcndr(j, 3 * i + 1) * dxdcn(i);
-        dAmat(3 * j + 2, i) -= dcndr(j, 3 * i + 2) * dxdcn(i);
+      dAmat(3 * ii, ii) += atrace(ii, 0);
+      dAmat(3 * ii + 1, ii) += atrace(ii, 1);
+      dAmat(3 * ii + 2, ii) += atrace(ii, 2);
+
+      for (int j = 0, jj = 0; j != mol.NAtoms; j++) {
+        jj = realIdx(j);
+        if (jj < 0) continue;
+
+        dAmat(3 * jj, ii) -= dcndr(jj, 3 * ii) * dxdcn(ii);
+        dAmat(3 * jj + 1, ii) -= dcndr(jj, 3 * ii + 1) * dxdcn(ii);
+        dAmat(3 * jj + 2, ii) -= dcndr(jj, 3 * ii + 2) * dxdcn(ii);
       }
     }
 
     // we do not need these gradient-related matrices anymore
-    atrace.Delete();
-    dxdcn.Delete();
+    atrace.DelMat();
+    dxdcn.DelVec();
 
     // Ainv with last column removed
     TMatrix<double> A;
@@ -387,16 +423,17 @@ int eeq_chrgeq(
       }
     }
 
-    info = BLAS_Add_Mat_x_Mat(dqdr, dAmat, A, false, false, -1.0);
-    if (info != EXIT_SUCCESS) return info;
+    // no return in ORCA
+    BLAS_Add_Mat_x_Mat(dqdr, dAmat, A, false, false, -1.0);
+    // if (info != EXIT_SUCCESS) return info;
 
-    dAmat.Delete();
+    dAmat.DelMat();
   }
 
   // free all memory
-  Ainv.Delete();
-  Amat.Delete();
-  xvec.Delete();
+  Ainv.DelMat();
+  Amat.DelMat();
+  xvec.DelVec();
 
   return EXIT_SUCCESS;
 }

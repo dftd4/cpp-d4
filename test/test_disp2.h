@@ -20,7 +20,7 @@
 
 extern int test_energy2(
   int n,
-  const char atoms[][4],
+  const char atoms[][3],
   const double coord[],
   int charge,
   double ref

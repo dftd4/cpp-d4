@@ -1,0 +1,10 @@
+{
+  "files.associations": {
+    "cassert": "cpp",
+    "cmath": "cpp",
+    "complex": "cpp",
+    "functional": "cpp",
+    "iostream": "cpp",
+    "new": "cpp"
+  }
+}

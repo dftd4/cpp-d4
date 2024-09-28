@@ -34,9 +34,9 @@ static const double wf_default = 6.0;
 
 class TD4Model {
   public:
+    double wf;
     double ga;
     double gc;
-    double wf;
 
     explicit TD4Model(
       double ga_scale = ga_default,
@@ -48,6 +48,7 @@ class TD4Model {
 
     int weight_references(
       const TMolecule &mol,
+      const TIVector &realIdx,
       const TVector<double> &cn,
       const TVector<double> &q,
       const TMatrix<double> &refq,
@@ -59,6 +60,7 @@ class TD4Model {
 
     int get_atomic_c6(
       const TMolecule &mol,
+      const TIVector &realIdx,
       const TMatrix<double> &gwvec,
       const TMatrix<double> &dgwdcn,
       const TMatrix<double> &dgwdq,
@@ -68,10 +70,17 @@ class TD4Model {
       bool lgrad = false
     ) const;
 
-    virtual int set_refq_eeq(const TMolecule &mol, TMatrix<double> &refq) const;
+    virtual int set_refq_eeq(
+      const TMolecule &mol,
+      const TIVector &realIdx,
+      TMatrix<double> &refq
+    ) const;
 
-    virtual int
-      set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha) const;
+    virtual int set_refalpha_eeq(
+      const TMolecule &mol,
+      const TIVector &realIdx,
+      TMatrix<double> &alpha
+    ) const;
 };
 
 extern inline double trapzd(const double a[23], const double b[23]);

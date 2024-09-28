@@ -54,7 +54,7 @@
 // Water
 static const int water_n{3};
 static const int water_charge{0};
-static const char water_atoms[water_n][4]{
+static const char water_atoms[water_n][3]{
   "O",
   "H",
   "H",
@@ -71,10 +71,74 @@ static const double water_coord[water_n * 3]{
   +0.37144274876492,
 };
 
+// Water dimer
+static const int water_dimer_n{6};
+static const int water_dimer_charge{0};
+static const char water_dimer_atoms[water_dimer_n][3]{
+  "O",
+  "H",
+  "H",
+  "O",
+  "H",
+  "H",
+};
+static const double water_dimer_coord[water_dimer_n * 3]{
+  -3.24461780406248,
+  -0.10530990158270,
+  +0.00000000000000,
+  -3.84932865216183,
+  +1.60128210841514,
+  +0.00000000000000,
+  -1.43101041465447,
+  +0.08039197290338,
+  +0.00000000000000,
+  +2.36992046172956,
+  +0.05080150740831,
+  +0.00000000000000,
+  +3.07751820457461,
+  -0.81358303254468,
+  +1.42952433403007,
+  +3.07751820457461,
+  -0.81358303254468,
+  -1.42952433403007,
+};
+
+// Water ghost
+static const int water_ghost_n{6};
+static const int water_ghost_charge{0};
+static const char water_ghost_atoms[water_ghost_n][3]{
+  "X",
+  "O",
+  "X",
+  "H",
+  "H",
+  "X",
+};
+static const double water_ghost_coord[water_ghost_n * 3]{
+  +2.36992046172956, // ghost
+  +0.05080150740831, // ghost
+  +0.00000000000000, // ghost
+  -3.24461780406248, // O
+  -0.10530990158270, // O
+  +0.00000000000000, // O
+  +3.07751820457461, // ghost
+  -0.81358303254468, // ghost
+  +1.42952433403007, // ghost
+  -3.84932865216183, // H1
+  +1.60128210841514, // H1
+  +0.00000000000000, // H1
+  -1.43101041465447, // H2
+  +0.08039197290338, // H2
+  +0.00000000000000, // H2
+  +3.07751820457461, // ghost
+  -0.81358303254468, // ghost
+  -1.42952433403007, // ghost
+};
+
 // MB16_43: 01
 static const int mb16_43_01_n{16};
 static const int mb16_43_01_charge{0};
-static const char mb16_43_01_atoms[mb16_43_01_n][4]{
+static const char mb16_43_01_atoms[mb16_43_01_n][3]{
   "Na",
   "H",
   "O",
@@ -110,7 +174,7 @@ static const double mb16_43_01_coord[mb16_43_01_n * 3]{
 // ROST61: m1
 static const int rost61_m1_n{22};
 static const int rost61_m1_charge{0};
-static const char rost61_m1_atoms[rost61_m1_n][4]{
+static const char rost61_m1_atoms[rost61_m1_n][3]{
   "c", "c", "c", "h", "c", "c", "h", "h", "h", "h",  "c",
   "c", "c", "h", "c", "c", "h", "h", "h", "h", "ti", "h",
 };
@@ -137,7 +201,7 @@ static const double rost61_m1_coord[rost61_m1_n * 3]{
 // UPU23: 0a
 static const int upu23_0a_n{59};
 static const int upu23_0a_charge{-1};
-static const char upu23_0a_atoms[upu23_0a_n][4]{
+static const char upu23_0a_atoms[upu23_0a_n][3]{
   "H", "O", "C", "H", "H", "C", "H", "O", "C", "H", "N", "C", "H", "C", "H",
   "C", "O", "N", "H", "C", "O", "C", "H", "C", "H", "O", "H", "O", "P", "O",
   "O", "O", "C", "H", "H", "C", "H", "O", "C", "H", "N", "C", "H", "C", "H",
@@ -208,7 +272,7 @@ static const double upu23_0a_coord[upu23_0a_n * 3]{
 // AmF3
 static const int amf3_n{4};
 static const int amf3_charge{0};
-static const char amf3_atoms[amf3_n][4]{
+static const char amf3_atoms[amf3_n][3]{
   "Am",
   "F",
   "F",
@@ -232,7 +296,7 @@ static const double amf3_coord[amf3_n * 3]{
 // Actinides
 static const int actinides_n{17};
 static const int actinides_charge{0};
-static const char actinides_atoms[actinides_n][4]{
+static const char actinides_atoms[actinides_n][3]{
   "Fr",
   "Ra",
   "Ac",

@@ -18,6 +18,12 @@
 #ifndef TEST_NCOORD_H
 #define TEST_NCOORD_H
 
+static const double water_ref_cn[3]{
+  +1.6104536494421657E+00,
+  +8.0522682472108287E-01,
+  +8.0522682472108287E-01
+};
+
 static const double mb16_43_01_ref_cn[16]{
   +3.0734967711040162E+00,
   +9.3146160511610288E-01,

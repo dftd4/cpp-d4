@@ -72,6 +72,7 @@ TD4Model::TD4Model(
 
 int TD4Model::weight_references(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TVector<double> &cn,
   const TVector<double> &q,
   const TMatrix<double> &refq,
@@ -87,8 +88,12 @@ int TD4Model::weight_references(
   double expw{0.0}, dexpw{0.0}, gwk{0.0}, dgwk{0.0};
 
   if (lgrad) {
-    for (int iat = 0; iat != mol.NAtoms; iat++) {
-      izp = mol.at(iat);
+    for (int iat = 0, ii = 0; iat != mol.NAtoms; iat++) {
+      // required for coordination number and charge
+      ii = realIdx(iat);
+      if (ii < 0) continue;
+
+      izp = mol.ATNO(iat);
       zi = zeff[izp];
       gi = gam[izp] * gc;
 
@@ -99,9 +104,9 @@ int TD4Model::weight_references(
         maxcn = std::max(maxcn, refcovcn[izp][iref]);
         for (int igw = 0; igw != refc[izp][iref]; igw++) {
           twf = (igw + 1) * wf;
-          gw = weight_cn(twf, cn(iat), refcovcn[izp][iref]);
+          gw = weight_cn(twf, cn(ii), refcovcn[izp][iref]);
           norm += gw;
-          dnorm += 2 * twf * (refcovcn[izp][iref] - cn(iat)) * gw;
+          dnorm += 2 * twf * (refcovcn[izp][iref] - cn(ii)) * gw;
         }
       }
       norm = 1.0 / norm;
@@ -110,9 +115,9 @@ int TD4Model::weight_references(
         dexpw = 0.0;
         for (int igw = 0; igw != refc[izp][iref]; igw++) {
           twf = (igw + 1) * wf;
-          gw = weight_cn(twf, cn(iat), refcovcn[izp][iref]);
+          gw = weight_cn(twf, cn(ii), refcovcn[izp][iref]);
           expw += gw;
-          dexpw += 2 * twf * (refcovcn[izp][iref] - cn(iat)) * gw;
+          dexpw += 2 * twf * (refcovcn[izp][iref] - cn(ii)) * gw;
         }
         gwk = expw * norm;
         if (is_exceptional(gwk)) {
@@ -123,20 +128,20 @@ int TD4Model::weight_references(
           }
         }
 
-        gwvec(iref, iat) =
-          gwk * zeta(ga, gi, refq(iref, iat) + zi, q(iat) + zi);
-        dgwdq(iref, iat) =
-          gwk * dzeta(ga, gi, refq(iref, iat) + zi, q(iat) + zi);
+        gwvec(iref, ii) = gwk * zeta(ga, gi, refq(iref, ii) + zi, q(ii) + zi);
+        dgwdq(iref, ii) = gwk * dzeta(ga, gi, refq(iref, ii) + zi, q(ii) + zi);
 
         dgwk = norm * (dexpw - expw * dnorm * norm);
         if (is_exceptional(dgwk)) { dgwk = 0.0; }
-        dgwdcn(iref, iat) =
-          dgwk * zeta(ga, gi, refq(iref, iat) + zi, q(iat) + zi);
+        dgwdcn(iref, ii) = dgwk * zeta(ga, gi, refq(iref, ii) + zi, q(ii) + zi);
       }
     }
   } else {
-    for (int iat = 0; iat != mol.NAtoms; iat++) {
-      izp = mol.at(iat);
+    for (int iat = 0, ii = 0; iat != mol.NAtoms; iat++) {
+      ii = realIdx(iat);
+      if (ii < 0) continue;
+
+      izp = mol.ATNO(iat);
       zi = zeff[izp];
       gi = gam[izp] * gc;
 
@@ -146,7 +151,7 @@ int TD4Model::weight_references(
         maxcn = std::max(maxcn, refcovcn[izp][iref]);
         for (int igw = 0; igw != refc[izp][iref]; igw++) {
           twf = (igw + 1) * wf;
-          norm += weight_cn(twf, cn(iat), refcovcn[izp][iref]);
+          norm += weight_cn(twf, cn(ii), refcovcn[izp][iref]);
         }
       }
       norm = 1.0 / norm;
@@ -154,7 +159,7 @@ int TD4Model::weight_references(
         expw = 0.0;
         for (int igw = 0; igw != refc[izp][iref]; igw++) {
           twf = (igw + 1) * wf;
-          expw += weight_cn(twf, cn(iat), refcovcn[izp][iref]);
+          expw += weight_cn(twf, cn(ii), refcovcn[izp][iref]);
         }
         gwk = expw * norm;
         if (std::isnan(gwk)) {
@@ -165,8 +170,7 @@ int TD4Model::weight_references(
           }
         }
 
-        gwvec(iref, iat) =
-          gwk * zeta(ga, gi, refq(iref, iat) + zi, q(iat) + zi);
+        gwvec(iref, ii) = gwk * zeta(ga, gi, refq(iref, ii) + zi, q(ii) + zi);
       }
     }
   }
@@ -176,6 +180,7 @@ int TD4Model::weight_references(
 
 int TD4Model::get_atomic_c6(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const TMatrix<double> &gwvec,
   const TMatrix<double> &dgwdcn,
   const TMatrix<double> &dgwdq,
@@ -193,17 +198,23 @@ int TD4Model::get_atomic_c6(
   if (info != EXIT_SUCCESS) return info;
 
   TMatrix<double> alpha;
-  alpha.NewMat(mol.NAtoms, 23 * mref);
-  info = set_refalpha_eeq(mol, alpha);
+  alpha.NewMat(realIdx.Max() + 1, 23 * mref);
+  info = set_refalpha_eeq(mol, realIdx, alpha);
   if (info != EXIT_SUCCESS) return info;
 
   if (lgrad) {
     double dc6dcni{0.0}, dc6dcnj{0.0}, dc6dqi{0.0}, dc6dqj{0.0};
 
-    for (int iat = 0; iat != mol.NAtoms; iat++) {
-      izp = mol.at(iat);
-      for (int jat = 0; jat != mol.NAtoms; jat++) {
-        jzp = mol.at(jat);
+    for (int iat = 0, ii = 0; iat != mol.NAtoms; iat++) {
+      ii = realIdx(iat);
+      if (ii < 0) continue;
+
+      izp = mol.ATNO(iat);
+      for (int jat = 0, jj = 0; jat != mol.NAtoms; jat++) {
+        jj = realIdx(jat);
+        if (jj < 0) continue;
+
+        jzp = mol.ATNO(jat);
 
         dc6 = 0.0;
         dc6dcni = 0.0;
@@ -213,70 +224,91 @@ int TD4Model::get_atomic_c6(
         for (int iref = 0; iref != refn[izp]; iref++) {
           for (int jref = 0; jref != refn[jzp]; jref++) {
             refc6 =
-              thopi * trapzd(&alpha[iat][23 * iref], &alpha[jat][23 * jref]);
-            dc6 += gwvec(iref, iat) * gwvec(jref, jat) * refc6;
+              thopi * trapzd(&alpha[ii][23 * iref], &alpha[jj][23 * jref]);
+            dc6 += gwvec(iref, ii) * gwvec(jref, jj) * refc6;
 
-            dc6dcni += dgwdcn(iref, iat) * gwvec(jref, jat) * refc6;
-            dc6dcnj += gwvec(iref, iat) * dgwdcn(jref, jat) * refc6;
-            dc6dqi += dgwdq(iref, iat) * gwvec(jref, jat) * refc6;
-            dc6dqj += gwvec(iref, iat) * dgwdq(jref, jat) * refc6;
+            dc6dcni += dgwdcn(iref, ii) * gwvec(jref, jj) * refc6;
+            dc6dcnj += gwvec(iref, ii) * dgwdcn(jref, jj) * refc6;
+            dc6dqi += dgwdq(iref, ii) * gwvec(jref, jj) * refc6;
+            dc6dqj += gwvec(iref, ii) * dgwdq(jref, jj) * refc6;
           }
         }
 
-        c6(iat, jat) = dc6;
-        c6(jat, iat) = dc6;
+        c6(ii, jj) = dc6;
+        c6(jj, ii) = dc6;
 
-        dc6dcn(iat, jat) = dc6dcni;
-        dc6dcn(jat, iat) = dc6dcnj;
-        dc6dq(iat, jat) = dc6dqi;
-        dc6dq(jat, iat) = dc6dqj;
+        dc6dcn(ii, jj) = dc6dcni;
+        dc6dcn(jj, ii) = dc6dcnj;
+        dc6dq(ii, jj) = dc6dqi;
+        dc6dq(jj, ii) = dc6dqj;
       }
     }
   } else {
-    for (int iat = 0; iat != mol.NAtoms; iat++) {
-      izp = mol.at(iat);
-      for (int jat = 0; jat != mol.NAtoms; jat++) {
-        jzp = mol.at(jat);
+    for (int iat = 0, ii = 0; iat != mol.NAtoms; iat++) {
+      ii = realIdx(iat);
+      if (ii < 0) continue;
+
+      izp = mol.ATNO(iat);
+      for (int jat = 0, jj = 0; jat != mol.NAtoms; jat++) {
+        jj = realIdx(jat);
+        if (jj < 0) continue;
+
+        jzp = mol.ATNO(jat);
 
         dc6 = 0.0;
         for (int iref = 0; iref != refn[izp]; iref++) {
           for (int jref = 0; jref != refn[jzp]; jref++) {
             refc6 =
-              thopi * trapzd(&alpha[iat][23 * iref], &alpha[jat][23 * jref]);
-            dc6 += gwvec(iref, iat) * gwvec(jref, jat) * refc6;
+              thopi * trapzd(&alpha[ii][23 * iref], &alpha[jj][23 * jref]);
+            dc6 += gwvec(iref, ii) * gwvec(jref, jj) * refc6;
           }
         }
 
-        c6(iat, jat) = dc6;
-        c6(jat, iat) = dc6;
+        c6(ii, jj) = dc6;
+        c6(jj, ii) = dc6;
       }
     }
   }
 
-  alpha.Delete();
+  alpha.DelMat();
 
   return EXIT_SUCCESS;
 }
 
-int TD4Model::set_refq_eeq(const TMolecule &mol, TMatrix<double> &refq) const {
-  int izp;
+int TD4Model::set_refq_eeq(
+  const TMolecule &mol,
+  const TIVector &realIdx,
+  TMatrix<double> &refq
+) const {
+  int izp{0}, ii{0};
+
   for (int iat = 0; iat != mol.NAtoms; iat++) {
-    izp = mol.at(iat);
+    ii = realIdx(iat);
+    if (ii < 0) continue;
+
+    izp = mol.ATNO(iat);
+
     for (int iref = 0; iref != refn[izp]; iref++) {
-      refq(iref, iat) = refq_eeq[izp][iref];
+      refq(iref, ii) = refq_eeq[izp][iref];
     }
   }
 
   return EXIT_SUCCESS;
 }
 
-int TD4Model::set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha)
-  const {
-  int izp{0}, is{0};
+int TD4Model::set_refalpha_eeq(
+  const TMolecule &mol,
+  const TIVector &realIdx,
+  TMatrix<double> &alpha
+) const {
+  int izp{0}, ii{0}, is{0};
   double iz{0.0}, aiw{0.0};
 
   for (int iat = 0; iat != mol.NAtoms; iat++) {
-    izp = mol.at(iat);
+    ii = realIdx(iat);
+    if (ii < 0) continue;
+
+    izp = mol.ATNO(iat);
     for (int ir = 0; ir != refn[izp]; ir++) {
       is = refsys[izp][ir];
       if (is == 0) continue;
@@ -285,7 +317,7 @@ int TD4Model::set_refalpha_eeq(const TMolecule &mol, TMatrix<double> &alpha)
       for (int k = 0; k != 23; k++) {
         aiw = secscale[is] * secalpha[is][k] *
               zeta(ga, gam[is] * gc, iz, refsq[izp][ir] + iz);
-        alpha(iat, 23 * ir + k) = std::max(
+        alpha(ii, 23 * ir + k) = std::max(
           0.0,
           refascale[izp][ir] *
             (refalpha[izp][23 * ir + k] - refscount[izp][ir] * aiw)
@@ -330,9 +362,9 @@ inline double
 }
 
 int get_max_ref(const TMolecule &mol, int &mref) {
-  mref = refn[mol.at(0)];
+  mref = refn[mol.ATNO(0)];
   for (int i = 1; i != mol.NAtoms; i++) {
-    int val = refn[mol.at(i)];
+    int val = refn[mol.ATNO(i)];
     if (val > mref) mref = val;
   }
 

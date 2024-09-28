@@ -25,8 +25,8 @@ namespace dftd4 {
 class TMolecule {
   public:
     int NAtoms;
-    TMatrix<double> xyz; // Cartesian Coordinates: (NAtoms x 3)-matrix
-    TVector<int> at;     // atomic numbers
+    TMatrix<double> CC; // Cartesian Coordinates: (NAtoms x 3)-matrix
+    TVector<int> ATNO;  // atomic numbers
 
     TMolecule() { NAtoms = 0; }
     ~TMolecule() { FreeMemory(); }
@@ -34,13 +34,13 @@ class TMolecule {
     void GetMemory(int NumAt_) {
       FreeMemory();
       NAtoms = NumAt_;
-      xyz.New(NAtoms, 3);
-      at.New(NAtoms);
+      CC.New(NAtoms, 3);
+      ATNO.New(NAtoms);
     }
 
-    void FreeMemory() {
-      xyz.Delete();
-      at.Delete();
+    void FreeMemory(void) {
+      CC.Delete();
+      ATNO.Delete();
     }
 };
 

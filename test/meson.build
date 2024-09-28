@@ -18,6 +18,7 @@
 tests = [
   'disp2',
   'disp',
+  'ghost',
   'grad',
   'ncoord',
   'param',

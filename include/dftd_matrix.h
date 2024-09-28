@@ -63,6 +63,8 @@ template <class T> class TVector {
       p = nullptr;
       N = 0;
     }
+    void DelVec(void) { return Delete(); }
+
     void CopyVec(const TVector &v) {
       long int mem;
       if (N != v.N) {
@@ -73,6 +75,7 @@ template <class T> class TVector {
       mem = (long int)N * ElementSize;
       std::memcpy(p, v.p, mem);
     }
+
     void Init() {
       if (p != nullptr) {
         long int mem = (long int)N * ElementSize;
@@ -80,10 +83,17 @@ template <class T> class TVector {
       }
     }
 
-    void Print(char name[]) {
+    void Print(const char name[]) {
       printf("Vector printed: %s (%d)\n", name, N);
       for (int i = 0; i < N; i++) {
         printf("%+23.15e\n", p[i]);
+      }
+      printf("\n");
+    }
+    void PrintInt(const char name[]) {
+      printf("Vector printed: %s (%d)\n", name, N);
+      for (int i = 0; i < N; i++) {
+        printf("%d\n", p[i]);
       }
       printf("\n");
     }
@@ -92,6 +102,14 @@ template <class T> class TVector {
     inline const T &operator()(int i) const { return p[i]; }
     inline T &operator[](int i) { return p[i]; }
     inline const T &operator[](int i) const { return p[i]; }
+
+    // Max element
+    T Max() const {
+      T result = p[0];
+      for (int i = 0; i < N; ++i)
+        if (result < p[i]) result = p[i];
+      return result;
+    };
 };
 
 // Define a normal matrix
@@ -142,6 +160,7 @@ template <class T> class TMatrix {
       cols = 0;
       p = nullptr;
     }
+    void DelMat(void) { return Delete(); }
 
     void Init() {
       long int mem;
@@ -210,5 +229,7 @@ template <class T> class TMatrix {
     inline const T &operator()(int i, int j) const { return p[i * cols + j]; }
     inline T *operator[](int i) { return p + i * cols; }
 };
+
+typedef TVector<int> TIVector;
 
 } // namespace dftd4

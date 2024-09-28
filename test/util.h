@@ -24,7 +24,7 @@
 
 extern int get_molecule(
   int n,
-  const char atoms[][4],
+  const char atoms[][3],
   const double coord[],
   dftd4::TMolecule &mol
 );

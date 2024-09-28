@@ -36,6 +36,7 @@ namespace dftd4 {
 
 int get_dispersion(
   const TMolecule &mol,
+  const TIVector &realIdx,
   const int charge,
   const TD4Model &d4,
   const dparam &par,
@@ -44,14 +45,16 @@ int get_dispersion(
   double *GRAD
 ) {
   // setup variables
+  int info{0};
   bool lmbd = (par.s9 != 0.0);
   bool lgrad = !!GRAD;
-  int info = 0;
+
+  int nat = realIdx.Max() + 1;
 
   // distances
   TMatrix<double> dist;
-  dist.NewMat(mol.NAtoms, mol.NAtoms);
-  calc_distances(mol, dist);
+  dist.NewMatrix(nat, nat);
+  calc_distances(mol, realIdx, dist);
 
   TVector<double> cn;       // D4 coordination number
   TVector<double> q;        // partial charges from EEQ model
@@ -59,20 +62,20 @@ int get_dispersion(
   TMatrix<double> dqdr;     // derivative of partial charges
   TVector<double> gradient; // derivative of dispersion energy
 
-  cn.NewVec(mol.NAtoms);
-  q.NewVec(mol.NAtoms);
+  cn.NewVector(nat);
+  q.NewVector(nat);
   if (lgrad) {
-    dcndr.NewMat(3 * mol.NAtoms, mol.NAtoms);
-    dqdr.NewMat(3 * mol.NAtoms, mol.NAtoms);
-    gradient.NewVec(3 * mol.NAtoms);
+    dcndr.NewMatrix(3 * nat, nat);
+    dqdr.NewMatrix(3 * nat, nat);
+    gradient.NewVector(3 * nat);
   }
 
   // calculate partial charges from EEQ model
-  info = get_charges(mol, dist, charge, cutoff.cn_eeq, q, dqdr, lgrad);
+  info = get_charges(mol, realIdx, dist, charge, cutoff.cn_eeq, q, dqdr, lgrad);
   if (info != EXIT_SUCCESS) return info;
 
   // get the D4 coordination number
-  info = get_ncoord_d4(mol, dist, cutoff.cn, cn, dcndr, lgrad);
+  info = get_ncoord_d4(mol, realIdx, dist, cutoff.cn, cn, dcndr, lgrad);
   if (info != EXIT_SUCCESS) return info;
 
   // maximum number of reference systems
@@ -82,31 +85,35 @@ int get_dispersion(
 
   // reference charges
   TMatrix<double> refq;
-  refq.NewMat(mref, mol.NAtoms);
-  info = d4.set_refq_eeq(mol, refq);
+  refq.NewMat(mref, nat);
+  info = d4.set_refq_eeq(mol, realIdx, refq);
   if (info != EXIT_SUCCESS) return info;
 
   TMatrix<double> gwvec;
   TMatrix<double> dgwdcn;
   TMatrix<double> dgwdq;
-  gwvec.NewMat(mref, mol.NAtoms);
+  gwvec.NewMatrix(mref, nat);
   if (lgrad) {
-    dgwdcn.NewMat(mref, mol.NAtoms);
-    dgwdq.NewMat(mref, mol.NAtoms);
+    dgwdcn.NewMatrix(mref, nat);
+    dgwdq.NewMatrix(mref, nat);
   }
-  info = d4.weight_references(mol, cn, q, refq, gwvec, dgwdcn, dgwdq, lgrad);
+  info = d4.weight_references(
+    mol, realIdx, cn, q, refq, gwvec, dgwdcn, dgwdq, lgrad
+  );
   if (info != EXIT_SUCCESS) return info;
 
   TMatrix<double> c6;
   TMatrix<double> dc6dcn;
   TMatrix<double> dc6dq;
-  c6.NewMat(mol.NAtoms, mol.NAtoms);
+  c6.NewMatrix(nat, nat);
   if (lgrad) {
-    dc6dcn.NewMat(mol.NAtoms, mol.NAtoms);
-    dc6dq.NewMat(mol.NAtoms, mol.NAtoms);
+    dc6dcn.NewMatrix(nat, nat);
+    dc6dq.NewMatrix(nat, nat);
   }
 
-  info = d4.get_atomic_c6(mol, gwvec, dgwdcn, dgwdq, c6, dc6dcn, dc6dq, lgrad);
+  info = d4.get_atomic_c6(
+    mol, realIdx, gwvec, dgwdcn, dgwdq, c6, dc6dcn, dc6dq, lgrad
+  );
   if (info != EXIT_SUCCESS) return info;
 
   // --------------------------
@@ -116,14 +123,15 @@ int get_dispersion(
   TVector<double> dEdcn;
   TVector<double> dEdq;
   TVector<double> energies;
-  energies.NewVec(mol.NAtoms);
+  energies.NewVector(nat);
   if (lgrad) {
-    dEdcn.NewVec(mol.NAtoms);
-    dEdq.NewVec(mol.NAtoms);
+    dEdcn.NewVector(nat);
+    dEdq.NewVector(nat);
   }
 
   info = get_dispersion2(
     mol,
+    realIdx,
     dist,
     cutoff.disp2,
     par,
@@ -138,12 +146,9 @@ int get_dispersion(
   );
   if (info != EXIT_SUCCESS) return info;
 
-  if (lgrad) {
-    info = BLAS_Add_Mat_x_Vec(gradient, dqdr, dEdq, false, 1.0);
-    if (info != EXIT_SUCCESS) return info;
-  }
-
-  dqdr.Delete();
+  // blas function have no return in orca
+  if (lgrad) BLAS_Add_Mat_x_Vec(gradient, dqdr, dEdq, false, 1.0);
+  dqdr.DelMat();
 
   // ----------------------------
   // Three-body dispersion energy
@@ -151,17 +156,19 @@ int get_dispersion(
 
   if (lmbd) {
     // Three-body term is independent of charges
-    for (int i = 0; i != mol.NAtoms; i++) {
+    for (int i = 0; i != nat; i++) {
       q(i) = 0.0;
     }
 
     // calculate weight references
-    gwvec.NewMat(mref, mol.NAtoms);
+    gwvec.NewMatrix(mref, nat);
     if (lgrad) {
-      dgwdcn.NewMat(mref, mol.NAtoms);
-      dgwdq.NewMat(mref, mol.NAtoms);
+      dgwdcn.NewMatrix(mref, nat);
+      dgwdq.NewMatrix(mref, nat);
     }
-    info = d4.weight_references(mol, cn, q, refq, gwvec, dgwdcn, dgwdq, lgrad);
+    info = d4.weight_references(
+      mol, realIdx, cn, q, refq, gwvec, dgwdcn, dgwdq, lgrad
+    );
     if (info != EXIT_SUCCESS) return info;
 
     cn.Delete();
@@ -169,22 +176,24 @@ int get_dispersion(
     refq.Delete();
 
     // calculate reference C6 coefficients
-    c6.NewMat(mol.NAtoms, mol.NAtoms);
+    c6.NewMatrix(nat, nat);
     if (lgrad) {
-      dc6dcn.NewMat(mol.NAtoms, mol.NAtoms);
-      dc6dq.NewMat(mol.NAtoms, mol.NAtoms);
+      dc6dcn.NewMatrix(nat, nat);
+      dc6dq.NewMatrix(nat, nat);
     }
-    info =
-      d4.get_atomic_c6(mol, gwvec, dgwdcn, dgwdq, c6, dc6dcn, dc6dq, lgrad);
+    info = d4.get_atomic_c6(
+      mol, realIdx, gwvec, dgwdcn, dgwdq, c6, dc6dcn, dc6dq, lgrad
+    );
     if (info != EXIT_SUCCESS) return info;
 
-    gwvec.Delete();
-    dgwdcn.Delete();
-    dgwdq.Delete();
+    gwvec.DelMat();
+    dgwdcn.DelMat();
+    dgwdq.DelMat();
 
     // calculate three-body dispersion
     info = get_dispersion3(
       mol,
+      realIdx,
       dist,
       cutoff.disp3,
       par,
@@ -207,32 +216,35 @@ int get_dispersion(
     dgwdq.Delete();
   }
 
-  dist.Delete();
-  c6.Delete();
-  dc6dcn.Delete();
-  dc6dq.Delete();
+  dist.DelMat();
+  c6.DelMat();
+  dc6dcn.DelMat();
+  dc6dq.DelMat();
 
-  if (lgrad) {
-    info = BLAS_Add_Mat_x_Vec(gradient, dcndr, dEdcn, false, 1.0);
-    if (info != EXIT_SUCCESS) return info;
-  }
+  if (lgrad) { BLAS_Add_Mat_x_Vec(gradient, dcndr, dEdcn, false, 1.0); }
 
-  dcndr.Delete();
-  dEdcn.Delete();
-  dEdq.Delete();
+  dcndr.DelMat();
+  dEdcn.DelVec();
+  dEdq.DelVec();
 
   // sum up atom-wise energies
-  for (int i = 0; i != mol.NAtoms; i++) {
+  for (int i = 0; i != nat; i++) {
     energy += energies(i);
   }
-  energies.Delete();
+  energies.DelVec();
 
   // write to input gradient
   if (lgrad) {
-    for (int i = 0; i != 3 * mol.NAtoms; i++) {
-      GRAD[i] = gradient(i);
+    for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
+      ii = realIdx(i);
+      if (ii < 0) continue;
+
+      GRAD[3 * i] = gradient(3 * ii);
+      GRAD[3 * i + 1] = gradient(3 * ii + 1);
+      GRAD[3 * i + 2] = gradient(3 * ii + 2);
     }
-    gradient.Delete();
+
+    gradient.DelVec();
   }
 
   return EXIT_SUCCESS;

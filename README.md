@@ -1,10 +1,12 @@
-# C++ Port of DFT-D4
+# C++ Port of DFT-D4 (for ORCA)
 
 [![License](https://img.shields.io/github/license/dftd4/cpp-d4)](https://github.com/dftd4/cpp-d4/blob/master/COPYING)
 [![Latest Version](https://img.shields.io/github/v/release/dftd4/cpp-d4)](https://github.com/dftd4/cpp-d4/releases/latest)
 
 This project is a port of the [`dftd4`](https://github.com/dftd4/dftd4) project
 to C++ and provides the D4(EEQ)-ATM method.
+
+**NOTE:** This branch contains some adaptations for compatibility with the ORCA Quantum Chemistry program. This inludes some renaming of variables and functions, and, most notably, the handling of ghost atoms.
 
 ## Building This Project
 

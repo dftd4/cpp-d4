@@ -39,19 +39,28 @@ int test_numgrad(TMolecule &mol, const int charge, const dparam &par) {
   TCutoff cutoff;
   TD4Model d4;
 
+  // masking (nothing excluded)
+  TVector<int> realIdx;
+  realIdx.NewVec(mol.NAtoms);
+  int nat = 0;
+  for (int i = 0; i != mol.NAtoms; i++) {
+    realIdx(i) = nat;
+    nat++;
+  }
+
   // numerical gradient
   for (int i = 0; i < mol.NAtoms; i++) {
     for (int c = 0; c < 3; c++) {
       er = 0.0;
       el = 0.0;
 
-      mol.xyz(i, c) += step;
-      get_dispersion(mol, charge, d4, par, cutoff, er, nullptr);
+      mol.CC(i, c) += step;
+      get_dispersion(mol, realIdx, charge, d4, par, cutoff, er, nullptr);
 
-      mol.xyz(i, c) = mol.xyz(i, c) - 2 * step;
-      get_dispersion(mol, charge, d4, par, cutoff, el, nullptr);
+      mol.CC(i, c) = mol.CC(i, c) - 2 * step;
+      get_dispersion(mol, realIdx, charge, d4, par, cutoff, el, nullptr);
 
-      mol.xyz(i, c) = mol.xyz(i, c) + step;
+      mol.CC(i, c) = mol.CC(i, c) + step;
       numgrad(i, c) = 0.5 * (er - el) / step;
     }
   }
@@ -61,8 +70,8 @@ int test_numgrad(TMolecule &mol, const int charge, const dparam &par) {
   for (int i = 0; i < 3 * mol.NAtoms; i++) {
     d4grad[i] = 0.0;
   }
-  info = get_dispersion(mol, charge, d4, par, cutoff, energy, d4grad);
-  if (info != EXIT_SUCCESS) return info;
+  info = get_dispersion(mol, realIdx, charge, d4, par, cutoff, energy, d4grad);
+  if (!info == EXIT_SUCCESS) return info;
 
   // check translational invariance of analytical gradient
   if (is_trans_invar(mol, d4grad) != EXIT_SUCCESS) return EXIT_FAILURE;

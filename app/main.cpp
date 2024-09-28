@@ -163,6 +163,15 @@ int main(int argc, char **argv) {
   dftd4::TCutoff cutoff;
   dftd4::TD4Model d4;
 
+  // masking (nothing excluded)
+  dftd4::TVector<int> realIdx;
+  realIdx.NewVec(mol.NAtoms);
+  int nat = 0;
+  for (int i = 0; i != mol.NAtoms; i++) {
+    realIdx(i) = nat;
+    nat++;
+  }
+
   // analytical gradient
   double *d4grad;
   if (lgrad) {
@@ -174,7 +183,9 @@ int main(int argc, char **argv) {
     d4grad = nullptr;
   }
 
-  info = dftd4::get_dispersion(mol, charge, d4, par, cutoff, energy, d4grad);
+  info = dftd4::get_dispersion(
+    mol, realIdx, charge, d4, par, cutoff, energy, d4grad
+  );
   if (info != EXIT_SUCCESS) return info;
 
   // Print results
@@ -196,6 +207,7 @@ int main(int argc, char **argv) {
   }
 
   mol.FreeMemory();
+  delete[] d4grad;
 
   return EXIT_SUCCESS;
 }
