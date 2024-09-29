@@ -18,7 +18,7 @@
 project(
   'cpp-d4',
   'cpp',
-  version: '2.1.0',
+  version: '2.2.0',
   license: 'LGPL3-or-later',
   meson_version: '>=0.51',
   default_options: [
