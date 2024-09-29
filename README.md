@@ -1,4 +1,4 @@
-# C++ Port of DFT-D4 (for ORCA)
+# C++ Port of DFT-D4
 
 [![License](https://img.shields.io/github/license/dftd4/cpp-d4)](https://github.com/dftd4/cpp-d4/blob/master/COPYING)
 [![Latest Version](https://img.shields.io/github/v/release/dftd4/cpp-d4)](https://github.com/dftd4/cpp-d4/releases/latest)
