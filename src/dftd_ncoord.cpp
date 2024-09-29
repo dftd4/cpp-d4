@@ -234,6 +234,9 @@ static const double hlfosqrtpi = 1.0 / 1.7724538509055159;
 // Maximum CN (not strictly obeyed)
 static const double cn_max = 8.0;
 
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
 int calc_distances(
   const TMolecule &mol,
   const TIVector &realIdx,
@@ -259,6 +262,13 @@ int calc_distances(
   }
 
   return EXIT_SUCCESS;
+};
+
+void initializeRealIdx(int nat, TVector<int> &realIdx) {
+  realIdx.NewVec(nat);
+  for (int i = 0; i < nat; ++i) {
+    realIdx(i) = i;
+  }
 };
 
 ///////////////////////////////////////////////////////////////////////////////

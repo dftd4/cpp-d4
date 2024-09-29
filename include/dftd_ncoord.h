@@ -43,6 +43,18 @@ extern int calc_distances(
 );
 
 /**
+ * Initialize real indices to all atoms in the molecule.
+ *
+ * @param nat Number of atoms in the molecule.
+ * @param realIdx Vector to store the real indices.
+ * @return void
+ */
+void initializeRealIdx(int nat, TVector<int> &realIdx);
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+/**
  * Wrapper for error function coordination number.
  *
  * @param mol Molecule object.
