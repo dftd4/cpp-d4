@@ -6,8 +6,6 @@
 This project is a port of the [`dftd4`](https://github.com/dftd4/dftd4) project
 to C++ and provides the D4(EEQ)-ATM method.
 
-**NOTE:** This branch contains some adaptations for compatibility with the ORCA Quantum Chemistry program. This inludes some renaming of variables and functions, and, most notably, the handling of ghost atoms.
-
 ## Building This Project
 
 This project is build with `meson`, to setup and perform a build run:
