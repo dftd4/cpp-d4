@@ -27,6 +27,44 @@
 
 namespace dftd4 {
 
+/**
+ * Get the EEQ charges for a given molecule.
+ *
+ * @param mol     The molecule object
+ * @param dist    The distance matrix
+ * @param charge  The total charge of the molecule
+ * @param cutoff  The cutoff for the EEQ coordination number
+ * @param q       The EEQ charges
+ * @param dqdr    The derivative of the EEQ charges
+ * @param lgrad   Flag for the gradient
+ *
+ * @return 0 if successful, 1 otherwise
+ */
+extern int get_charges(
+  const TMolecule &mol,
+  const TMatrix<double> &dist,
+  int charge,
+  double cutoff,
+  TVector<double> &q,
+  TMatrix<double> &dqdr,
+  bool lgrad
+);
+
+/**
+ * Get the EEQ charges for a given molecule for the atoms specified by the
+ * indices in `realIdx`.
+ *
+ * @param mol     The molecule object
+ * @param realIdx The real atom indices (for excluding dummy atoms)
+ * @param dist    The distance matrix
+ * @param charge  The total charge of the molecule
+ * @param cutoff  The cutoff for the EEQ coordination number
+ * @param q       The EEQ charges
+ * @param dqdr    The derivative of the EEQ charges
+ * @param lgrad   Flag for the gradient
+ *
+ * @return 0 if successful, 1 otherwise
+ */
 extern int get_charges(
   const TMolecule &mol,
   const TIVector &realIdx,

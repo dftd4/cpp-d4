@@ -232,4 +232,18 @@ template <class T> class TMatrix {
 
 typedef TVector<int> TIVector;
 
+/**
+ * Initialize real indices to all atoms in the molecule.
+ *
+ * @param nat Number of atoms in the molecule.
+ * @param realIdx Vector to store the real indices.
+ * @return void
+ */
+void initializeRealIdx(int nat, TVector<int> &realIdx) {
+  realIdx.NewVec(nat);
+  for (int i = 0; i < nat; ++i) {
+    realIdx(i) = i;
+  }
+}
+
 } // namespace dftd4

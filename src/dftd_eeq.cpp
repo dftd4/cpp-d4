@@ -131,6 +131,21 @@ static const double sqrt2pi = std::sqrt(2.0 / pi);
 
 int get_charges(
   const TMolecule &mol,
+  const TMatrix<double> &dist,
+  const int charge,
+  const double cutoff,
+  TVector<double> &q,
+  TMatrix<double> &dqdr,
+  bool lgrad
+) {
+  TIVector realIdx;
+  initializeRealIdx(mol.NAtoms, realIdx);
+
+  return get_charges(mol, realIdx, dist, charge, cutoff, q, dqdr, lgrad);
+};
+
+int get_charges(
+  const TMolecule &mol,
   const TIVector &realIdx,
   const TMatrix<double> &dist,
   const int charge,

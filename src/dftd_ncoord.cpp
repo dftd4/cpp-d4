@@ -259,7 +259,24 @@ int calc_distances(
   }
 
   return EXIT_SUCCESS;
-}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+int get_ncoord_erf(
+  const TMolecule &mol,
+  const TMatrix<double> &dist,
+  const double cutoff,
+  TVector<double> &cn,
+  TMatrix<double> &dcndr,
+  bool lgrad
+) {
+  TIVector realIdx;
+  initializeRealIdx(mol.NAtoms, realIdx);
+
+  return get_ncoord_erf(mol, realIdx, dist, cutoff, cn, dcndr, lgrad);
+};
 
 int get_ncoord_erf(
   const TMolecule &mol,
@@ -283,6 +300,111 @@ int get_ncoord_erf(
   if (info != EXIT_SUCCESS) return info;
 
   return EXIT_SUCCESS;
+};
+
+int ncoord_erf(
+  const TMolecule &mol,
+  const TIVector &realIdx,
+  const TMatrix<double> &dist,
+  const double cutoff,
+  TVector<double> &cn
+) {
+  double r = 0.0, rcovij = 0.0, rr = 0.0;
+  double countf = 0.0;
+
+  for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
+    ii = realIdx(i);
+    if (ii < 0) continue;
+
+    for (int j = 0, jj = 0; j != i; j++) {
+      jj = realIdx(j);
+      if (jj < 0) continue;
+
+      r = dist(ii, jj);
+      if (r > cutoff) continue;
+
+      rcovij = rad[mol.ATNO(i)] + rad[mol.ATNO(j)];
+      rr = r / rcovij;
+      countf = erf_count(kn, rr);
+      cn(ii) += countf;
+      cn(jj) += countf;
+    }
+  }
+
+  return EXIT_SUCCESS;
+}
+
+int dncoord_erf(
+  const TMolecule &mol,
+  const TIVector &realIdx,
+  const TMatrix<double> &dist,
+  const double cutoff,
+  TVector<double> &cn,
+  TMatrix<double> &dcndr
+) {
+  double r = 0.0, rcovij = 0.0, rr = 0.0;
+  double rx = 0.0, ry = 0.0, rz = 0.0;
+  double countf = 0.0, dcountf = 0.0;
+
+  for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
+    ii = realIdx(i);
+    if (ii < 0) continue;
+
+    for (int j = 0, jj = 0; j != i; j++) {
+      jj = realIdx(j);
+      if (jj < 0) continue;
+
+      r = dist(ii, jj);
+      if (r > cutoff) continue;
+
+      rx = (mol.CC(j, 0) - mol.CC(i, 0)) / r;
+      ry = (mol.CC(j, 1) - mol.CC(i, 1)) / r;
+      rz = (mol.CC(j, 2) - mol.CC(i, 2)) / r;
+
+      rcovij = rad[mol.ATNO(i)] + rad[mol.ATNO(j)];
+      rr = r / rcovij;
+
+      countf = erf_count(kn, rr);
+      cn(ii) += countf;
+      cn(jj) += countf;
+
+      dcountf = derf_count(kn, rr) / rcovij;
+      dcndr(jj, 3 * jj) += dcountf * rx;
+      dcndr(jj, 3 * jj + 1) += dcountf * ry;
+      dcndr(jj, 3 * jj + 2) += dcountf * rz;
+
+      dcndr(jj, 3 * ii) += dcountf * rx;
+      dcndr(jj, 3 * ii + 1) += dcountf * ry;
+      dcndr(jj, 3 * ii + 2) += dcountf * rz;
+
+      dcndr(ii, 3 * jj) -= dcountf * rx;
+      dcndr(ii, 3 * jj + 1) -= dcountf * ry;
+      dcndr(ii, 3 * jj + 2) -= dcountf * rz;
+
+      dcndr(ii, 3 * ii) -= dcountf * rx;
+      dcndr(ii, 3 * ii + 1) -= dcountf * ry;
+      dcndr(ii, 3 * ii + 2) -= dcountf * rz;
+    }
+  }
+
+  return EXIT_SUCCESS;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+int get_ncoord_d4(
+  const TMolecule &mol,
+  const TMatrix<double> &dist,
+  const double cutoff,
+  TVector<double> &cn,
+  TMatrix<double> &dcndr,
+  bool lgrad
+) {
+  TIVector realIdx;
+  initializeRealIdx(mol.NAtoms, realIdx);
+
+  return get_ncoord_d4(mol, realIdx, dist, cutoff, cn, dcndr, lgrad);
 };
 
 int get_ncoord_d4(
@@ -390,93 +512,8 @@ int dncoord_d4(
   return EXIT_SUCCESS;
 }
 
-int ncoord_erf(
-  const TMolecule &mol,
-  const TIVector &realIdx,
-  const TMatrix<double> &dist,
-  const double cutoff,
-  TVector<double> &cn
-) {
-  double r = 0.0, rcovij = 0.0, rr = 0.0;
-  double countf = 0.0;
-
-  for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
-    ii = realIdx(i);
-    if (ii < 0) continue;
-
-    for (int j = 0, jj = 0; j != i; j++) {
-      jj = realIdx(j);
-      if (jj < 0) continue;
-
-      r = dist(ii, jj);
-      if (r > cutoff) continue;
-
-      rcovij = rad[mol.ATNO(i)] + rad[mol.ATNO(j)];
-      rr = r / rcovij;
-      countf = erf_count(kn, rr);
-      cn(ii) += countf;
-      cn(jj) += countf;
-    }
-  }
-
-  return EXIT_SUCCESS;
-}
-
-int dncoord_erf(
-  const TMolecule &mol,
-  const TIVector &realIdx,
-  const TMatrix<double> &dist,
-  const double cutoff,
-  TVector<double> &cn,
-  TMatrix<double> &dcndr
-) {
-  double r = 0.0, rcovij = 0.0, rr = 0.0;
-  double rx = 0.0, ry = 0.0, rz = 0.0;
-  double countf = 0.0, dcountf = 0.0;
-
-  for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
-    ii = realIdx(i);
-    if (ii < 0) continue;
-
-    for (int j = 0, jj = 0; j != i; j++) {
-      jj = realIdx(j);
-      if (jj < 0) continue;
-
-      r = dist(ii, jj);
-      if (r > cutoff) continue;
-
-      rx = (mol.CC(j, 0) - mol.CC(i, 0)) / r;
-      ry = (mol.CC(j, 1) - mol.CC(i, 1)) / r;
-      rz = (mol.CC(j, 2) - mol.CC(i, 2)) / r;
-
-      rcovij = rad[mol.ATNO(i)] + rad[mol.ATNO(j)];
-      rr = r / rcovij;
-
-      countf = erf_count(kn, rr);
-      cn(ii) += countf;
-      cn(jj) += countf;
-
-      dcountf = derf_count(kn, rr) / rcovij;
-      dcndr(jj, 3 * jj) += dcountf * rx;
-      dcndr(jj, 3 * jj + 1) += dcountf * ry;
-      dcndr(jj, 3 * jj + 2) += dcountf * rz;
-
-      dcndr(jj, 3 * ii) += dcountf * rx;
-      dcndr(jj, 3 * ii + 1) += dcountf * ry;
-      dcndr(jj, 3 * ii + 2) += dcountf * rz;
-
-      dcndr(ii, 3 * jj) -= dcountf * rx;
-      dcndr(ii, 3 * jj + 1) -= dcountf * ry;
-      dcndr(ii, 3 * jj + 2) -= dcountf * rz;
-
-      dcndr(ii, 3 * ii) -= dcountf * rx;
-      dcndr(ii, 3 * ii + 1) -= dcountf * ry;
-      dcndr(ii, 3 * ii + 2) -= dcountf * rz;
-    }
-  }
-
-  return EXIT_SUCCESS;
-}
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 double erf_count(double k, double rr) {
   return 0.5 * (1.0 + erf(-k * (rr - 1.0)));

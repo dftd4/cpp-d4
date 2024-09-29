@@ -36,6 +36,21 @@ namespace dftd4 {
 
 int get_dispersion(
   const TMolecule &mol,
+  const int charge,
+  const TD4Model &d4,
+  const dparam &par,
+  const TCutoff cutoff,
+  double &energy,
+  double *GRAD
+) {
+  TVector<int> realIdx;
+  initializeRealIdx(mol.NAtoms, realIdx);
+
+  return get_dispersion(mol, realIdx, charge, d4, par, cutoff, energy, GRAD);
+}
+
+int get_dispersion(
+  const TMolecule &mol,
   const TIVector &realIdx,
   const int charge,
   const TD4Model &d4,
