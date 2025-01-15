@@ -71,7 +71,7 @@ int test_numgrad(TMolecule &mol, const int charge, const dparam &par) {
     d4grad[i] = 0.0;
   }
   info = get_dispersion(mol, realIdx, charge, d4, par, cutoff, energy, d4grad);
-  if (!info == EXIT_SUCCESS) return info;
+  if (info != EXIT_SUCCESS) return info;
 
   // check translational invariance of analytical gradient
   if (is_trans_invar(mol, d4grad) != EXIT_SUCCESS) return EXIT_FAILURE;
