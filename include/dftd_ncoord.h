@@ -49,7 +49,7 @@ extern int calc_distances(
  * @param realIdx Vector to store the real indices.
  * @return void
  */
-void initializeRealIdx(int nat, TVector<int> &realIdx);
+extern void initializeRealIdx(int nat, TVector<int> &realIdx);
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
