@@ -74,8 +74,8 @@ extern int get_dispersion(
 /**
  * @brief Wrapper to handle the evaluation of dispersion energy and derivatives.
  *
- * This function calculates the atom-wise dispersion energy and gradients 
- * for the given molecular geometry, considering only the atoms specified 
+ * This function calculates the atom-wise dispersion energy and gradients
+ * for the given molecular geometry, considering only the atoms specified
  * in `realIdx`.
  *
  * @param mol Molecular geometry.

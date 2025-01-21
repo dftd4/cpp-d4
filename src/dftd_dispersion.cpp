@@ -64,16 +64,18 @@ int get_dispersion(
 
   int nat = realIdx.Max() + 1;
 
-  TRVector energies;  // atom-wise energies
+  TRVector energies; // atom-wise energies
+  energies.NewVector(nat);
+
   info = get_dispersion(mol, realIdx, charge, d4, par, cutoff, energies, GRAD);
-  
+
   if (info != EXIT_SUCCESS) return info;
 
   // sum up atom-wise energies
   for (int i = 0; i != nat; i++) {
     energy += energies(i);
   }
-  
+
   energies.DelVec();
 
   return EXIT_SUCCESS;
@@ -167,7 +169,6 @@ int get_dispersion(
 
   TVector<double> dEdcn;
   TVector<double> dEdq;
-  energies.NewVector(nat);
   if (lgrad) {
     dEdcn.NewVector(nat);
     dEdq.NewVector(nat);
