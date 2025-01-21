@@ -59,6 +59,36 @@ int get_dispersion(
   double &energy,
   double *GRAD
 ) {
+
+  int info{0};
+
+  int nat = realIdx.Max() + 1;
+
+  TRVector energies;  // atom-wise energies
+  info = get_dispersion(mol, realIdx, charge, d4, par, cutoff, energies, GRAD);
+  
+  if (info != EXIT_SUCCESS) return info;
+
+  // sum up atom-wise energies
+  for (int i = 0; i != nat; i++) {
+    energy += energies(i);
+  }
+  
+  energies.DelVec();
+
+  return EXIT_SUCCESS;
+}
+
+int get_dispersion(
+  const TMolecule &mol,
+  const TIVector &realIdx,
+  const int charge,
+  const TD4Model &d4,
+  const dparam &par,
+  const TCutoff cutoff,
+  TRVector &energies,
+  double *GRAD
+) {
   // setup variables
   int info{0};
   bool lmbd = (par.s9 != 0.0);
@@ -137,7 +167,6 @@ int get_dispersion(
 
   TVector<double> dEdcn;
   TVector<double> dEdq;
-  TVector<double> energies;
   energies.NewVector(nat);
   if (lgrad) {
     dEdcn.NewVector(nat);
@@ -241,12 +270,6 @@ int get_dispersion(
   dcndr.DelMat();
   dEdcn.DelVec();
   dEdq.DelVec();
-
-  // sum up atom-wise energies
-  for (int i = 0; i != nat; i++) {
-    energy += energies(i);
-  }
-  energies.DelVec();
 
   // write to input gradient
   if (lgrad) {

@@ -74,6 +74,34 @@ extern int get_dispersion(
 /**
  * @brief Wrapper to handle the evaluation of dispersion energy and derivatives.
  *
+ * This function calculates the atom-wise dispersion energy and gradients 
+ * for the given molecular geometry, considering only the atoms specified 
+ * in `realIdx`.
+ *
+ * @param mol Molecular geometry.
+ * @param realIdx List for real atoms excluding ghost/non atoms.
+ * @param charge Molecular charge.
+ * @param par DFT-D4 parameters.
+ * @param d4 Base D4 dispersion model.
+ * @param cutoff Real-space cutoffs for CN and dispersion.
+ * @param energies atom-wise dispersion energies (inout).
+ * @param GRAD Dispersion gradient (inout).
+ * @return Exit status.
+ */
+extern int get_dispersion(
+  const TMolecule &mol,
+  const TIVector &realIdx,
+  int charge,
+  const TD4Model &d4,
+  const dparam &par,
+  TCutoff cutoff,
+  TRVector &energies,
+  double *GRAD
+);
+
+/**
+ * @brief Wrapper to handle the evaluation of dispersion energy and derivatives.
+ *
  * This function calculates the dispersion energy and gradients for the given
  * molecular geometry, considering only the atoms specified in `realIdx`.
  *

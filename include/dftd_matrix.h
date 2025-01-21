@@ -231,5 +231,6 @@ template <class T> class TMatrix {
 };
 
 typedef TVector<int> TIVector;
+typedef TVector<double> TRVector;
 
 } // namespace dftd4
