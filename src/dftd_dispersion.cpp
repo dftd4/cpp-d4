@@ -68,7 +68,6 @@ int get_dispersion(
   energies.NewVector(nat);
 
   info = get_dispersion(mol, realIdx, charge, d4, par, cutoff, energies, GRAD);
-
   if (info != EXIT_SUCCESS) return info;
 
   // sum up atom-wise energies
