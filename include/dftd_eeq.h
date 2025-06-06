@@ -25,95 +25,152 @@
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
 
-namespace dftd4 {
+namespace multicharge {
+  using dftd4::TIVector;
+  using dftd4::TVector;
+  using dftd4::TMatrix;
+  using dftd4::TMolecule;
 
-/**
- * Get the EEQ charges for a given molecule.
- *
- * @param mol     The molecule object
- * @param dist    The distance matrix
- * @param charge  The total charge of the molecule
- * @param cutoff  The cutoff for the EEQ coordination number
- * @param q       The EEQ charges
- * @param dqdr    The derivative of the EEQ charges
- * @param lgrad   Flag for the gradient
- *
- * @return 0 if successful, 1 otherwise
- */
-extern int get_charges(
-  const TMolecule &mol,
-  const TMatrix<double> &dist,
-  int charge,
-  double cutoff,
-  TVector<double> &q,
-  TMatrix<double> &dqdr,
-  bool lgrad
-);
+class ChargeModel
+{
+public:
+  // Constructor
+  ChargeModel();
+  // Virtual destructor
+  virtual ~ChargeModel() {}
 
-/**
- * Get the EEQ charges for a given molecule for the atoms specified by the
- * indices in `realIdx`.
- *
- * @param mol     The molecule object
- * @param realIdx The real atom indices (for excluding dummy atoms)
- * @param dist    The distance matrix
- * @param charge  The total charge of the molecule
- * @param cutoff  The cutoff for the EEQ coordination number
- * @param q       The EEQ charges
- * @param dqdr    The derivative of the EEQ charges
- * @param lgrad   Flag for the gradient
- *
- * @return 0 if successful, 1 otherwise
- */
-extern int get_charges(
-  const TMolecule &mol,
-  const TIVector &realIdx,
-  const TMatrix<double> &dist,
-  int charge,
-  double cutoff,
-  TVector<double> &q,
-  TMatrix<double> &dqdr,
-  bool lgrad
-);
+  /**
+   * Get the EEQ charges for a given molecule.
+   *
+   * @param mol     The molecule object
+   * @param dist    The distance matrix
+   * @param charge  The total charge of the molecule
+   * @param cutoff  The cutoff for the EEQ coordination number
+   * @param q       The EEQ charges
+   * @param dqdr    The derivative of the EEQ charges
+   * @param lgrad   Flag for the gradient
+   *
+   * @return 0 if successful, 1 otherwise
+   */
+  int get_charges(
+    const TMolecule &mol,
+    const TMatrix<double> &dist,
+    int charge,
+    double cutoff,
+    TVector<double> &q,
+    TMatrix<double> &dqdr,
+    bool lgrad
+  );
+  
+  /**
+   * Get the EEQ charges for a given molecule for the atoms specified by the
+   * indices in `realIdx`.
+   *
+   * @param mol     The molecule object
+   * @param realIdx The real atom indices (for excluding dummy atoms)
+   * @param dist    The distance matrix
+   * @param charge  The total charge of the molecule
+   * @param cutoff  The cutoff for the EEQ coordination number
+   * @param q       The EEQ charges
+   * @param dqdr    The derivative of the EEQ charges
+   * @param lgrad   Flag for the gradient
+   *
+   * @return 0 if successful, 1 otherwise
+   */
+  int get_charges(
+    const TMolecule &mol,
+    const TIVector &realIdx,
+    const TMatrix<double> &dist,
+    int charge,
+    double cutoff,
+    TVector<double> &q,
+    TMatrix<double> &dqdr,
+    bool lgrad
+  );
 
-extern int get_vrhs(
-  const TMolecule &mol,
-  const TIVector &realIdx,
-  const int &charge,
-  const TVector<double> &cn,
-  TVector<double> &Xvec,
-  TVector<double> &dXvec,
-  bool lgrad
-);
+  int eeq_chrgeq(
+    const TMolecule &mol,
+    const TIVector &realIdx,
+    const TMatrix<double> &dist,
+    const int &charge,
+    const TVector<double> &cn,
+    TVector<double> &qvec,
+    TMatrix<double> &dcndr,
+    TMatrix<double> &dqdr,
+    bool lgrad = false,
+    bool lverbose = false
+  );
+  
+  virtual int get_vrhs(
+    const TMolecule &mol,
+    const TIVector &realIdx,
+    const int &charge,
+    const TVector<double> &cn,
+    TVector<double> &Xvec,
+    TVector<double> &dXvec,
+    bool lgrad
+  ) const = 0;
 
-extern int get_amat_0d(
-  const TMolecule &mol,
-  const TIVector &realIdx,
-  const TMatrix<double> &dist,
-  TMatrix<double> &Amat
-);
+  // Calculate the Coulomb matrix
+  virtual int get_amat_0d(
+    const TMolecule &mol,
+    const TIVector &realIdx,
+    const TMatrix<double> &dist,
+    TMatrix<double> &Amat
+  ) const = 0;
+  
+  // Calculate the Coulomb matrix derivatives
+  virtual int get_damat_0d(
+    const TMolecule &mol,
+    const TIVector &realIdx,
+    const TMatrix<double> &dist,
+    const TVector<double> &q,
+    const TMatrix<double> &Amat,
+    TMatrix<double> &dAmat,
+    TMatrix<double> &atrace
+  ) const = 0;
+  
+};
 
-extern int get_damat_0d(
-  const TMolecule &mol,
-  const TIVector &realIdx,
-  const TMatrix<double> &dist,
-  const TVector<double> &q,
-  const TMatrix<double> &Amat,
-  TMatrix<double> &dAmat,
-  TMatrix<double> &atrace
-);
+// Derived class for EEQ charge model
+class EEQModel : public ChargeModel {
+  public:
+    const double* xi;
+    const double* gam;
+    const double* kappa;
+    const double* alp;
+    
+    //
+    EEQModel();
+  
+    int get_vrhs(
+      const TMolecule &mol,
+      const TIVector &realIdx,
+      const int &charge,
+      const TVector<double> &cn,
+      TVector<double> &Xvec,
+      TVector<double> &dXvec,
+      bool lgrad
+    ) const override;
+  
+    // Calculate the Coulomb matrix
+    int get_amat_0d(
+      const TMolecule &mol,
+      const TIVector &realIdx,
+      const TMatrix<double> &dist,
+      TMatrix<double> &Amat
+    ) const override;
+    
+    // Calculate the Coulomb matrix derivatives
+    int get_damat_0d(
+      const TMolecule &mol,
+      const TIVector &realIdx,
+      const TMatrix<double> &dist,
+      const TVector<double> &q,
+      const TMatrix<double> &Amat,
+      TMatrix<double> &dAmat,
+      TMatrix<double> &atrace
+    ) const override;
+};
 
-extern int eeq_chrgeq(
-  const TMolecule &mol,
-  const TIVector &realIdx,
-  const TMatrix<double> &dist,
-  const int &charge,
-  const TVector<double> &cn,
-  TVector<double> &qvec,
-  TMatrix<double> &dcndr,
-  TMatrix<double> &dqdr,
-  bool lgrad = false,
-  bool lverbose = false
-);
-
-} // namespace dftd4
+} // namespace multicharge
