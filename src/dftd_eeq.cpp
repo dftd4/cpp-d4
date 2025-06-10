@@ -27,7 +27,6 @@
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
 #include "dftd_ncoord.h"
-#include "qceeqbc_param.h"
 #include "qceeq_param.h"
 
 // wrap all charge models in the multicharge namespace
