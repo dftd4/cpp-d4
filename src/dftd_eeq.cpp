@@ -301,7 +301,7 @@ int EEQModel::get_amat_0d(
       if (jj < 0) continue;
 
       jzp = mol.ATNO(j);
-      alphaj = pow(alp[jzp], 2);
+      alphaj = alp[jzp] * alp[jzp];
 
       r = dist(ii, jj);
       gamij = 1.0 / std::sqrt(alphai + alphaj);
