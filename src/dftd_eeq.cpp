@@ -343,7 +343,7 @@ int EEQModel::get_damat_0d(
       jj = realIdx(j);
       if (jj < 0) continue;
 
-      alphaj = pow(alp[mol.ATNO(j)], 2);
+      alphaj = alp[mol.ATNO(j)] * alp[mol.ATNO(j)];;
 
       rx = mol.CC(i, 0) - mol.CC(j, 0);
       ry = mol.CC(i, 1) - mol.CC(j, 1);
