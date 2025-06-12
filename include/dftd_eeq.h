@@ -140,7 +140,6 @@ class EEQModel : public ChargeModel {
     const double* kappa;  // Element-specific CN scaling constant
     const double* alp;  // Element-specific atomic radii
     
-    //
     EEQModel();
   
     int get_vrhs(
