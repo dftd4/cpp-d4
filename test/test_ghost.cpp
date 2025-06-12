@@ -30,6 +30,7 @@
 #include "util.h"
 
 using namespace dftd4;
+using namespace multicharge;
 
 int test_water(
   int n,
@@ -39,6 +40,7 @@ int test_water(
   const TIVector &realIdx
 ) {
   int info;
+  multicharge::EEQModel chrg_model;
 
   // assemble molecule
   int charge{0};
@@ -81,7 +83,7 @@ int test_water(
 
   // calculate partial charges from EEQ model
   info =
-    get_charges(mol, realIdx, dist, charge, cn_eeq_default, q, dqdr, false);
+    chrg_model.get_charges(mol, realIdx, dist, charge, cn_eeq_default, q, dqdr, false);
   if (info != EXIT_SUCCESS) return info;
 
   // compare to ref
@@ -151,7 +153,7 @@ int test_water(
   if (info != EXIT_SUCCESS) return info;
 
   dqdr.NewMatrix(3 * nat, nat);
-  info = get_charges(mol, realIdx, dist, charge, cutoff.cn_eeq, q, dqdr, lgrad);
+  info = chrg_model.get_charges(mol, realIdx, dist, charge, cutoff.cn_eeq, q, dqdr, lgrad);
   if (info != EXIT_SUCCESS) return info;
 
   info = get_dispersion(mol, realIdx, charge, d4, par, cutoff, energy, d4grad);
