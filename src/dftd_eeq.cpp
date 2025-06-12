@@ -348,7 +348,7 @@ int EEQModel::get_damat_0d(
       rx = mol.CC(i, 0) - mol.CC(j, 0);
       ry = mol.CC(i, 1) - mol.CC(j, 1);
       rz = mol.CC(i, 2) - mol.CC(j, 2);
-      r2 = pow(dist(ii, jj), 2);
+      r2 = dist(ii, jj) * dist(ii, jj);
 
       gam = 1.0 / std::sqrt((alphai + alphaj));
       arg = gam * gam * r2;
