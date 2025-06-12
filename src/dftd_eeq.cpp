@@ -295,7 +295,7 @@ int EEQModel::get_amat_0d(
     if (ii < 0) continue;
 
     izp = mol.ATNO(i);
-    alphai = pow(alp[izp], 2);
+    alphai = alp[izp] * alp[izp];
     for (int j = 0, jj = 0; j != i; j++) {
       jj = realIdx(j);
       if (jj < 0) continue;
