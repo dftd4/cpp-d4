@@ -135,10 +135,10 @@ public:
 // Derived class for EEQ charge model
 class EEQModel : public ChargeModel {
   public:
-    const double* xi;
-    const double* gam;
-    const double* kappa;
-    const double* alp;
+    const double* xi;  // Element-specific electronegativity 
+    const double* gam;  // Element-specific chemical hardnesses
+    const double* kappa;  // Element-specific CN scaling constant
+    const double* alp;  // Element-specific atomic radii
     
     //
     EEQModel();
