@@ -102,17 +102,16 @@ int get_dispersion(
   dist.NewMatrix(nat, nat);
   calc_distances(mol, realIdx, dist);
 
-  TVector<double> cn;       // D4 coordination number
   TVector<double> q;        // partial charges from EEQ model
-  TMatrix<double> dcndr;    // derivative of D4-CN
   TMatrix<double> dqdr;     // derivative of partial charges
   TVector<double> gradient; // derivative of dispersion energy
+  NCoordErf ncoord_erf;
   multicharge::EEQModel chrg_model;  // Charge model
 
-  cn.NewVector(nat);
+  ncoord_erf.cn.NewVector(nat);
   q.NewVector(nat);
   if (lgrad) {
-    dcndr.NewMatrix(3 * nat, nat);
+    ncoord_erf.dcndr.NewMatrix(3 * nat, nat);
     dqdr.NewMatrix(3 * nat, nat);
     gradient.NewVector(3 * nat);
   }
@@ -122,7 +121,7 @@ int get_dispersion(
   if (info != EXIT_SUCCESS) return info;
 
   // get the D4 coordination number
-  info = get_ncoord_d4(mol, realIdx, dist, cutoff.cn, cn, dcndr, lgrad);
+  info = ncoord_erf.get_ncoord_d4(mol, realIdx, dist, lgrad);
   if (info != EXIT_SUCCESS) return info;
 
   // maximum number of reference systems
@@ -145,7 +144,7 @@ int get_dispersion(
     dgwdq.NewMatrix(mref, nat);
   }
   info = d4.weight_references(
-    mol, realIdx, cn, q, refq, gwvec, dgwdcn, dgwdq, lgrad
+    mol, realIdx, ncoord_erf.cn, q, refq, gwvec, dgwdcn, dgwdq, lgrad
   );
   if (info != EXIT_SUCCESS) return info;
 
@@ -212,11 +211,11 @@ int get_dispersion(
       dgwdq.NewMatrix(mref, nat);
     }
     info = d4.weight_references(
-      mol, realIdx, cn, q, refq, gwvec, dgwdcn, dgwdq, lgrad
+      mol, realIdx, ncoord_erf.cn, q, refq, gwvec, dgwdcn, dgwdq, lgrad
     );
     if (info != EXIT_SUCCESS) return info;
 
-    cn.Delete();
+    ncoord_erf.cn.Delete();
     q.Delete();
     refq.Delete();
 
@@ -253,7 +252,7 @@ int get_dispersion(
     );
     if (info != EXIT_SUCCESS) return info;
   } else {
-    cn.Delete();
+    ncoord_erf.cn.Delete();
     q.Delete();
     refq.Delete();
     gwvec.Delete();
@@ -266,9 +265,9 @@ int get_dispersion(
   dc6dcn.DelMat();
   dc6dq.DelMat();
 
-  if (lgrad) { BLAS_Add_Mat_x_Vec(gradient, dcndr, dEdcn, false, 1.0); }
+  if (lgrad) { BLAS_Add_Mat_x_Vec(gradient, ncoord_erf.dcndr, dEdcn, false, 1.0); }
 
-  dcndr.DelMat();
+  ncoord_erf.dcndr.DelMat();
   dEdcn.DelVec();
   dEdq.DelVec();
 

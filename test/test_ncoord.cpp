@@ -61,16 +61,15 @@ int test_cn(
   calc_distances(mol, realIdx, dist);
 
   // erf-CN without cutoff
-  TVector<double> cn;
-  TMatrix<double> dcndr; // empty because no gradient needed
-  cn.New(n);
-  info = get_ncoord_d4(mol, realIdx, dist, 9999.9, cn, dcndr, false);
+  NCoordErf ncoord_erf(7.5, 1.0, 9999.9);
+  ncoord_erf.cn.New(n);
+  info = ncoord_erf.get_ncoord_d4(mol, realIdx, dist, false);
   if (info != EXIT_SUCCESS) return info;
 
   // compare to ref
   for (int i = 0; i != n; i++) {
-    if (check(cn(i), ref(i)) == EXIT_FAILURE) {
-      print_fail("CN_D4", cn(i), ref(i));
+    if (check(ncoord_erf.cn(i), ref(i)) == EXIT_FAILURE) {
+      print_fail("CN_D4", ncoord_erf.cn(i), ref(i));
       return EXIT_FAILURE;
     }
   }

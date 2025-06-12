@@ -28,6 +28,79 @@
 
 namespace dftd4 {
 
+
+class NCoordBase
+{
+  public:
+    TVector<double> cn;
+    TMatrix<double> dcndr;
+    static const double rad[];
+    double kcn;  // Steepness of counting function 
+    double norm_exp;
+    double cutoff;
+    // Get the coordination number
+    int get_ncoord( // with ghost atoms
+      const TMolecule&,
+      const TMatrix<double>&,
+      const double,
+      TVector<double>&,
+      TMatrix<double>&,
+      bool);
+    int get_ncoord(  // without ghost atoms
+      const TMolecule&,
+      const TIVector&,
+      const TMatrix<double>&,
+      bool);
+    // Calculate the coordination number using the virtual counting function
+    int ncoord_base(
+      const TMolecule&,
+      const TIVector&,
+      const TMatrix<double>&);
+    // Calculate the derivative of the coordination number
+    int dr_ncoord_base(
+      const TMolecule&,
+      const TIVector&,
+      const TMatrix<double>&);
+    // Get the DFT-D4 coordination number
+    int get_ncoord_d4(
+      const TMolecule&,
+      const TMatrix<double>&,
+      bool);
+    int get_ncoord_d4(
+      const TMolecule&,
+      const TIVector&,
+      const TMatrix<double>&,
+      bool);
+    int ncoord_d4(
+      const TMolecule&,
+      const TIVector&,
+      const TMatrix<double>&);
+    int dncoord_d4(
+      const TMolecule&,
+      const TIVector&,
+      const TMatrix<double>&);
+
+    // Counting function
+    virtual double count_fct(double) const = 0;
+    // Derivative of the counting function
+    virtual double dr_count_fct(double) const = 0;
+    // Constructor
+    NCoordBase(double, double, double);
+    // Virtual destructor
+    virtual ~NCoordBase() = default;
+};
+
+class NCoordErf : public NCoordBase {
+  public:
+    // erf() based counting function
+    double count_fct(double) const override;
+    // derivative of the erf() based counting function
+    double dr_count_fct(double) const override;
+    // Constructor
+    NCoordErf(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0)
+    : NCoordBase(optional_kcn, optional_norm_exp, optional_cutoff){}
+};
+
 /**
  * Calculate all distance pairs and store in matrix.
  *
