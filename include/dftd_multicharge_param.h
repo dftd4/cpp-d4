@@ -23,7 +23,9 @@ This file contains the model parameters
 
 #pragma once
 
-namespace EEQ_param {
+namespace multicharge_param {
+
+namespace eeq {
 
 constexpr int MAXELEMENT = 104; // 103 + dummy
 
@@ -118,4 +120,6 @@ static const double alp[MAXELEMENT]{
   +1.34071499,
 };
 
-}
+}  // namespace eeq
+
+}  // namespace multicharge_param

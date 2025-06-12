@@ -27,7 +27,7 @@
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
 #include "dftd_ncoord.h"
-#include "dftd_eeq_param.h"
+#include "dftd_multicharge_param.h"
 
 // wrap all charge models in the multicharge namespace
 namespace multicharge {
@@ -231,10 +231,10 @@ int ChargeModel::eeq_chrgeq(
 // EEQ Model class derived from ChargeModel
 EEQModel::EEQModel()
   // Constructor initializer list
-  : xi(EEQ_param::xi),
-    gam(EEQ_param::gam),
-    kappa(EEQ_param::kappa),
-    alp(EEQ_param::alp)
+  : xi(multicharge_param::eeq::xi),
+    gam(multicharge_param::eeq::gam),
+    kappa(multicharge_param::eeq::kappa),
+    alp(multicharge_param::eeq::alp)
 {}
 
 int EEQModel::get_vrhs(

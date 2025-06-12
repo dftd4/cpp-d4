@@ -30,7 +30,7 @@
 #include "util.h"
 
 using namespace dftd4;
-using namespace multicharge::EEQModel;
+using namespace multicharge;
 
 int test_water(
   int n,
@@ -40,7 +40,7 @@ int test_water(
   const TIVector &realIdx
 ) {
   int info;
-  EEQModel chrg_model;
+  multicharge::EEQModel chrg_model;
 
   // assemble molecule
   int charge{0};
