@@ -72,23 +72,22 @@ int ChargeModel::get_charges(
   bool lverbose{false};
   int nat = realIdx.Max() + 1;
 
-  TVector<double> cn;    // EEQ cordination number
-  TMatrix<double> dcndr; // Derivative of EEQ-CN
+  dftd4::NCoordErf ncoord_erf;
 
-  cn.NewVec(nat);
-  if (lgrad) dcndr.NewMat(nat, 3 * nat);
+  ncoord_erf.cn.NewVec(nat);
+  if (lgrad) ncoord_erf.dcndr.NewMat(nat, 3 * nat);
 
   // get the EEQ coordination number
-  info = get_ncoord_erf(mol, realIdx, dist, cutoff, cn, dcndr, lgrad);
+  info = ncoord_erf.get_ncoord(mol, realIdx, dist, lgrad);
   if (info != EXIT_SUCCESS) return info;
 
   // corresponds to model%solve in Fortran
   info =
-    eeq_chrgeq(mol, realIdx, dist, charge, cn, q, dcndr, dqdr, lgrad, lverbose);
+    eeq_chrgeq(mol, realIdx, dist, charge, ncoord_erf.cn, q, ncoord_erf.dcndr, dqdr, lgrad, lverbose);
   if (info != EXIT_SUCCESS) return info;
 
-  dcndr.DelMat();
-  cn.DelVec();
+  ncoord_erf.dcndr.DelMat();
+  ncoord_erf.cn.DelVec();
 
   return EXIT_SUCCESS;
 };
