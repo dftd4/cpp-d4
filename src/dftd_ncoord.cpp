@@ -35,7 +35,7 @@ namespace dftd4 {
 NCoordBase::NCoordBase(
   double optional_kcn = 7.5,  // defaults for D4 EEQ
   double optional_norm_exp = 1.0, // defaults for D4 EEQ
-  double optional_cutoff = 25.0  //@TR NOTE check if this is EEQ default
+  double optional_cutoff = 25.0  // defaults for D4 EEQ
 ){
   NCoordBase::kcn = optional_kcn;
   NCoordBase::norm_exp = optional_norm_exp;
