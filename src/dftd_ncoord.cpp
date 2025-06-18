@@ -327,6 +327,9 @@ int NCoordBase::ncoord_base(
 ) {
   double r = 0.0, rcovij = 0.0, rr = 0.0;
   double countf = 0.0;
+  // initialize cn to zero
+  int nat = realIdx.Max() + 1;
+  cn.NewVector(nat);
 
   for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
     ii = realIdx(i);
@@ -358,6 +361,10 @@ int NCoordBase::dr_ncoord_base(
   double r = 0.0, rcovij = 0.0, rr = 0.0;
   double rx = 0.0, ry = 0.0, rz = 0.0;
   double countf = 0.0, dcountf = 0.0;
+  // initialize cn and dcndr to zero
+  int nat = realIdx.Max() + 1;
+  cn.NewVector(nat);
+  dcndr.NewMatrix(nat, 3 * nat);
 
   for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
     ii = realIdx(i);
@@ -436,6 +443,9 @@ int NCoordBase::ncoord_d4(
   double den = 0.0;
   double countf = 0.0;
   int izp, jzp;
+  // initialize cn to zero
+  int nat = realIdx.Max() + 1;
+  cn.NewVector(nat);
 
   for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
     ii = realIdx(i);
@@ -471,6 +481,10 @@ int NCoordBase::dncoord_d4(
   double rx = 0.0, ry = 0.0, rz = 0.0;
   double countf = 0.0, dcountf = 0.0, den = 0.0;
   int izp, jzp;
+  // initialize cn and dcndr to zero
+  int nat = realIdx.Max() + 1;
+  cn.NewVector(nat);
+  dcndr.NewMatrix(3*nat, nat);
 
   for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
     ii = realIdx(i);

@@ -108,10 +108,8 @@ int get_dispersion(
   NCoordErf ncoord_erf;
   multicharge::EEQModel chrg_model;  // Charge model
 
-  ncoord_erf.cn.NewVector(nat);
   q.NewVector(nat);
   if (lgrad) {
-    ncoord_erf.dcndr.NewMatrix(3 * nat, nat);
     dqdr.NewMatrix(3 * nat, nat);
     gradient.NewVector(3 * nat);
   }

@@ -60,7 +60,6 @@ int test_water(
 
   // erf-CN without cutoff
   NCoordErf ncoord_erf(7.5, 1.0, 9999.9);
-  ncoord_erf.cn.New(nat);
   info = ncoord_erf.get_ncoord_d4(mol, realIdx, dist, false);
   if (info != EXIT_SUCCESS) return info;
 
@@ -147,7 +146,6 @@ int test_water(
     d4grad[i] = 0.0;
   }
 
-  ncoord_erf.dcndr.NewMatrix(3 * nat, nat);
   info = ncoord_erf.get_ncoord_d4(mol, realIdx, dist, lgrad);
   if (info != EXIT_SUCCESS) return info;
 

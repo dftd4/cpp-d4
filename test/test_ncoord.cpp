@@ -62,7 +62,6 @@ int test_cn(
 
   // erf-CN without cutoff
   NCoordErf ncoord_erf(7.5, 1.0, 9999.9);
-  ncoord_erf.cn.New(n);
   info = ncoord_erf.get_ncoord_d4(mol, realIdx, dist, false);
   if (info != EXIT_SUCCESS) return info;
 

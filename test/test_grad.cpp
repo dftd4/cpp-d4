@@ -126,6 +126,7 @@ int test_pbed4_mb01() {
   par.s8 = 0.95948085;
   par.a1 = 0.38574991;
   par.a2 = 4.80688534;
+  par.s10 = 0.0;
 
   // assemble molecule
   int charge = mb16_43_01_charge;

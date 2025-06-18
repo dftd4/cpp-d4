@@ -74,9 +74,6 @@ int ChargeModel::get_charges(
 
   dftd4::NCoordErf ncoord_erf;
 
-  ncoord_erf.cn.NewVec(nat);
-  if (lgrad) ncoord_erf.dcndr.NewMat(nat, 3 * nat);
-
   // get the EEQ coordination number
   info = ncoord_erf.get_ncoord(mol, realIdx, dist, lgrad);
   if (info != EXIT_SUCCESS) return info;
