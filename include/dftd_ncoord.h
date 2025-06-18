@@ -57,7 +57,7 @@ class NCoordBase
       const TIVector&,
       const TMatrix<double>&);
     // Calculate the derivative of the coordination number
-    int dr_ncoord_base(
+    int dncoord_base(
       const TMolecule&,
       const TIVector&,
       const TMatrix<double>&);
@@ -83,7 +83,7 @@ class NCoordBase
     // Counting function
     virtual double count_fct(double) const = 0;
     // Derivative of the counting function
-    virtual double dr_count_fct(double) const = 0;
+    virtual double dcount_fct(double) const = 0;
     // Constructor
     NCoordBase(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0);
     // Virtual destructor
@@ -95,7 +95,7 @@ class NCoordErf : public NCoordBase {
     // erf() based counting function
     double count_fct(double) const override;
     // derivative of the erf() based counting function
-    double dr_count_fct(double) const override;
+    double dcount_fct(double) const override;
     // Constructor
     NCoordErf(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0)
     : NCoordBase(optional_kcn, optional_norm_exp, optional_cutoff){}

@@ -305,7 +305,7 @@ int NCoordBase::get_ncoord(
   int info;
 
   if (lgrad) {
-    info = dr_ncoord_base(mol, realIdx, dist);
+    info = dncoord_base(mol, realIdx, dist);
   } else {
     info = ncoord_base(mol, realIdx, dist);
   }
@@ -350,7 +350,7 @@ int NCoordBase::ncoord_base(
   return EXIT_SUCCESS;
 }
 
-int NCoordBase::dr_ncoord_base(
+int NCoordBase::dncoord_base(
   const TMolecule &mol,
   const TIVector &realIdx,
   const TMatrix<double> &dist
@@ -385,7 +385,7 @@ int NCoordBase::dr_ncoord_base(
       cn(ii) += countf;
       cn(jj) += countf;
 
-      dcountf = dr_count_fct(rr) / rcovij;
+      dcountf = dcount_fct(rr) / rcovij;
       dcndr(jj, 3 * jj) += dcountf * rx;
       dcndr(jj, 3 * jj + 1) += dcountf * ry;
       dcndr(jj, 3 * jj + 2) += dcountf * rz;
@@ -507,7 +507,7 @@ int NCoordBase::dncoord_d4(
       cn(ii) += countf;
       cn(jj) += countf;
 
-      dcountf = den * dr_count_fct(rr) / rcovij;
+      dcountf = den * dcount_fct(rr) / rcovij;
       dcndr(3 * jj, jj) += dcountf * rx;
       dcndr(3 * jj + 1, jj) += dcountf * ry;
       dcndr(3 * jj + 2, jj) += dcountf * rz;
@@ -532,7 +532,7 @@ double NCoordErf::count_fct(double rr) const {
   return 0.5 * (1.0 + erf(-kcn * (rr - 1.0)));
 }
 
-double NCoordErf::dr_count_fct(double rr) const {
+double NCoordErf::dcount_fct(double rr) const {
   return -kcn * hlfosqrtpi * exp(-pow(kcn * (rr - 1.0), 2));
 }
 
