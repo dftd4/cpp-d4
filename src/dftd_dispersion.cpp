@@ -213,7 +213,6 @@ int get_dispersion(
     );
     if (info != EXIT_SUCCESS) return info;
 
-    ncoord_erf.cn.Delete();
     q.Delete();
     refq.Delete();
 
@@ -250,7 +249,6 @@ int get_dispersion(
     );
     if (info != EXIT_SUCCESS) return info;
   } else {
-    ncoord_erf.cn.Delete();
     q.Delete();
     refq.Delete();
     gwvec.Delete();
@@ -265,7 +263,6 @@ int get_dispersion(
 
   if (lgrad) { BLAS_Add_Mat_x_Vec(gradient, ncoord_erf.dcndr, dEdcn, false, 1.0); }
 
-  ncoord_erf.dcndr.DelMat();
   dEdcn.DelVec();
   dEdq.DelVec();
 
