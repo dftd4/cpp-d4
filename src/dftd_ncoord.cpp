@@ -33,14 +33,11 @@
 namespace dftd4 {
 
 NCoordBase::NCoordBase(
-  double optional_kcn = 7.5,  // defaults for D4 EEQ
-  double optional_norm_exp = 1.0, // defaults for D4 EEQ
-  double optional_cutoff = 25.0  // defaults for D4 EEQ
-){
-  NCoordBase::kcn = optional_kcn;
-  NCoordBase::norm_exp = optional_norm_exp;
-  NCoordBase::cutoff = optional_cutoff;
-}
+  double optional_kcn,  // defaults for D4 EEQ
+  double optional_norm_exp, // defaults for D4 EEQ
+  double optional_cutoff  // defaults for D4 EEQ
+) : kcn(optional_kcn), norm_exp(optional_norm_exp), cutoff(optional_cutoff)
+{}
 
 
 /**
@@ -530,9 +527,6 @@ int NCoordBase::dncoord_d4(
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-
-//NCoordErf::NCoordErf(double optional_kcn, double optional_norm_exp, double optional_cutoff)
-//  : NCoordBase(optional_kcn, optional_norm_exp, optional_cutoff) {}
 
 double NCoordErf::count_fct(double rr) const {
   return 0.5 * (1.0 + erf(-kcn * (rr - 1.0)));

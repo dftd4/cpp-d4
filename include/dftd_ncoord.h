@@ -85,7 +85,7 @@ class NCoordBase
     // Derivative of the counting function
     virtual double dr_count_fct(double) const = 0;
     // Constructor
-    NCoordBase(double, double, double);
+    NCoordBase(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0);
     // Virtual destructor
     virtual ~NCoordBase() = default;
 };
