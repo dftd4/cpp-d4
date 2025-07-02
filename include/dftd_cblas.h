@@ -1,19 +1,13 @@
-/* This file is part of cpp-d4.
+/*
+ * This file contains code adapted from the ORCA quantum chemistry program.
+ * ORCA is developed by the group of Prof. Frank Neese at the Max-Planck-Institut für Kohlenforschung,
+ * Mülheim an der Ruhr and FAccTs GmbH. ORCA is licensed by the Max-Planck-Institut für Kohlenforschung and FAccTs GmbH.
  *
- * Copyright (C) 2019 Sebastian Ehlert, Marvin Friede
+ * The inclusion of ORCA code in this file has been done with the explicit permission
+ * of the ORCA developers.
  *
- * cpp-d4 is free software: you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * cpp-d4 is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with cpp-d4.  If not, see <https://www.gnu.org/licenses/>.
+ * For reuse or licensing of this code, please contact the ORCA team at the Max-Planck-Institut
+ * für Kohlenforschung (https://orcaforum.kofo.mpg.de/) or FAccTs GmbH (https://www.faccts.de/).
  */
 #pragma once
 
