@@ -29,6 +29,8 @@ meson test -C _build --print-errorlogs
 
 ## License
 
+### DFT-D4 Code
+
 DFT-D4 is free software: you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -38,3 +40,21 @@ DFT-D4 is distributed in the hope that it will be useful,
 but without any warranty; without even the implied warranty of
 merchantability or fitness for a particular purpose. See the
 GNU Lesser General Public License for more details.
+
+### ORCA-derived Code in `dftd_cblas.h` and `dftd_matrix.h`
+
+The files [`include/dftd_cblas.h`](https://github.com/dftd4/cpp-d4/blob/main/include/dftd_cblas.h) and
+[`include/dftd_matrix.h`](https://github.com/dftd4/cpp-d4/blob/main/include/dftd_matrix.h)
+contain code adapted from the ORCA quantum chemistry program,
+which is developed by the group of Prof. Frank Neese at the Max-Planck-Institut für Kohlenforschung,
+Mülheim an der Ruhr and FAccTs GmbH. ORCA is licensed by the
+Max-Planck-Institut für Kohlenforschung and FAccTs GmbH.
+
+The inclusion of ORCA code in these files is done with the explicit permission
+of the ORCA developers. This code remains subject to the licensing terms
+of ORCA, which allow free academic use but require a separate license for
+industrial or commercial use.
+
+For reuse or licensing of the code in `dftd_cblas.h` and `dftd_matrix.h`, please contact
+the ORCA team at the Max-Planck-Institut für Kohlenforschung (https://orcaforum.kofo.mpg.de/)
+or FAccTs GmbH. (https://www.faccts.de/).
