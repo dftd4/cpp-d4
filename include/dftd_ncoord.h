@@ -87,7 +87,10 @@ class NCoordBase
     // Constructor
     NCoordBase(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0);
     // Virtual destructor
-    virtual ~NCoordBase() = default;
+    virtual ~NCoordBase() {
+      cn.DelVec();
+      dcndr.DelMat();
+    }
 };
 
 class NCoordErf : public NCoordBase {
@@ -99,6 +102,8 @@ class NCoordErf : public NCoordBase {
     // Constructor
     NCoordErf(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0)
     : NCoordBase(optional_kcn, optional_norm_exp, optional_cutoff){}
+    // Use default destructor; base class handles cleanup
+    ~NCoordErf() override = default;
 };
 
 /**

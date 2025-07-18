@@ -83,9 +83,6 @@ int ChargeModel::get_charges(
     eeq_chrgeq(mol, realIdx, dist, charge, ncoord_erf.cn, q, ncoord_erf.dcndr, dqdr, lgrad, lverbose);
   if (info != EXIT_SUCCESS) return info;
 
-  ncoord_erf.dcndr.DelMat();
-  ncoord_erf.cn.DelVec();
-
   return EXIT_SUCCESS;
 };
 
