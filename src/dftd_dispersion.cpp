@@ -105,7 +105,7 @@ int get_dispersion(
   TVector<double> q;        // partial charges from EEQ model
   TMatrix<double> dqdr;     // derivative of partial charges
   TVector<double> gradient; // derivative of dispersion energy
-  NCoordErf ncoord_erf;
+  NCoordErfD4 ncoord_erf;
   multicharge::EEQModel chrg_model;  // Charge model
 
   q.NewVector(nat);
@@ -119,7 +119,7 @@ int get_dispersion(
   if (info != EXIT_SUCCESS) return info;
 
   // get the D4 coordination number
-  info = ncoord_erf.get_ncoord_d4(mol, realIdx, dist, lgrad);
+  info = ncoord_erf.get_ncoord(mol, realIdx, dist, lgrad);
   if (info != EXIT_SUCCESS) return info;
 
   // maximum number of reference systems
@@ -261,7 +261,7 @@ int get_dispersion(
   dc6dcn.DelMat();
   dc6dq.DelMat();
 
-  if (lgrad) { BLAS_Add_Mat_x_Vec(gradient, ncoord_erf.dcndr, dEdcn, false, 1.0); }
+  if (lgrad) BLAS_Add_Mat_x_Vec(gradient, ncoord_erf.dcndr, dEdcn, true, 1.0);
 
   dEdcn.DelVec();
   dEdq.DelVec();

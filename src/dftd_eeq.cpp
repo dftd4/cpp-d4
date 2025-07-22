@@ -187,9 +187,9 @@ int ChargeModel::eeq_chrgeq(
         jj = realIdx(j);
         if (jj < 0) continue;
 
-        dAmat(3 * jj, ii) -= dcndr(jj, 3 * ii) * dxdcn(ii);
-        dAmat(3 * jj + 1, ii) -= dcndr(jj, 3 * ii + 1) * dxdcn(ii);
-        dAmat(3 * jj + 2, ii) -= dcndr(jj, 3 * ii + 2) * dxdcn(ii);
+        dAmat(3 * jj,     ii) -= dcndr(ii, 3 * jj    ) * dxdcn(ii);
+        dAmat(3 * jj + 1, ii) -= dcndr(ii, 3 * jj + 1) * dxdcn(ii);
+        dAmat(3 * jj + 2, ii) -= dcndr(ii, 3 * jj + 2) * dxdcn(ii);
       }
     }
 
@@ -357,10 +357,10 @@ int EEQModel::get_damat_0d(
       atrace(jj, 1) -= dgy * q(ii);
       atrace(jj, 2) -= dgz * q(ii);
 
-      dAmat(3 * ii, jj) = dgx * q(ii);
-      dAmat(3 * ii + 1, jj) = dgy * q(ii);
-      dAmat(3 * ii + 2, jj) = dgz * q(ii);
-      dAmat(3 * jj, ii) = -dgx * q(jj);
+      dAmat(3 * ii,     jj) =  dgx * q(ii);
+      dAmat(3 * ii + 1, jj) =  dgy * q(ii);
+      dAmat(3 * ii + 2, jj) =  dgz * q(ii);
+      dAmat(3 * jj,     ii) = -dgx * q(jj);
       dAmat(3 * jj + 1, ii) = -dgy * q(jj);
       dAmat(3 * jj + 2, ii) = -dgz * q(jj);
     }

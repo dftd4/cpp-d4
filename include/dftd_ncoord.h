@@ -80,10 +80,14 @@ class NCoordBase
       const TIVector&,
       const TMatrix<double>&);
 
+    // Electronegativity factor
+    virtual double get_en_factor(int, int) const;
     // Counting function
     virtual double count_fct(double) const = 0;
     // Derivative of the counting function
     virtual double dcount_fct(double) const = 0;
+    // Soft maximum/cutoff for coordination number
+    virtual int cut_coordination_number(const double, TVector<double>&, TMatrix<double>&, bool) = 0;
     // Constructor
     NCoordBase(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0);
     // Virtual destructor
@@ -99,11 +103,30 @@ class NCoordErf : public NCoordBase {
     double count_fct(double) const override;
     // derivative of the erf() based counting function
     double dcount_fct(double) const override;
+    // Soft maximum/cutoff for coordination number
+    int cut_coordination_number(const double, TVector<double>&, TMatrix<double>&, bool) override;
     // Constructor
     NCoordErf(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0)
     : NCoordBase(optional_kcn, optional_norm_exp, optional_cutoff){}
     // Use default destructor; base class handles cleanup
     ~NCoordErf() override = default;
+};
+
+class NCoordErfD4 : public NCoordBase {
+  public:
+    // erf() based counting function
+    double count_fct(double) const override;
+    // derivative of the erf() based counting function
+    double dcount_fct(double) const override;
+    // coordination number scaling factor based on electronegativity difference
+    double get_en_factor(int, int) const override;
+    // Soft maximum/cutoff for coordination number
+    int cut_coordination_number(const double, TVector<double>&, TMatrix<double>&, bool) override;
+    // Constructor
+    NCoordErfD4(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0)
+    : NCoordBase(optional_kcn, optional_norm_exp, optional_cutoff){}
+    // Use default destructor; base class handles cleanup
+    ~NCoordErfD4() override = default;
 };
 
 /**
@@ -205,86 +228,6 @@ extern int ncoord_erf(
  * @return Exit status.
  */
 extern int dncoord_erf(
-  const TMolecule &mol,
-  const TIVector &realIdx,
-  const TMatrix<double> &dist,
-  double cutoff,
-  TVector<double> &cn,
-  TMatrix<double> &dcndr
-);
-
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-/**
- * Wrapper for error function coordination number for DFT-D4.
- *
- * @param mol Molecule object.
- * @param realIdx List for real atoms excluding ghost/non atoms.
- * @param dist Distance matrix.
- * @param cutoff Real-space cutoff (default: @see {dftd_cutoff.h}).
- * @param cn Vector of coordination numbers.
- * @return Exit status.
- */
-extern int get_ncoord_d4(
-  const TMolecule &mol,
-  const TIVector &realIdx,
-  const TMatrix<double> &dist,
-  double cutoff,
-  TVector<double> &cn,
-  TMatrix<double> &dcndr,
-  bool lgrad = false
-);
-
-/**
- * Wrapper for error function coordination number for DFT-D4.
- *
- * @param mol Molecule object.
- * @param dist Distance matrix.
- * @param cutoff Real-space cutoff (default: @see {dftd_cutoff.h}).
- * @param cn Vector of coordination numbers.
- * @return Exit status.
- */
-extern int get_ncoord_d4(
-  const TMolecule &mol,
-  const TMatrix<double> &dist,
-  double cutoff,
-  TVector<double> &cn,
-  TMatrix<double> &dcndr,
-  bool lgrad = false
-);
-
-/**
- * Calculate covalent coordination number for DFT-D4.
- *
- * @param mol Molecule object.
- * @param realIdx List for real atoms excluding ghost/non atoms.
- * @param dist Distance matrix.
- * @param cutoff Real-space cutoff (default: @see {dftd_cutoff.h}).
- * @param cn Vector of coordination numbers.
- * @return Exit status.
- */
-extern int ncoord_d4(
-  const TMolecule &mol,
-  const TIVector &realIdx,
-  const TMatrix<double> &dist,
-  double cutoff,
-  TVector<double> &cn
-);
-
-/**
- * Calculate covalent coordination number and derivative
- * w.r.t. nuclear coordinates
- *
- * @param mol Molecule object.
- * @param realIdx List for real atoms excluding ghost/non atoms.
- * @param dist Distance matrix.
- * @param cutoff Real-space cutoff (default: @see {dftd_cutoff.h}).
- * @param cn Vector of coordination numbers.
- * @param dcndr Derivative of coordination number.
- * @return Exit status.
- */
-extern int dncoord_d4(
   const TMolecule &mol,
   const TIVector &realIdx,
   const TMatrix<double> &dist,

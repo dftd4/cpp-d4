@@ -41,8 +41,8 @@ inline int BLAS_Add_Mat_x_Vec(
   bool Transpose,
   double alpha
 ) {
-  if (A.rows == C.N && A.cols == V.N) {
     if (Transpose) {
+      if (A.cols == C.N && A.rows == V.N) {
       cblas_dgemv(
         CblasRowMajor,
         CblasTrans,
@@ -58,7 +58,9 @@ inline int BLAS_Add_Mat_x_Vec(
         1
       );
       return EXIT_SUCCESS;
-    } else {
+    };
+  } else {
+      if (A.rows == C.N && A.cols == V.N) {
       cblas_dgemv(
         CblasRowMajor,
         CblasNoTrans,
