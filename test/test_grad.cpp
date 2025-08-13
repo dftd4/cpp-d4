@@ -215,20 +215,19 @@ int test_numgrad_dqdr(
   if (info != EXIT_SUCCESS) return info;
 
   // calculate numerical gradient via finite difference method
-  multicharge::EEQModel eeq_model_num; // charge model instance for numerical gradient
   for (int i = 0; i < mol.NAtoms; i++) {
     for (int c = 0; c < 3; c++) {
       // calculate forward point
       q_r.NewVec(n);
       mol.CC(i, c) += step;
       calc_distances(mol, realIdx, dist);
-      eeq_model_num.get_charges(mol, realIdx, dist, 0, cutoff.cn_eeq, q_r, dqdr, false);
+      eeq_model.get_charges(mol, realIdx, dist, 0, cutoff.cn_eeq, q_r, dqdr, false);
 
       // calculate backward point
       q_l.NewVec(n);
       mol.CC(i, c) = mol.CC(i, c) - 2 * step;
       calc_distances(mol, realIdx, dist);
-      eeq_model_num.get_charges(mol, realIdx, dist, 0, cutoff.cn_eeq, q_l, dqdr, false);
+      eeq_model.get_charges(mol, realIdx, dist, 0, cutoff.cn_eeq, q_l, dqdr, false);
 
       // calculate numerical gradient as finite difference
       mol.CC(i, c) = mol.CC(i, c) + step;
