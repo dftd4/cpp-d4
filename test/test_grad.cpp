@@ -192,7 +192,6 @@ int test_numgrad_dqdr(
   analytic_dqdr.NewMat(3 * mol.NAtoms, mol.NAtoms);
   multicharge::EEQModel eeq_model;
   TVector<double> q;
-  TVector<double> q_dum;
   TMatrix<double> dqdr;
   q.NewVec(mol.NAtoms);
   dqdr.NewMat(3 * mol.NAtoms, mol.NAtoms);
@@ -212,39 +211,26 @@ int test_numgrad_dqdr(
   // analytical gradient
   calc_distances(mol, realIdx, dist);
   info =
-    eeq_model.get_charges(mol, realIdx, dist, 0, cutoff.cn_eeq, q, dqdr, true);
+    eeq_model.get_charges(mol, realIdx, dist, 0, cutoff.cn_eeq, q, analytic_dqdr, true);
   if (info != EXIT_SUCCESS) return info;
-  for (int i = 0; i < mol.NAtoms; i++) {
-    for (int c = 0; c < 3; c++) {
-      for (int k = 0; k < mol.NAtoms; k++) {
-        analytic_dqdr(3 * i + c, k) = dqdr(3 * i + c, k);
-      }
-    }
-  }
 
-  // numerical gradient
+  // calculate numerical gradient via finite difference method
+  multicharge::EEQModel eeq_model_num; // charge model instance for numerical gradient
   for (int i = 0; i < mol.NAtoms; i++) {
     for (int c = 0; c < 3; c++) {
-      multicharge::EEQModel eeq_model_l;
-      multicharge::EEQModel eeq_model_r;
+      // calculate forward point
       q_r.NewVec(n);
-      q_l.NewVec(n);
-      q_dum.NewVec(mol.NAtoms);
       mol.CC(i, c) += step;
       calc_distances(mol, realIdx, dist);
-      eeq_model_r.get_charges(mol, realIdx, dist, 0, cutoff.cn_eeq, q_dum, dqdr, false);
+      eeq_model_num.get_charges(mol, realIdx, dist, 0, cutoff.cn_eeq, q_r, dqdr, false);
 
-      for (int k = 0; k < mol.NAtoms; k++) {
-        q_r(k) = q_dum(k);
-      }
-
+      // calculate backward point
+      q_l.NewVec(n);
       mol.CC(i, c) = mol.CC(i, c) - 2 * step;
       calc_distances(mol, realIdx, dist);
-      eeq_model_l.get_charges(mol, realIdx, dist, 0, cutoff.cn_eeq, q_dum, dqdr, false);
-      for (int k = 0; k < mol.NAtoms; k++) {
-        q_l(k) = q_dum(k);
-      }
+      eeq_model_num.get_charges(mol, realIdx, dist, 0, cutoff.cn_eeq, q_l, dqdr, false);
 
+      // calculate numerical gradient as finite difference
       mol.CC(i, c) = mol.CC(i, c) + step;
       for (int j = 0; j < mol.NAtoms; j++) {
         num_dqdr(3 * i + c, j) = 0.5 * (q_r(j) - q_l(j)) / step;

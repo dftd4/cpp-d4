@@ -286,8 +286,6 @@ int NCoordBase::get_ncoord(
   const TMolecule &mol,
   const TMatrix<double> &dist,
   const double cutoff,
-  TVector<double> &cn,
-  TMatrix<double> &dcndr,
   bool lgrad
 ) {
   TIVector realIdx;
