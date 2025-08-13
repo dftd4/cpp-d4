@@ -59,16 +59,14 @@ int test_water(
   // COORDINATION NUMBER CHECK
 
   // erf-CN without cutoff
-  TVector<double> cn;
-  TMatrix<double> dcndr; // empty because no gradient needed
-  cn.New(nat);
-  info = get_ncoord_d4(mol, realIdx, dist, 9999.9, cn, dcndr, false);
+  NCoordErfD4 ncoord_erf(7.5, 1.0, 9999.9);
+  info = ncoord_erf.get_ncoord(mol, realIdx, dist, false);
   if (info != EXIT_SUCCESS) return info;
 
   // compare to ref
   for (int i = 0; i != nat; i++) {
-    if (check(cn(i), water_dimer_ref_cn[i]) == EXIT_FAILURE) {
-      print_fail("GHOST: CN_D4", cn(i), water_dimer_ref_cn[i]);
+    if (check(ncoord_erf.cn(i), water_dimer_ref_cn[i]) == EXIT_FAILURE) {
+      print_fail("GHOST: CN_D4", ncoord_erf.cn(i), water_dimer_ref_cn[i]);
       return EXIT_FAILURE;
     }
   }
@@ -148,8 +146,7 @@ int test_water(
     d4grad[i] = 0.0;
   }
 
-  dcndr.NewMatrix(3 * nat, nat);
-  info = get_ncoord_d4(mol, realIdx, dist, cutoff.cn, cn, dcndr, lgrad);
+  info = ncoord_erf.get_ncoord(mol, realIdx, dist, lgrad);
   if (info != EXIT_SUCCESS) return info;
 
   dqdr.NewMatrix(3 * nat, nat);
@@ -162,6 +159,7 @@ int test_water(
   for (int i = 0; i < 3 * mol.NAtoms; i++) {
     if (check(d4grad[i], ref_grad[i], 1e-8) == EXIT_FAILURE) {
       print_fail("GHOST: Gradient", d4grad[i], ref_grad[i]);
+      delete[] d4grad;
       return EXIT_FAILURE;
     }
   }

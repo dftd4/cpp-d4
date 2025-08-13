@@ -72,23 +72,16 @@ int ChargeModel::get_charges(
   bool lverbose{false};
   int nat = realIdx.Max() + 1;
 
-  TVector<double> cn;    // EEQ cordination number
-  TMatrix<double> dcndr; // Derivative of EEQ-CN
-
-  cn.NewVec(nat);
-  if (lgrad) dcndr.NewMat(nat, 3 * nat);
+  dftd4::NCoordErf ncoord_erf;
 
   // get the EEQ coordination number
-  info = get_ncoord_erf(mol, realIdx, dist, cutoff, cn, dcndr, lgrad);
+  info = ncoord_erf.get_ncoord(mol, realIdx, dist, lgrad);
   if (info != EXIT_SUCCESS) return info;
 
   // corresponds to model%solve in Fortran
   info =
-    eeq_chrgeq(mol, realIdx, dist, charge, cn, q, dcndr, dqdr, lgrad, lverbose);
+    eeq_chrgeq(mol, realIdx, dist, charge, ncoord_erf.cn, q, ncoord_erf.dcndr, dqdr, lgrad, lverbose);
   if (info != EXIT_SUCCESS) return info;
-
-  dcndr.DelMat();
-  cn.DelVec();
 
   return EXIT_SUCCESS;
 };
@@ -194,9 +187,9 @@ int ChargeModel::eeq_chrgeq(
         jj = realIdx(j);
         if (jj < 0) continue;
 
-        dAmat(3 * jj, ii) -= dcndr(jj, 3 * ii) * dxdcn(ii);
-        dAmat(3 * jj + 1, ii) -= dcndr(jj, 3 * ii + 1) * dxdcn(ii);
-        dAmat(3 * jj + 2, ii) -= dcndr(jj, 3 * ii + 2) * dxdcn(ii);
+        dAmat(3 * jj,     ii) -= dcndr(ii, 3 * jj    ) * dxdcn(ii);
+        dAmat(3 * jj + 1, ii) -= dcndr(ii, 3 * jj + 1) * dxdcn(ii);
+        dAmat(3 * jj + 2, ii) -= dcndr(ii, 3 * jj + 2) * dxdcn(ii);
       }
     }
 
@@ -364,10 +357,10 @@ int EEQModel::get_damat_0d(
       atrace(jj, 1) -= dgy * q(ii);
       atrace(jj, 2) -= dgz * q(ii);
 
-      dAmat(3 * ii, jj) = dgx * q(ii);
-      dAmat(3 * ii + 1, jj) = dgy * q(ii);
-      dAmat(3 * ii + 2, jj) = dgz * q(ii);
-      dAmat(3 * jj, ii) = -dgx * q(jj);
+      dAmat(3 * ii,     jj) =  dgx * q(ii);
+      dAmat(3 * ii + 1, jj) =  dgy * q(ii);
+      dAmat(3 * ii + 2, jj) =  dgz * q(ii);
+      dAmat(3 * jj,     ii) = -dgx * q(jj);
       dAmat(3 * jj + 1, ii) = -dgy * q(jj);
       dAmat(3 * jj + 2, ii) = -dgz * q(jj);
     }

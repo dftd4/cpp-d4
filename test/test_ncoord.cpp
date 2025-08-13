@@ -61,22 +61,181 @@ int test_cn(
   calc_distances(mol, realIdx, dist);
 
   // erf-CN without cutoff
-  TVector<double> cn;
-  TMatrix<double> dcndr; // empty because no gradient needed
-  cn.New(n);
-  info = get_ncoord_d4(mol, realIdx, dist, 9999.9, cn, dcndr, false);
+  NCoordErfD4 ncoord_erf(7.5, 1.0, 9999.9);
+  info = ncoord_erf.get_ncoord(mol, realIdx, dist, false);
   if (info != EXIT_SUCCESS) return info;
 
   // compare to ref
   for (int i = 0; i != n; i++) {
-    if (check(cn(i), ref(i)) == EXIT_FAILURE) {
-      print_fail("CN_D4", cn(i), ref(i));
+    if (check(ncoord_erf.cn(i), ref(i)) == EXIT_FAILURE) {
+      print_fail("CN_D4", ncoord_erf.cn(i), ref(i));
       return EXIT_FAILURE;
     }
   }
 
   return EXIT_SUCCESS;
 }
+
+
+int test_numgrad_d4(
+  int n,
+  const char atoms[][3],
+  const double coord[]
+) {
+  // assemble molecule
+  int info;
+  TMolecule mol;
+  info = get_molecule(n, atoms, coord, mol);
+  if (info != EXIT_SUCCESS) return info;
+  double step{1.0e-6};
+  double thr{1e-8};
+
+  TMatrix<double> dist;
+  dist.NewMat(mol.NAtoms, mol.NAtoms);
+  TMatrix<double> num_dcndr;  // numerical gradient of the coordination number
+  num_dcndr.NewMat(mol.NAtoms, 3 * mol.NAtoms);
+  TMatrix<double> analytic_dcndr;  // analytical gradient of the coordination number
+  analytic_dcndr.NewMat(mol.NAtoms, 3 * mol.NAtoms);
+  NCoordErfD4 ncoord_erf_d4;
+  NCoordErfD4 ncoord_erf_d4_r;
+  NCoordErfD4 ncoord_erf_d4_l;
+
+  TCutoff cutoff;
+
+  // masking (nothing excluded)
+  TVector<int> realIdx;
+  realIdx.NewVec(mol.NAtoms);
+  int nat = 0;
+  for (int i = 0; i != mol.NAtoms; i++) {
+    realIdx(i) = nat;
+    nat++;
+  }
+
+  // analytical gradient
+  calc_distances(mol, realIdx, dist);
+  ncoord_erf_d4.get_ncoord(mol, realIdx, dist, true);
+  analytic_dcndr.CopyMat(ncoord_erf_d4.dcndr);
+
+  // check if analytical gradient is antisymmetric
+  for (int c = 0; c < 3; c++) {
+    for (int i = 0; i < mol.NAtoms; i++) {
+      for (int k = 0; k < i; k++) {
+        if (abs(analytic_dcndr(k, 3 * i + c) + analytic_dcndr(i, 3 * k + c)) > 1.0e-9 ) {
+          print_fail("Analytical CN-gradient is not antisymmetric for NCoordErfD4",analytic_dcndr(k, 3 * i + c) + analytic_dcndr(i, 3 * k + c) , 0.0);
+          return EXIT_FAILURE;
+        }
+      }
+    }
+  }
+
+  // numerical gradient
+  for (int i = 0; i < mol.NAtoms; i++) {
+    for (int c = 0; c < 3; c++) {
+      mol.CC(i, c) += step;
+      calc_distances(mol, realIdx, dist);
+      ncoord_erf_d4_r.get_ncoord(mol, realIdx, dist, false);
+
+      mol.CC(i, c) = mol.CC(i, c) - 2 * step;
+      calc_distances(mol, realIdx, dist);
+      ncoord_erf_d4_l.get_ncoord(mol, realIdx, dist, false);
+
+      mol.CC(i, c) = mol.CC(i, c) + step;
+      for (int j = 0; j < mol.NAtoms; j++) {
+        // numerical CN gradient: dCN(j)/ dr(i)^c with c = x,y, or z
+        num_dcndr(j, 3 * i + c) = 0.5 * (ncoord_erf_d4_r.cn(j) - ncoord_erf_d4_l.cn(j)) / step;
+      }
+    }
+  }
+
+  // compare against numerical gradient
+  for (int i = 0; i < mol.NAtoms; i++) {
+    for (int c = 0; c < 3; c++) {
+      for (int j = 0; j < mol.NAtoms; j++) {
+        if (check(analytic_dcndr(j, 3 * i + c), num_dcndr(j, 3 * i + c), thr) != EXIT_SUCCESS) {
+          print_fail("Gradient mismatch for NCoordErfD4 dcndr", analytic_dcndr(j, 3 * i + c), num_dcndr(j, 3 * i + c));
+          return EXIT_FAILURE;
+        }
+      }
+    }
+  }
+
+  return EXIT_SUCCESS;
+}
+
+
+int test_numgrad(
+  int n,
+  const char atoms[][3],
+  const double coord[]
+) {
+  // assemble molecule
+  int info;
+  TMolecule mol;
+  info = get_molecule(n, atoms, coord, mol);
+  if (info != EXIT_SUCCESS) return info;
+  double step{1.0e-6};
+  double thr{1e-8};
+
+  TMatrix<double> dist;
+  dist.NewMat(mol.NAtoms, mol.NAtoms);
+  TMatrix<double> num_dcndr;  // numerical gradient of the coordination number
+  num_dcndr.NewMat(mol.NAtoms, 3 * mol.NAtoms);
+  TMatrix<double> analytic_dcndr;  // analytical gradient of the coordination number
+  analytic_dcndr.NewMat(mol.NAtoms, 3 * mol.NAtoms);
+  NCoordErf ncoord_erf;
+  NCoordErf ncoord_erf_r;
+  NCoordErf ncoord_erf_l;
+
+  TCutoff cutoff;
+
+  // masking (nothing excluded)
+  TVector<int> realIdx;
+  realIdx.NewVec(mol.NAtoms);
+  int nat = 0;
+  for (int i = 0; i != mol.NAtoms; i++) {
+    realIdx(i) = nat;
+    nat++;
+  }
+
+  // analytical gradient
+  calc_distances(mol, realIdx, dist);
+  ncoord_erf.get_ncoord(mol, realIdx, dist, true);
+  analytic_dcndr.CopyMat(ncoord_erf.dcndr);
+
+  // numerical gradient
+  for (int i = 0; i < mol.NAtoms; i++) {
+    for (int c = 0; c < 3; c++) {
+      mol.CC(i, c) += step;
+      calc_distances(mol, realIdx, dist);
+      ncoord_erf_r.get_ncoord(mol, realIdx, dist, false);
+
+      mol.CC(i, c) = mol.CC(i, c) - 2 * step;
+      calc_distances(mol, realIdx, dist);
+      ncoord_erf_l.get_ncoord(mol, realIdx, dist, false);
+
+      mol.CC(i, c) = mol.CC(i, c) + step;
+      for (int j = 0; j < mol.NAtoms; j++) {
+        // numerical CN gradient: dCN(j)/ dr(i)^c with c = x,y, or z
+        num_dcndr(j, 3 * i + c) = 0.5 * (ncoord_erf_r.cn(j) - ncoord_erf_l.cn(j)) / step;
+      }
+    }
+  }
+
+  // compare against numerical gradient
+  for (int i = 0; i < mol.NAtoms; i++) {
+    for (int c = 0; c < 3; c++) {
+      for (int j = 0; j < mol.NAtoms; j++) {
+        if (check(analytic_dcndr(j, 3 * i + c), num_dcndr(j, 3 * i + c), thr) != EXIT_SUCCESS) {
+          print_fail("Gradient mismatch for NCoordErf dcndr", analytic_dcndr(j, 3 * i + c), num_dcndr(j, 3 * i + c));
+          return EXIT_FAILURE;
+        }
+      }
+    }
+  }
+
+  return EXIT_SUCCESS;
+}
+
 
 int test_ncoord() {
   int info;
@@ -93,5 +252,24 @@ int test_ncoord() {
     test_cn(rost61_m1_n, rost61_m1_atoms, rost61_m1_coord, rost61_m1_ref_cn);
   if (info != EXIT_SUCCESS) return info;
 
+  info = test_numgrad_d4(
+    mb16_43_01_n, mb16_43_01_atoms, mb16_43_01_coord
+  );
+  if (info != EXIT_SUCCESS) return info;
+
+  info = test_numgrad(
+    mb16_43_01_n, mb16_43_01_atoms, mb16_43_01_coord
+  );
+  if (info != EXIT_SUCCESS) return info;
+
+  info = test_numgrad_d4(
+    water_n, water_atoms, water_coord
+  );
+  if (info != EXIT_SUCCESS) return info;
+
+  info = test_numgrad(
+    water_n, water_atoms, water_coord
+  );
+  if (info != EXIT_SUCCESS) return info;
   return EXIT_SUCCESS;
 }
