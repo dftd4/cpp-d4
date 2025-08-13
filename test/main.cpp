@@ -26,6 +26,7 @@
 #include "test_grad.h"
 #include "test_ncoord.h"
 #include "test_param.h"
+#include "test_multi.h"
 
 enum test {
   invalid,
@@ -35,6 +36,7 @@ enum test {
   grad,
   ncoord,
   param,
+  multi,
 };
 
 test get_tests(std::string name) {
@@ -45,6 +47,7 @@ test get_tests(std::string name) {
     {"grad", grad},
     {"ncoord", ncoord},
     {"param", param},
+    {"multi", multi}
   };
 
   std::string test = name;
@@ -63,5 +66,6 @@ int main(int argc, char *argv[]) {
   case grad: return test_grad();
   case ncoord: return test_ncoord();
   case param: return test_param();
+  case multi: return test_multi();
   }
 }

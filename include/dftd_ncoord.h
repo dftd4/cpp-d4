@@ -25,19 +25,23 @@
 
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
+#include "dftd_multicharge_param.h"
 
 namespace dftd4 {
-
 
 class NCoordBase
 {
   public:
-    TVector<double> cn;
-    TMatrix<double> dcndr;
-    static const double rad[];
+    TVector<double> cn;  // coordination number
+    TMatrix<double> dcndr;  // derivative of the coordination number
+    static const double rad[];  // cov. radii default: D3 covalent radii from dftd_ncoord.cpp
     double kcn;  // Steepness of counting function 
-    double norm_exp;
-    double cutoff;
+    double norm_exp;  // exponent of the normalizing-factor in the counting function
+    double cutoff;  // Coordination number cutoff distance
+    double f_directed;  // directed factor for EN scaled coordination number
+    double cn_max;  // (Soft-)maximum value for the coordination number
+    const double* rcov;  // covalent radii for CN
+    // Get the coordination number
     /**
     * Wrapper for coordination number calculation.
     *
@@ -47,12 +51,12 @@ class NCoordBase
     * @param lgrad Flag for gradient computation.
     * @return Exit status.
     */
-    int get_ncoord( // with ghost atoms
+    int get_ncoord( // without ghost atom indices
       const TMolecule &mol,
       const TMatrix<double> &dist,
       const double cutoff,
       bool lgrad);
-    /**
+          /**
     * Wrapper for coordination number calculation.
     *
     * @param mol Molecule object.
@@ -62,7 +66,7 @@ class NCoordBase
     * @param cn Vector of coordination numbers.
     * @return Exit status.
     */
-    int get_ncoord(  // without ghost atoms
+    int get_ncoord(  // with ghost atoms
       const TMolecule &mol,
       const TIVector &realIdx,
       const TMatrix<double> &dist,
@@ -88,7 +92,7 @@ class NCoordBase
     * @param dist Distance matrix.
     * @return Exit status.
     */
-    int dncoord_base(
+    int dr_ncoord_base(
       const TMolecule &mol,
       const TIVector &realIdx,
       const TMatrix<double> &dist);
@@ -100,20 +104,24 @@ class NCoordBase
     * @return Value of the electronegativity factor.
     */
     virtual double get_en_factor(int i, int j) const;
+    // Calculate the element pair-specific covalent radii
+    virtual double get_rcov(int, int) const;
     /**
     * base class function for coordination number contributions.
     *
-    * @param rr atomic distance over covalent radii
+    * @param r distance between the two atoms 
+    * @param rc summed up covalent radii of the two atoms
     * @return Value of the counting function.
     */
-    virtual double count_fct(double rr) const = 0;
+    virtual double count_fct(double r, double rc) const = 0;
     /**
     * Derivative of the counting function w.r.t. the distance.
     *
-    * @param rr atomic distance over covalent radii
+    * @param r distance between the two atoms 
+    * @param rc summed up covalent radii of the two atoms
     * @return Derivative of the counting function.
     */
-    virtual double dcount_fct(double rr) const = 0;
+    virtual double dr_count_fct(double r, double rc) const = 0;
     /**
     * TCutoff function for large coordination numbers
     *
@@ -125,7 +133,8 @@ class NCoordBase
     */
     virtual int cut_coordination_number(const double cn_max, TVector<double> &cn, TMatrix<double> &dcndr, bool lgrad) = 0;
     // Constructor
-    NCoordBase(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0);
+    NCoordBase(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0,
+    double optional_f_directed = 1.0, double optional_cn_max = 8.0, const double* optional_rcov = rad);
     // Virtual destructor
     virtual ~NCoordBase() {
       cn.DelVec();
@@ -133,34 +142,59 @@ class NCoordBase
     }
 };
 
+// derived CN-class for erf()-based CN; includes default CN-cutoff
 class NCoordErf : public NCoordBase {
   public:
     // erf() based counting function
-    double count_fct(double) const override;
+    double count_fct(double, double) const override;
     // derivative of the erf() based counting function
-    double dcount_fct(double) const override;
+    double dr_count_fct(double, double) const override;
     // Soft maximum/cutoff for coordination number
     int cut_coordination_number(const double, TVector<double>&, TMatrix<double>&, bool) override;
     // Constructor
-    NCoordErf(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0)
-    : NCoordBase(optional_kcn, optional_norm_exp, optional_cutoff){}
+    NCoordErf(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0,
+    double optional_f_directed = 1.0, double optional_cn_max = 8.0, const double* optional_rcov = rad)
+    : NCoordBase(optional_kcn, optional_norm_exp, optional_cutoff, optional_f_directed, optional_cn_max, optional_rcov){}
     // Use default destructor; base class handles cleanup
     ~NCoordErf() override = default;
 };
 
+// derived CN-class for EEQ-BC local charges
+class NCoordErfEN : public NCoordBase {
+  public:
+    // erf() based counting function
+    double count_fct(double, double) const override;
+    // derivative of the erf() based counting function
+    double dr_count_fct(double, double) const override;
+    // Soft maximum/cutoff for coordination number
+    int cut_coordination_number(const double, TVector<double>&, TMatrix<double>&, bool) override;
+    // coordination number scaling factor based on electronegativity difference
+    double get_en_factor(int, int) const override;
+    // Calculate the element pair-specific covalent radii for EEQ-BC qloc
+    double get_rcov(int, int) const override;
+    // Constructor
+    NCoordErfEN(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0,
+    double optional_f_directed = -1.0, double optional_cn_max = 8.0, const double* optional_rcov = multicharge_param::eeqbc::eeqbc_cov_radii)
+    : NCoordBase(optional_kcn, optional_norm_exp, optional_cutoff, optional_f_directed, optional_cn_max, optional_rcov){}
+    // Use default destructor; base class handles cleanup
+    ~NCoordErfEN() override = default;
+};
+
+// derived CN-class for the D4 model
 class NCoordErfD4 : public NCoordBase {
   public:
     // erf() based counting function
-    double count_fct(double) const override;
+    double count_fct(double, double) const override;
     // derivative of the erf() based counting function
-    double dcount_fct(double) const override;
+    double dr_count_fct(double, double) const override;
     // coordination number scaling factor based on electronegativity difference
     double get_en_factor(int, int) const override;
     // Soft maximum/cutoff for coordination number
     int cut_coordination_number(const double, TVector<double>&, TMatrix<double>&, bool) override;
     // Constructor
-    NCoordErfD4(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0)
-    : NCoordBase(optional_kcn, optional_norm_exp, optional_cutoff){}
+    NCoordErfD4(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0,
+    double optional_f_directed = 1.0, double optional_cn_max = 8.0, const double* optional_rcov = rad)
+    : NCoordBase(optional_kcn, optional_norm_exp, optional_cutoff, optional_f_directed, optional_cn_max, optional_rcov){}
     // Use default destructor; base class handles cleanup
     ~NCoordErfD4() override = default;
 };

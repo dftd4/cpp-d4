@@ -29,16 +29,24 @@
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
 #include "dftd_ncoord.h"
+#include "dftd_multicharge_param.h"
 
 namespace dftd4 {
 
 NCoordBase::NCoordBase(
-  double optional_kcn,  // defaults for D4 EEQ
-  double optional_norm_exp, // defaults for D4 EEQ
-  double optional_cutoff  // defaults for D4 EEQ
-) : kcn(optional_kcn), norm_exp(optional_norm_exp), cutoff(optional_cutoff)
+  double optional_kcn,
+  double optional_norm_exp,
+  double optional_cutoff,
+  double optional_f_directed,
+  double optional_cn_max,
+  const double* optional_rcov
+) : kcn(optional_kcn),
+    norm_exp(optional_norm_exp),
+    cutoff(optional_cutoff),
+    f_directed(optional_f_directed),
+    cn_max(optional_cn_max),
+    rcov(optional_rcov)
 {}
-
 
 /**
  * Covalent radii (taken from Pyykko and Atsumi, Chem. Eur. J. 15, 2009,
@@ -237,10 +245,7 @@ static const double kn = 7.5;
 static const double k4 = 4.10451;
 static const double k5 = 19.08857;
 static const double k6 = 2 * pow(11.28174, 2);
-static const double hlfosqrtpi = 1.0 / 1.7724538509055159;
-
-// Maximum CN (not strictly obeyed)
-static const double cn_max = 8.0;
+static const double hlfosqrtpi = 1.0 / 1.7724538509055159;  // one over square root of pi
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -302,15 +307,21 @@ int NCoordBase::get_ncoord(
 ) {
   int info;
 
+  int nat = realIdx.Max() + 1;
+  cn.NewVector(nat);
+  if (lgrad) dcndr.NewMatrix(nat, 3 * nat);
+  
   if (lgrad) {
-    info = dncoord_base(mol, realIdx, dist);
+    info = dr_ncoord_base(mol, realIdx, dist);
   } else {
     info = ncoord_base(mol, realIdx, dist);
   }
   if (info != EXIT_SUCCESS) return info;
 
-  info = cut_coordination_number(cn_max, cn, dcndr, lgrad);
-  if (info != EXIT_SUCCESS) return info;
+  if (cn_max != -1.0) { // cn_max = -1.0 for EEQ-BC for cn and qloc; using NCoordErf and NCoordErfEN
+    info = cut_coordination_number(cn_max, cn, dcndr, lgrad);
+    if (info != EXIT_SUCCESS) return info;
+  }
 
   return EXIT_SUCCESS;
 };
@@ -320,12 +331,9 @@ int NCoordBase::ncoord_base(
   const TIVector &realIdx,
   const TMatrix<double> &dist
 ) {
-  double r = 0.0, rcovij = 0.0, rr = 0.0;
+  double r = 0.0, rcovij = 0.0;
   double countf = 0.0;
   double f_en = 0.0;
-  // initialize cn to zero
-  int nat = realIdx.Max() + 1;
-  cn.NewVector(nat);
 
   for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
     ii = realIdx(i);
@@ -338,32 +346,25 @@ int NCoordBase::ncoord_base(
       r = dist(ii, jj);
       if (r > cutoff) continue;
 
-      rcovij = rad[mol.ATNO(i)] + rad[mol.ATNO(j)];
-      rr = r / rcovij;
+      rcovij = get_rcov(mol.ATNO(i), mol.ATNO(j));
       f_en = get_en_factor(mol.ATNO(i), mol.ATNO(j));
-      countf = f_en * count_fct(rr);
+      countf = f_en * count_fct(r, rcovij);
       cn(ii) += countf;
-      cn(jj) += countf;
+      cn(jj) += countf * f_directed;
     }
   }
-
   return EXIT_SUCCESS;
 }
 
-
-int NCoordBase::dncoord_base(
+int NCoordBase::dr_ncoord_base(
   const TMolecule &mol,
   const TIVector &realIdx,
   const TMatrix<double> &dist
 ) {
-  double r = 0.0, rcovij = 0.0, rr = 0.0;
+  double r = 0.0, rcovij = 0.0;
   double rx = 0.0, ry = 0.0, rz = 0.0;
   double countf = 0.0, dcountf = 0.0;
-  double f_en = 0.0;
-  // initialize cn and dcndr to zero
-  int nat = realIdx.Max() + 1;
-  cn.NewVector(nat);
-  dcndr.NewMatrix(nat, 3 * nat);
+  double f_en = 0;
 
   for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
     ii = realIdx(i);
@@ -380,26 +381,25 @@ int NCoordBase::dncoord_base(
       ry = (mol.CC(i, 1) - mol.CC(j, 1)) / r;
       rz = (mol.CC(i, 2) - mol.CC(j, 2)) / r;
 
-      rcovij = rad[mol.ATNO(i)] + rad[mol.ATNO(j)];
-      rr = r / rcovij;
+      rcovij = get_rcov(mol.ATNO(i), mol.ATNO(j));
 
       f_en = get_en_factor(mol.ATNO(i), mol.ATNO(j));
-      countf = f_en * count_fct(rr);
+      countf = f_en * count_fct(r, rcovij);
       cn(ii) += countf;
       cn(jj) += countf;
 
-      dcountf = f_en * dcount_fct(rr) / rcovij;
-      dcndr(jj, 3 * jj    ) -= dcountf * rx;
-      dcndr(jj, 3 * jj + 1) -= dcountf * ry;
-      dcndr(jj, 3 * jj + 2) -= dcountf * rz;
+      dcountf = f_en * dr_count_fct(r, rcovij) / rcovij;
+      dcndr(jj, 3 * jj    ) -= dcountf * rx * f_directed;
+      dcndr(jj, 3 * jj + 1) -= dcountf * ry * f_directed;
+      dcndr(jj, 3 * jj + 2) -= dcountf * rz * f_directed;
 
       dcndr(jj, 3 * ii    ) += dcountf * rx;
       dcndr(jj, 3 * ii + 1) += dcountf * ry;
       dcndr(jj, 3 * ii + 2) += dcountf * rz;
 
-      dcndr(ii, 3 * jj    ) -= dcountf * rx;
-      dcndr(ii, 3 * jj + 1) -= dcountf * ry;
-      dcndr(ii, 3 * jj + 2) -= dcountf * rz;
+      dcndr(ii, 3 * jj    ) -= dcountf * rx * f_directed;
+      dcndr(ii, 3 * jj + 1) -= dcountf * ry * f_directed;
+      dcndr(ii, 3 * jj + 2) -= dcountf * rz * f_directed;
 
       dcndr(ii, 3 * ii    ) += dcountf * rx;
       dcndr(ii, 3 * ii + 1) += dcountf * ry;
@@ -413,31 +413,62 @@ int NCoordBase::dncoord_base(
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
+double NCoordBase::get_rcov(int i, int j) const {
+  return rcov[i] + rcov[j];
+}
+
+double NCoordErfEN::get_rcov(int i, int j) const {
+  return rcov[i] + rcov[j];
+}
+
+double NCoordErf::count_fct(double r, double rc) const {
+  return 0.5 * (1.0 + erf(-kcn * (r - rc)/pow(rc, norm_exp)));
+}
+
+double NCoordErf::dr_count_fct(double r, double rc) const {
+  const double rc_norm_exp = pow(rc, norm_exp);
+  const double exponent_term = -pow(kcn * (r - rc)/rc_norm_exp, 2);
+  return -kcn * hlfosqrtpi * exp(exponent_term);
+}
+
+double NCoordErfEN::count_fct(double r, double rc) const {
+  return 0.5 * (1.0 + erf(-kcn * (r - rc)/pow(rc, norm_exp)));
+}
+
+double NCoordErfEN::dr_count_fct(double r, double rc) const {
+  const double rc_norm_exp = pow(rc, norm_exp);
+  const double exponent_term = -pow(kcn * (r - rc)/rc_norm_exp, 2);
+  return -kcn * hlfosqrtpi * exp(exponent_term);
+}
+
+double NCoordErfD4::count_fct(double r, double rc) const {
+  return 0.5 * (1.0 + erf(-kcn * (r - rc)/pow(rc, norm_exp)));
+}
+
+double NCoordErfD4::dr_count_fct(double r, double rc) const {
+  const double rc_norm_exp = pow(rc, norm_exp);
+  const double exponent_term = -pow(kcn * (r - rc)/rc_norm_exp, 2);
+  return -kcn * hlfosqrtpi * exp(exponent_term);
+}
+
 double NCoordBase::get_en_factor(int i, int j) const {
   return 1.0;
+}
+
+double NCoordErfEN::get_en_factor(int i, int j) const {
+  return multicharge_param::eeqbc::eeqbc_en[j] - multicharge_param::eeqbc::eeqbc_en[i];
 }
 
 double NCoordErfD4::get_en_factor(int i, int j) const {
   return k4 * exp(-pow((fabs(en[i] - en[j]) + k5), 2) / k6);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-double NCoordErf::count_fct(double rr) const {
-  return 0.5 * (1.0 + erf(-kcn * (rr - 1.0)));
+inline double log_cn_cut(const double cn_max, const double cn) {
+  return log(1.0 + exp(cn_max)) - log(1.0 + exp(cn_max - cn));
 }
 
-double NCoordErf::dcount_fct(double rr) const {
-  return -kcn * hlfosqrtpi * exp(-pow(kcn * (rr - 1.0), 2));
-}
-
-double NCoordErfD4::count_fct(double rr) const {
-  return 0.5 * (1.0 + erf(-kcn * (rr - 1.0)));
-}
-
-double NCoordErfD4::dcount_fct(double rr) const {
-  return -kcn * hlfosqrtpi * exp(-pow(kcn * (rr - 1.0), 2));
+inline double dlog_cn_cut(const double cn_max, const double cn) {
+  return exp(cn_max) / (exp(cn_max) + exp(cn));
 }
 
 int NCoordErf::cut_coordination_number(
@@ -466,12 +497,13 @@ int NCoordErf::cut_coordination_number(
   return EXIT_SUCCESS;
 }
 
-inline double log_cn_cut(const double cn_max, const double cn) {
-  return log(1.0 + exp(cn_max)) - log(1.0 + exp(cn_max - cn));
-}
-
-inline double dlog_cn_cut(const double cn_max, const double cn) {
-  return exp(cn_max) / (exp(cn_max) + exp(cn));
+int NCoordErfEN::cut_coordination_number(
+  const double cn_max,
+  TVector<double> &cn,
+  TMatrix<double> &dcndr,
+  bool lgrad
+) {
+  return EXIT_SUCCESS;
 }
 
 int NCoordErfD4::cut_coordination_number(

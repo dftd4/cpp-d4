@@ -24,16 +24,20 @@
 
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
+#include "dftd_ncoord.h"
 
 namespace multicharge {
   using dftd4::TIVector;
   using dftd4::TVector;
   using dftd4::TMatrix;
   using dftd4::TMolecule;
+  using dftd4::NCoordErf;
+  using dftd4::NCoordErfEN;
 
 class ChargeModel
 {
 public:
+  NCoordErf ncoord_erf;     // coordination number
   // Constructor
   ChargeModel();
   // Virtual destructor
@@ -93,9 +97,7 @@ public:
     const TIVector &realIdx,
     const TMatrix<double> &dist,
     const int &charge,
-    const TVector<double> &cn,
     TVector<double> &qvec,
-    TMatrix<double> &dcndr,
     TMatrix<double> &dqdr,
     bool lgrad = false,
     bool lverbose = false
@@ -105,11 +107,11 @@ public:
     const TMolecule &mol,
     const TIVector &realIdx,
     const int &charge,
-    const TVector<double> &cn,
+    const TMatrix<double> &dist,
     TVector<double> &Xvec,
     TVector<double> &dXvec,
     bool lgrad
-  ) const = 0;
+  ) = 0;
 
   // Calculate the Coulomb matrix
   virtual int get_amat_0d(
@@ -129,28 +131,37 @@ public:
     TMatrix<double> &dAmat,
     TMatrix<double> &atrace
   ) const = 0;
+
+  // Calculate the coordination number, forwarding to get_ncoord
+  virtual NCoordErf& get_cn(
+    const TMolecule &mol,
+    const TIVector &realIdx,
+    const TMatrix<double> &dist,
+    bool
+  ) = 0;
   
 };
 
 // Derived class for EEQ charge model
 class EEQModel : public ChargeModel {
   public:
-    const double* xi;  // Element-specific electronegativity 
-    const double* gam;  // Element-specific chemical hardnesses
+    const double* xi;     // Element-specific electronegativity 
+    const double* gam;    // Element-specific chemical hardnesses
     const double* kappa;  // Element-specific CN scaling constant
-    const double* alp;  // Element-specific atomic radii
+    const double* alp;    // Element-specific atomic radii
     
+    //
     EEQModel();
   
     int get_vrhs(
       const TMolecule &mol,
       const TIVector &realIdx,
       const int &charge,
-      const TVector<double> &cn,
+      const TMatrix<double> &dist,
       TVector<double> &Xvec,
       TVector<double> &dXvec,
       bool lgrad
-    ) const override;
+    ) override;
   
     // Calculate the Coulomb matrix
     int get_amat_0d(
@@ -170,6 +181,119 @@ class EEQModel : public ChargeModel {
       TMatrix<double> &dAmat,
       TMatrix<double> &atrace
     ) const override;
+
+    // Calculate the coordination number, forwarding to get_ncoord
+    NCoordErf& get_cn(
+      const TMolecule &mol,
+      const TIVector &realIdx,
+      const TMatrix<double> &dist,
+      bool lgrad
+    ) override;
 };
 
+// Derived class for EEQ-BC charge model
+class EEQBCModel : public ChargeModel {
+  public:
+    const double kcnrad;
+    const double kbc;         // scaling factor in erf() of bond capacitance matrix
+    const double cutoff;      // coordination number distance cutoff
+    const double cn_exp;
+    const double norm_exp;
+    const double* chi;        // Element-specific electronegativity
+    const double* eta;        // Element-specific chemical hardnesses 
+    const double* rad;        // Element-specific charge widths
+    const double* kcnchi;     // Element-specific CN scaling of the electronegativity
+    const double* kqchi;      // Element-specific local q scaling of the electronegativity
+    const double* kqeta;      // Element-specific local q scaling of the chemical hardness
+    const double* cap;        // Element-specific bond capacitance
+    const double* cov_radii;  // Element-specific covalent radii for the CN 
+    const double* avg_cn;     // Element-specific averaged coordination number over the fitset
+    const double* rvdw;       // Element-pair-specific van der Waals radii based on distance
+    TVector<double> qloc;     // local charges
+    TMatrix<double> cmat;     // capacitance matrix
+
+    //
+    EEQBCModel();
+  
+    int get_vrhs(
+      const TMolecule &mol,
+      const TIVector &realIdx,
+      const int &charge,
+      const TMatrix<double> &dist,
+      TVector<double> &Xvec,
+      TVector<double> &dXvec,
+      bool lgrad
+    ) override;
+  
+    // Calculate the Coulomb matrix
+    int get_amat_0d(
+      const TMolecule &mol,
+      const TIVector &realIdx,
+      const TMatrix<double> &dist,
+      TMatrix<double> &Amat
+    ) const override;
+    
+    // Calculate the Coulomb matrix derivatives
+    int get_damat_0d(
+      const TMolecule &mol,
+      const TIVector &realIdx,
+      const TMatrix<double> &dist,
+      const TVector<double> &q,
+      const TMatrix<double> &Amat,
+      TMatrix<double> &dAmat,
+      TMatrix<double> &atrace
+    ) const override;
+
+    // Calculate the coordination number, forwarding to get_ncoord
+    NCoordErf& get_cn(
+      const TMolecule &mol,
+      const TIVector &realIdx,
+      const TMatrix<double> &dist,
+      bool lgrad
+    ) override;
+
+    // Get purely geometry-dependent local charges
+    int get_qloc(
+      const TMolecule&,
+      const TMatrix<double>&,
+      const double,
+      TVector<double>&
+    );
+
+    // Get the capacitance for bond between atoms i and j
+    int get_cpair(
+      int iat,
+      int jat,
+      double &dist_ij,
+      double &c_ij
+    ) const;
+
+    // Get the capacitance matrix
+    int get_cmat(
+      const TMolecule&,
+      const TIVector &realIdx,
+      const TMatrix<double>&,
+      TMatrix<double>&
+    );
+
+    // Get the right-hand side (electronegativity) of the set of linear equations
+    int get_xvec(
+      const TMolecule&,
+      const TIVector&,
+      const TMatrix<double>&,
+      TMatrix<double>&,
+      NCoordErf&,
+      int,
+      TVector<double>&
+    );
+
+    // numerical gradient of partial charges w.r.t. atom positions
+    int num_grad_dqdr(
+      TMolecule&,  // molecular geometry
+      const TIVector&,
+      int,
+      TMatrix<double>& // numerical gradient
+    );
+
+};
 } // namespace multicharge
