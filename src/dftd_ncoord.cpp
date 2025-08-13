@@ -322,7 +322,7 @@ int NCoordBase::ncoord_base(
 ) {
   double r = 0.0, rcovij = 0.0, rr = 0.0;
   double countf = 0.0;
-  double f_en;
+  double f_en = 0.0;
   // initialize cn to zero
   int nat = realIdx.Max() + 1;
   cn.NewVector(nat);
