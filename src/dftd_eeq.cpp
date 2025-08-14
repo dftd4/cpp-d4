@@ -637,42 +637,35 @@ int EEQBCModel::num_grad_dqdr(
   int charge, // total charge of the system
   TMatrix<double> &num_dqdr // numerical gradient
 ) {
-  TVector<double> q_r, q_l;
-  double step{1.0e-6};
-  int nat = realIdx.Max() +1;
-  TMatrix<double> dqdr;
+  TVector<double> q_r, q_l;  // forward and backward point
+  double step{1.0e-6};  // step size of finite differences
+  int nat = realIdx.Max() +1;  // number of atoms
+  TMatrix<double> dqdr;  // dummy variable for analytical derivative
+  dqdr.NewMat(3 * nat, nat);
   num_dqdr.NewMat(3 * nat, nat);
-  TMatrix<double> dist;
-  TVector<double> q_dum;
+  TMatrix<double> dist;  // matrix with pairwise atomic distances
+  multicharge::EEQBCModel eeqbc_model;  // instance of the EEQ-BC model
+
+  // calculate numerical gradient via finite difference method
   for (int i = 0; i < nat; i++) {
     for (int c = 0; c < 3; c++) {
-      multicharge::EEQBCModel eeqbc_model_l;
-      multicharge::EEQBCModel eeqbc_model_r;
-      q_r.NewVec(nat);
-      q_l.NewVec(nat);
-      q_dum.NewVec(nat);
-      dqdr.NewMat(3 * nat, nat);
+      // calculate forward point
       mol.CC(i, c) += step;
       dist.NewMatrix(nat, nat);
       calc_distances(mol, realIdx, dist);
-      eeqbc_model_r.get_cn(mol, realIdx, dist, false);
-      eeqbc_model_r.eeq_chrgeq(mol, realIdx, dist, charge, q_dum, dqdr, false, false);
+      eeqbc_model.get_cn(mol, realIdx, dist, false);
+      q_r.NewVec(nat);
+      eeqbc_model.eeq_chrgeq(mol, realIdx, dist, charge, q_r, dqdr, false, false);
 
-      for (int k = 0; k < nat; k++) {
-        q_r(k) = q_dum(k);
-      }
-
+      // calculate backward point
       mol.CC(i, c) = mol.CC(i, c) - 2 * step;
       dist.NewMatrix(nat, nat);
       calc_distances(mol, realIdx, dist);
-      q_dum.NewVec(nat);
-      dqdr.NewMat(3 * nat, nat);
-      eeqbc_model_l.get_cn(mol, realIdx, dist, false);
-      eeqbc_model_l.eeq_chrgeq(mol, realIdx, dist, charge, q_dum, dqdr, false, false);
-      for (int k = 0; k < nat; k++) {
-        q_l(k) = q_dum(k);
-      }
+      eeqbc_model.get_cn(mol, realIdx, dist, false);
+      q_l.NewVec(nat);
+      eeqbc_model.eeq_chrgeq(mol, realIdx, dist, charge, q_l, dqdr, false, false);
 
+      // calculate numerical gradient as finite difference
       mol.CC(i, c) = mol.CC(i, c) + step;
       for (int j = 0; j < nat; j++) {
         num_dqdr(3 * i + c, j) = 0.5 * (q_r(j) - q_l(j)) / step;
