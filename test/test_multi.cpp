@@ -64,6 +64,8 @@ int test_multi_functions(){
   dftd4::initializeRealIdx(mb16_43_01_n, realIdx);
   dist.NewMatrix(mb16_43_01_n, mb16_43_01_n);
   dftd4::calc_distances(mol, realIdx, dist);
+  TVector<double> cn;
+  TMatrix<double> dcndr;
 
   // Calculate partial charges
   TVector<double> q;
@@ -71,8 +73,8 @@ int test_multi_functions(){
   q.NewVector(mb16_43_01_n);
   dqdr.NewMatrix(mb16_43_01_n, mb16_43_01_n);
 
-  eeqbc_model.get_cn(mol, realIdx, dist, false);
-  info = eeqbc_model.eeq_chrgeq(mol, realIdx, dist, mb16_43_01_charge, q, dqdr, false, false);
+  eeqbc_model.get_cn(mol, realIdx, dist, cn, dcndr, false);
+  info = eeqbc_model.eeq_chrgeq(mol, realIdx, dist, cn, dcndr, mb16_43_01_charge, q, dqdr, false, false);
   if (info != EXIT_SUCCESS) {
      printf("Multicharge: Functions, Failed to calculate charges.");
      return info;

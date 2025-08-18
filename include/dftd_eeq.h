@@ -96,6 +96,8 @@ public:
     const TMolecule &mol,
     const TIVector &realIdx,
     const TMatrix<double> &dist,
+    const TVector<double> &cn,
+    const TMatrix<double> &dcndr,
     const int &charge,
     TVector<double> &qvec,
     TMatrix<double> &dqdr,
@@ -108,6 +110,8 @@ public:
     const TIVector &realIdx,
     const int &charge,
     const TMatrix<double> &dist,
+    const TVector<double> &cn,
+    const TMatrix<double> &dcndr,
     TVector<double> &Xvec,
     TVector<double> &dXvec,
     bool lgrad
@@ -118,6 +122,8 @@ public:
     const TMolecule &mol,
     const TIVector &realIdx,
     const TMatrix<double> &dist,
+    const TVector<double> &cn,
+    const TMatrix<double> &dcndr,
     TMatrix<double> &Amat
   ) const = 0;
   
@@ -137,7 +143,9 @@ public:
     const TMolecule &mol,
     const TIVector &realIdx,
     const TMatrix<double> &dist,
-    bool
+    TVector<double> &cn,
+    TMatrix<double> &dcndr,
+    bool lgrad
   ) = 0;
   
 };
@@ -158,6 +166,8 @@ class EEQModel : public ChargeModel {
       const TIVector &realIdx,
       const int &charge,
       const TMatrix<double> &dist,
+      const TVector<double> &cn,
+      const TMatrix<double> &dcndr,
       TVector<double> &Xvec,
       TVector<double> &dXvec,
       bool lgrad
@@ -168,6 +178,8 @@ class EEQModel : public ChargeModel {
       const TMolecule &mol,
       const TIVector &realIdx,
       const TMatrix<double> &dist,
+      const TVector<double> &cn,
+      const TMatrix<double> &dcndr,
       TMatrix<double> &Amat
     ) const override;
     
@@ -187,12 +199,21 @@ class EEQModel : public ChargeModel {
       const TMolecule &mol,
       const TIVector &realIdx,
       const TMatrix<double> &dist,
+      TVector<double> &cn,
+      TMatrix<double> &dcndr,
       bool lgrad
     ) override;
 };
 
 // Derived class for EEQ-BC charge model
 class EEQBCModel : public ChargeModel {
+  private:
+    static constexpr double ncoorderf_kcn = 2.0;
+    static constexpr double ncoorderf_norm_exp = 0.75;
+    static constexpr double ncoorderf_cutoff = 25.0;
+    static constexpr double ncoorderf_f_directed = 1.0;
+    static constexpr double ncoorderfen_f_directed = -1.0;
+    static constexpr double ncoorderf_cn_max = -1.0;
   public:
     const double kcnrad;
     const double kbc;         // scaling factor in erf() of bond capacitance matrix
@@ -220,6 +241,8 @@ class EEQBCModel : public ChargeModel {
       const TIVector &realIdx,
       const int &charge,
       const TMatrix<double> &dist,
+      const TVector<double> &cn,
+      const TMatrix<double> &dcndr,
       TVector<double> &Xvec,
       TVector<double> &dXvec,
       bool lgrad
@@ -230,6 +253,8 @@ class EEQBCModel : public ChargeModel {
       const TMolecule &mol,
       const TIVector &realIdx,
       const TMatrix<double> &dist,
+      const TVector<double> &cn,
+      const TMatrix<double> &dcndr,
       TMatrix<double> &Amat
     ) const override;
     
@@ -249,12 +274,15 @@ class EEQBCModel : public ChargeModel {
       const TMolecule &mol,
       const TIVector &realIdx,
       const TMatrix<double> &dist,
+      TVector<double> &cn,
+      TMatrix<double> &dcndr,
       bool lgrad
     ) override;
 
     // Get purely geometry-dependent local charges
     int get_qloc(
       const TMolecule&,
+      const TIVector &,
       const TMatrix<double>&,
       const double,
       TVector<double>&
@@ -281,8 +309,9 @@ class EEQBCModel : public ChargeModel {
       const TMolecule&,
       const TIVector&,
       const TMatrix<double>&,
+      const TVector<double> &cn,
+      const TMatrix<double> &dcndr,
       TMatrix<double>&,
-      NCoordErf&,
       int,
       TVector<double>&
     );
