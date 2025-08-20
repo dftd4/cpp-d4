@@ -23,7 +23,6 @@
  * This module works on a distance matrix to avoid recalculating
  * the distances every time.
  */
-//#include <cmath>
 #include <iostream>
 
 #include "dftd_geometry.h"
@@ -191,11 +190,11 @@ int NCoordBase::get_ncoord(
   if (lgrad) {
     info = dr_ncoord_base(mol, realIdx, dist, cn, dcndr);
   } else {
-    info = ncoord_base(mol, realIdx, dist, cn, dcndr);
+    info = ncoord_base(mol, realIdx, dist, cn);
   }
   if (info != EXIT_SUCCESS) return info;
 
-  if (cn_max != -1.0) { // cn_max = -1.0 for EEQ-BC for cn and qloc; using NCoordErf and NCoordErfEN
+  if (cn_max > 0.0) { // cn_max = -1.0 for EEQ-BC for cn and qloc; using NCoordErf and NCoordErfEN
     info = cut_coordination_number(cn_max, cn, dcndr, lgrad);
     if (info != EXIT_SUCCESS) return info;
   }
@@ -207,8 +206,7 @@ int NCoordBase::ncoord_base(
   const TMolecule &mol,
   const TIVector &realIdx,
   const TMatrix<double> &dist,
-  TVector<double> &cn,
-  TMatrix<double> &dcndr
+  TVector<double> &cn
 ) {
   double r = 0.0, rcovij = 0.0;
   double countf = 0.0;

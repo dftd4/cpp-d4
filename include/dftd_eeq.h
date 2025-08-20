@@ -92,6 +92,26 @@ public:
     bool lgrad
   );
 
+  /**
+  * Solves the Electronegativity Equalization (EEQ) equations for a molecule,
+  * yielding atomic partial charges and, optionally, their derivatives.
+  *
+  * @param mol        Molecule object containing atomic information.
+  * @param realIdx    Mapping of real atom indices (excludes dummy atoms).
+  * @param dist       Interatomic distance matrix.
+  * @param cn         Coordination numbers for each atom.
+  * @param dcndr      Derivative of coordination numbers with respect to
+  *                   atomic positions.
+  * @param charge     Target total charge of the molecule.
+  * @param qvec       Output vector of atomic charges (size: number of atoms).
+  * @param dqdr       Output matrix of charge derivatives with respect to
+  *                   atomic positions. Only filled if `lgrad` is true.
+  * @param lgrad      If true, compute charge gradients (dq/dr) in addition to charges.
+  * @param lverbose   If true, print diagnostic output (charges, EN values, diagonals).
+  *
+  * @returns EXIT_SUCCESS (0) on success, or a nonzero error code if matrix
+  *          inversion or setup fails.
+  */
   int eeq_chrgeq(
     const TMolecule &mol,
     const TIVector &realIdx,
@@ -105,29 +125,71 @@ public:
     bool lverbose = false
   );
   
+  /**
+  * Computes the right-hand side vector (Xvec) for the EEQ charge equations.
+  * Optionally computes its derivatives with respect to atomic positions.
+  *
+  * @param mol        Molecule object containing atomic information.
+  * @param realIdx    Mapping of real atom indices (excludes dummy atoms).
+  * @param charge     Target total charge of the molecule.
+  * @param dist       Interatomic distance matrix.
+  * @param cn         Coordination numbers for each atom.
+  * @param Xvec       Output vector representing the effective driving term for the
+  *                   EEQ system (size: number of atoms).
+  * @param dXvec      Output vector of derivatives of Xvec w.r.t. atomic positions.
+  *                   Only filled if `lgrad` is true.
+  * @param lgrad      If true, compute derivatives of Xvec.
+  *
+  * @returns EXIT_SUCCESS (0) on success, or a nonzero error code if the computation fails.
+  */
   virtual int get_vrhs(
     const TMolecule &mol,
     const TIVector &realIdx,
     const int &charge,
     const TMatrix<double> &dist,
     const TVector<double> &cn,
-    const TMatrix<double> &dcndr,
     TVector<double> &Xvec,
     TVector<double> &dXvec,
     bool lgrad
   ) = 0;
 
-  // Calculate the Coulomb matrix
+  /**
+  * Computes the Coulomb interaction matrix for the charge model.
+  * The matrix represents the electrostatic interactions between atoms,
+  * optionally including model-specific self-terms and normalization factors.
+  * It forms the left-hand side (A) of the EEQ linear system: A Q = X.
+  * 
+  * @param mol     Molecule object containing atomic information.
+  * @param realIdx Mapping of real atom indices (excludes dummy atoms).
+  * @param dist    Interatomic distance matrix.
+  * @param cn      Coordination numbers for each atom.
+  * @param Amat    Output Coulomb matrix (size: number of atoms + 1 for charge constraint).
+  * 
+  * @returns EXIT_SUCCESS (0) on success, or a nonzero error code if the computation fails.
+  */
   virtual int get_amat_0d(
     const TMolecule &mol,
     const TIVector &realIdx,
     const TMatrix<double> &dist,
     const TVector<double> &cn,
-    const TMatrix<double> &dcndr,
     TMatrix<double> &Amat
   ) const = 0;
   
-  // Calculate the Coulomb matrix derivatives
+  /**
+  * Computes the derivatives of the Coulomb interaction matrix with respect to atomic positions.
+  * These derivatives are used to propagate the effect of the charge distribution on forces
+  * or gradients in the EEQ linear system.
+  * 
+  * @param mol     Molecule object containing atomic information.
+  * @param realIdx Mapping of real atom indices (excludes virtual atoms).
+  * @param dist    Interatomic distance matrix.
+  * @param q       Atomic charges computed from the EEQ model.
+  * @param Amat    Output coulomb matrix.
+  * @param dAmat   Output derivative matrix with respect to Cartesian coordinates.
+  * @param atrace  Output trace contributions for the derivative.
+  * 
+  * @returns EXIT_SUCCESS (0) on success, or a nonzero error code if the computation fails.
+  */
   virtual int get_damat_0d(
     const TMolecule &mol,
     const TIVector &realIdx,
@@ -138,8 +200,24 @@ public:
     TMatrix<double> &atrace
   ) const = 0;
 
-  // Calculate the coordination number, forwarding to get_ncoord
-  virtual NCoordErf& get_cn(
+  /**
+  * This function calculates the coordination number (CN) for each atom in the molecule.
+  * It also optionally computes the derivatives of CN with respect to Cartesian coordinates
+  * if `lgrad` is true. The actual computation is forwarded to the `get_ncoord` method
+  * of the `NCoordErf` object specific to the derived charge model.
+  * 
+  * @param mol       Molecule object containing atomic information.
+  * @param realIdx   Mapping of real atom indices (excluding dummy atoms).
+  * @param dist      Interatomic distance matrix.
+  * @param cn        Output vector of coordination numbers for each atom.
+  * @param dcndr     Output matrix of derivatives of CN with respect to Cartesian coordinates.
+  * @param lgrad     If true, compute derivatives of CN; otherwise, skip derivative calculation.
+  * 
+  * @returns EXIT_SUCCESS (0) on success, or a nonzero error code if the computation fails.
+  * 
+  * @throws std::runtime_error if the coordination number computation fails in the derived class.
+  */
+  virtual int get_cn(
     const TMolecule &mol,
     const TIVector &realIdx,
     const TMatrix<double> &dist,
@@ -158,16 +236,18 @@ class EEQModel : public ChargeModel {
     const double* kappa;  // Element-specific CN scaling constant
     const double* alp;    // Element-specific atomic radii
     
-    //
+    // Constructs an EEQModel with element-specific parameters and
+    // initializes its coordination number function.
     EEQModel();
   
+    // Computes the right-hand side vector (Xvec) for the EEQ charge equations.
+    // Optionally computes its derivatives with respect to atomic positions.
     int get_vrhs(
       const TMolecule &mol,
       const TIVector &realIdx,
       const int &charge,
       const TMatrix<double> &dist,
       const TVector<double> &cn,
-      const TMatrix<double> &dcndr,
       TVector<double> &Xvec,
       TVector<double> &dXvec,
       bool lgrad
@@ -179,7 +259,6 @@ class EEQModel : public ChargeModel {
       const TIVector &realIdx,
       const TMatrix<double> &dist,
       const TVector<double> &cn,
-      const TMatrix<double> &dcndr,
       TMatrix<double> &Amat
     ) const override;
     
@@ -195,7 +274,7 @@ class EEQModel : public ChargeModel {
     ) const override;
 
     // Calculate the coordination number, forwarding to get_ncoord
-    NCoordErf& get_cn(
+    int get_cn(
       const TMolecule &mol,
       const TIVector &realIdx,
       const TMatrix<double> &dist,
@@ -233,16 +312,18 @@ class EEQBCModel : public ChargeModel {
     TVector<double> qloc;     // local charges
     TMatrix<double> cmat;     // capacitance matrix
 
-    //
+    // Constructs an EEQ-BC model with element-specific parameters
+    // and initializes its coordination number function.
     EEQBCModel();
   
+    // Computes the right-hand side vector (Xvec) for the EEQ charge equations.
+    // Optionally computes its derivatives with respect to atomic positions.
     int get_vrhs(
       const TMolecule &mol,
       const TIVector &realIdx,
       const int &charge,
       const TMatrix<double> &dist,
       const TVector<double> &cn,
-      const TMatrix<double> &dcndr,
       TVector<double> &Xvec,
       TVector<double> &dXvec,
       bool lgrad
@@ -254,7 +335,6 @@ class EEQBCModel : public ChargeModel {
       const TIVector &realIdx,
       const TMatrix<double> &dist,
       const TVector<double> &cn,
-      const TMatrix<double> &dcndr,
       TMatrix<double> &Amat
     ) const override;
     
@@ -270,7 +350,7 @@ class EEQBCModel : public ChargeModel {
     ) const override;
 
     // Calculate the coordination number, forwarding to get_ncoord
-    NCoordErf& get_cn(
+    int get_cn(
       const TMolecule &mol,
       const TIVector &realIdx,
       const TMatrix<double> &dist,
@@ -310,7 +390,6 @@ class EEQBCModel : public ChargeModel {
       const TIVector&,
       const TMatrix<double>&,
       const TVector<double> &cn,
-      const TMatrix<double> &dcndr,
       TMatrix<double>&,
       int,
       TVector<double>&

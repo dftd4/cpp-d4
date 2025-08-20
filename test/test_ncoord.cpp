@@ -186,7 +186,7 @@ int test_numgrad(
   analytic_dcndr.NewMat(mol.NAtoms, 3 * mol.NAtoms);
   NCoordErf ncoord_erf;
   TVector<double> cn, cn_r, cn_l;
-  TMatrix<double> dcndr, dcndr_dum;
+  TMatrix<double> dcndr_dum;
 
   TCutoff cutoff;
 
@@ -201,8 +201,7 @@ int test_numgrad(
 
   // analytical gradient
   calc_distances(mol, realIdx, dist);
-  ncoord_erf.get_ncoord(mol, realIdx, dist, cn, dcndr, true);
-  analytic_dcndr.CopyMat(dcndr);
+  ncoord_erf.get_ncoord(mol, realIdx, dist, cn, analytic_dcndr, true);
 
   // numerical gradient
   for (int i = 0; i < mol.NAtoms; i++) {

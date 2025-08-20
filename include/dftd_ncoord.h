@@ -33,8 +33,6 @@ namespace dftd4 {
 class NCoordBase
 {
   public:
-    //TVector<double> cn;  // coordination number
-    //TMatrix<double> dcndr;  // derivative of the coordination number
     static const double rad[];  // cov. radii default: D3 covalent radii from dftd_ncoord.cpp
     double kcn;  // Steepness of counting function 
     double norm_exp;  // exponent of the normalizing-factor in the counting function
@@ -59,7 +57,7 @@ class NCoordBase
       TVector<double> &cn,  // coordination number
       TMatrix<double> &dcndr,  // derivative of the coordination number
       bool lgrad);
-          /**
+    /**
     * Wrapper for coordination number calculation.
     *
     * @param mol Molecule object.
@@ -91,8 +89,7 @@ class NCoordBase
       const TMolecule &mol,
       const TIVector &realIdx,
       const TMatrix<double> &dist,
-      TVector<double> &cn,
-      TMatrix<double> &dcndr);
+      TVector<double> &cn);
     /**
     * Calculate error function coordination number and derivative
     * w.r.t. nuclear coordinates.
