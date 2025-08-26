@@ -183,7 +183,7 @@ int NCoordBase::get_ncoord(
 ) {
   int info;
 
-  int nat = realIdx.Max() + 1;
+  const int nat = realIdx.Max() + 1;
   cn.NewVector(nat);
   if (lgrad) dcndr.NewMatrix(nat, 3 * nat);
   
