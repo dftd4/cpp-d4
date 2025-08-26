@@ -72,7 +72,7 @@ int ChargeModel::get_charges(
 ) {
   int info{0};
   bool lverbose{false};
-  int nat = realIdx.Max() + 1;
+  const int nat = realIdx.Max() + 1;
   TVector<double> cn;  // coordination number
   TMatrix<double> dcndr;  // derivative of the coordination number
 
