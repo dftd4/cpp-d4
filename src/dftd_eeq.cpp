@@ -675,7 +675,7 @@ int EEQBCModel::num_grad_dqdr(
 ) {
   TVector<double> q_r, q_l;  // forward and backward point
   double step{1.0e-6};  // step size of finite differences
-  int nat = realIdx.Max() +1;  // number of atoms
+  const int nat = realIdx.Max() +1;  // number of atoms
   TVector<double> cn;  // coordination number
   TMatrix<double> dcndr;  // derivative of the coordination number
   TMatrix<double> dqdr;  // dummy variable for analytical derivative
