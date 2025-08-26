@@ -435,7 +435,7 @@ int EEQBCModel::get_vrhs(
   bool lgrad
 ) {
   int info{0};
-  int n_atoms = realIdx.Max() + 1;
+  const int n_atoms = realIdx.Max() + 1;
   // calculate the capacitance matrix
   cmat.NewMatrix(n_atoms + 1, n_atoms + 1);
   info = get_cmat(mol, realIdx, dist, cmat);
