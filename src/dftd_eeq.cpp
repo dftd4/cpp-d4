@@ -101,7 +101,7 @@ int ChargeModel::eeq_chrgeq(
 ) {
   double qtotal = 0.0;
   int info{0};
-  int n = realIdx.Max() + 1;
+  const int n = realIdx.Max() + 1;
   int m = n + 1;
 
   TMatrix<double> Amat; // Coulomb matrix
