@@ -461,7 +461,7 @@ int EEQBCModel::get_amat_0d(
   const TVector<double> &cn,
   TMatrix<double> &Amat
 ) const {
-  int nat = mol.NAtoms;
+  const int nat = mol.NAtoms;
   int iat, jat; // atomic numbers
   double norm_cn; // coordination number normalization factor
   double r, radi, radj, gamij2, tmp;
