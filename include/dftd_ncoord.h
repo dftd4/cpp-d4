@@ -59,6 +59,7 @@ class NCoordBase
       bool lgrad);
     /**
     * Wrapper for coordination number calculation.
+    * Allocates the cn vector unconditionally, and the dcndr matrix only if lgrad is true.
     *
     * @param mol Molecule object.
     * @param realIdx List for real atoms excluding ghost/non atoms.

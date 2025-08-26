@@ -100,7 +100,7 @@ int test_numgrad_d4(
   analytic_dcndr.NewMat(mol.NAtoms, 3 * mol.NAtoms);
   NCoordErfD4 ncoord_erf_d4;
   TVector<double> cn, cn_r, cn_l;
-  TMatrix<double> dcndr, dcndr_dum;
+  TMatrix<double> dcndr_dum;
 
   TCutoff cutoff;
 
@@ -115,8 +115,7 @@ int test_numgrad_d4(
 
   // analytical gradient
   calc_distances(mol, realIdx, dist);
-  ncoord_erf_d4.get_ncoord(mol, realIdx, dist, cn, dcndr, true);
-  analytic_dcndr.CopyMat(dcndr);
+  ncoord_erf_d4.get_ncoord(mol, realIdx, dist, cn, analytic_dcndr, true);
 
   // check if analytical gradient is antisymmetric
   for (int c = 0; c < 3; c++) {
