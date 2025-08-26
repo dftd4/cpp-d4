@@ -245,7 +245,7 @@ int EEQModel::get_vrhs(
 ) {
   double tmp{0.0};
   int izp;
-  int nat = realIdx.Max() + 1;
+  const int nat = realIdx.Max() + 1;
 
   if (lgrad) {
     for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
