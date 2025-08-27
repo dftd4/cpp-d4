@@ -220,15 +220,18 @@ inline int BLAS_InvertMatrix(TMatrix<double> &a) {
     (lapack_int)a.cols,
     ipiv
   );
-  if (info != 0) { return EXIT_FAILURE; }
+  if (info != 0) { 
+    delete[] ipiv;
+    return EXIT_FAILURE; 
+  }
 
   // Inverse of an LU-factored general matrix
   info = LAPACKE_dgetri(
     LAPACK_ROW_MAJOR, (lapack_int)a.rows, a.p, (lapack_int)a.cols, ipiv
   );
-  if (info != 0) { return EXIT_FAILURE; }
-
   delete[] ipiv;
+
+  if (info != 0) { return EXIT_FAILURE; }
 
   return EXIT_SUCCESS;
 };

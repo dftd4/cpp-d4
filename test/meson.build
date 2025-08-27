@@ -22,6 +22,7 @@ tests = [
   'grad',
   'ncoord',
   'param',
+  'multi',
 ]
 
 test_srcs = files(

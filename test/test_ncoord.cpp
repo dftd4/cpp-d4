@@ -61,14 +61,16 @@ int test_cn(
   calc_distances(mol, realIdx, dist);
 
   // erf-CN without cutoff
+  TVector<double> cn;
+  TMatrix<double> dcndr;
   NCoordErfD4 ncoord_erf(7.5, 1.0, 9999.9);
-  info = ncoord_erf.get_ncoord(mol, realIdx, dist, false);
+  info = ncoord_erf.get_ncoord(mol, realIdx, dist, cn, dcndr, false);
   if (info != EXIT_SUCCESS) return info;
 
   // compare to ref
   for (int i = 0; i != n; i++) {
-    if (check(ncoord_erf.cn(i), ref(i)) == EXIT_FAILURE) {
-      print_fail("CN_D4", ncoord_erf.cn(i), ref(i));
+    if (check(cn(i), ref(i)) == EXIT_FAILURE) {
+      print_fail("CN_D4", cn(i), ref(i));
       return EXIT_FAILURE;
     }
   }
@@ -97,8 +99,8 @@ int test_numgrad_d4(
   TMatrix<double> analytic_dcndr;  // analytical gradient of the coordination number
   analytic_dcndr.NewMat(mol.NAtoms, 3 * mol.NAtoms);
   NCoordErfD4 ncoord_erf_d4;
-  NCoordErfD4 ncoord_erf_d4_r;
-  NCoordErfD4 ncoord_erf_d4_l;
+  TVector<double> cn, cn_r, cn_l;
+  TMatrix<double> dcndr_dum;
 
   TCutoff cutoff;
 
@@ -113,8 +115,7 @@ int test_numgrad_d4(
 
   // analytical gradient
   calc_distances(mol, realIdx, dist);
-  ncoord_erf_d4.get_ncoord(mol, realIdx, dist, true);
-  analytic_dcndr.CopyMat(ncoord_erf_d4.dcndr);
+  ncoord_erf_d4.get_ncoord(mol, realIdx, dist, cn, analytic_dcndr, true);
 
   // check if analytical gradient is antisymmetric
   for (int c = 0; c < 3; c++) {
@@ -133,16 +134,16 @@ int test_numgrad_d4(
     for (int c = 0; c < 3; c++) {
       mol.CC(i, c) += step;
       calc_distances(mol, realIdx, dist);
-      ncoord_erf_d4_r.get_ncoord(mol, realIdx, dist, false);
+      ncoord_erf_d4.get_ncoord(mol, realIdx, dist, cn_r, dcndr_dum, false);
 
       mol.CC(i, c) = mol.CC(i, c) - 2 * step;
       calc_distances(mol, realIdx, dist);
-      ncoord_erf_d4_l.get_ncoord(mol, realIdx, dist, false);
+      ncoord_erf_d4.get_ncoord(mol, realIdx, dist, cn_l, dcndr_dum, false);
 
       mol.CC(i, c) = mol.CC(i, c) + step;
       for (int j = 0; j < mol.NAtoms; j++) {
         // numerical CN gradient: dCN(j)/ dr(i)^c with c = x,y, or z
-        num_dcndr(j, 3 * i + c) = 0.5 * (ncoord_erf_d4_r.cn(j) - ncoord_erf_d4_l.cn(j)) / step;
+        num_dcndr(j, 3 * i + c) = 0.5 * (cn_r(j) - cn_l(j)) / step;
       }
     }
   }
@@ -183,8 +184,8 @@ int test_numgrad(
   TMatrix<double> analytic_dcndr;  // analytical gradient of the coordination number
   analytic_dcndr.NewMat(mol.NAtoms, 3 * mol.NAtoms);
   NCoordErf ncoord_erf;
-  NCoordErf ncoord_erf_r;
-  NCoordErf ncoord_erf_l;
+  TVector<double> cn, cn_r, cn_l;
+  TMatrix<double> dcndr_dum;
 
   TCutoff cutoff;
 
@@ -199,24 +200,23 @@ int test_numgrad(
 
   // analytical gradient
   calc_distances(mol, realIdx, dist);
-  ncoord_erf.get_ncoord(mol, realIdx, dist, true);
-  analytic_dcndr.CopyMat(ncoord_erf.dcndr);
+  ncoord_erf.get_ncoord(mol, realIdx, dist, cn, analytic_dcndr, true);
 
   // numerical gradient
   for (int i = 0; i < mol.NAtoms; i++) {
     for (int c = 0; c < 3; c++) {
       mol.CC(i, c) += step;
       calc_distances(mol, realIdx, dist);
-      ncoord_erf_r.get_ncoord(mol, realIdx, dist, false);
+      ncoord_erf.get_ncoord(mol, realIdx, dist, cn_r, dcndr_dum, false);
 
       mol.CC(i, c) = mol.CC(i, c) - 2 * step;
       calc_distances(mol, realIdx, dist);
-      ncoord_erf_l.get_ncoord(mol, realIdx, dist, false);
+      ncoord_erf.get_ncoord(mol, realIdx, dist, cn_l, dcndr_dum, false);
 
       mol.CC(i, c) = mol.CC(i, c) + step;
       for (int j = 0; j < mol.NAtoms; j++) {
         // numerical CN gradient: dCN(j)/ dr(i)^c with c = x,y, or z
-        num_dcndr(j, 3 * i + c) = 0.5 * (ncoord_erf_r.cn(j) - ncoord_erf_l.cn(j)) / step;
+        num_dcndr(j, 3 * i + c) = 0.5 * (cn_r(j) - cn_l(j)) / step;
       }
     }
   }

@@ -135,6 +135,38 @@ static const double water_ghost_coord[water_ghost_n * 3]{
   -1.42952433403007, // ghost
 };
 
+// Hydroxide ion (OH-) sorting "A"
+static const int hydroxide_n_A{2};
+static const int hydroxide_charge_A{-1};
+static const char hydroxide_atoms_A[hydroxide_n_A][3]{
+  "O",
+  "H",
+};
+static const double hydroxide_coord_A[hydroxide_n_A * 3]{
+  +0.00000000000000,
+  +0.00000000000000,
+  -0.01000000000000,  // Oxygen
+  +0.00000000000000,
+  +0.00000000000000,
+  +1.80000000000000,  // Hydrogen
+};
+
+// Hydroxide ion (OH-) sorting "B"
+static const int hydroxide_n_B{2};
+static const int hydroxide_charge_B{-1};
+static const char hydroxide_atoms_B[hydroxide_n_B][3]{
+  "H",
+  "O",
+};
+static const double hydroxide_coord_B[hydroxide_n_B * 3]{
+  +0.00000000000000,
+  +0.00000000000000,
+  +1.80000000000000,  // Hydrogen
+  +0.00000000000000,
+  +0.00000000000000,
+  -0.01000000000000,  // Oxygen
+};
+
 // MB16_43: 01
 static const int mb16_43_01_n{16};
 static const int mb16_43_01_charge{0};

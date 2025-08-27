@@ -59,14 +59,16 @@ int test_water(
   // COORDINATION NUMBER CHECK
 
   // erf-CN without cutoff
+  TVector<double> cn;
+  TMatrix<double> dcndr;
   NCoordErfD4 ncoord_erf(7.5, 1.0, 9999.9);
-  info = ncoord_erf.get_ncoord(mol, realIdx, dist, false);
+  info = ncoord_erf.get_ncoord(mol, realIdx, dist, cn, dcndr, false);
   if (info != EXIT_SUCCESS) return info;
 
   // compare to ref
   for (int i = 0; i != nat; i++) {
-    if (check(ncoord_erf.cn(i), water_dimer_ref_cn[i]) == EXIT_FAILURE) {
-      print_fail("GHOST: CN_D4", ncoord_erf.cn(i), water_dimer_ref_cn[i]);
+    if (check(cn(i), water_dimer_ref_cn[i]) == EXIT_FAILURE) {
+      print_fail("GHOST: CN_D4", cn(i), water_dimer_ref_cn[i]);
       return EXIT_FAILURE;
     }
   }
@@ -146,7 +148,7 @@ int test_water(
     d4grad[i] = 0.0;
   }
 
-  info = ncoord_erf.get_ncoord(mol, realIdx, dist, lgrad);
+  info = ncoord_erf.get_ncoord(mol, realIdx, dist, cn, dcndr, lgrad);
   if (info != EXIT_SUCCESS) return info;
 
   dqdr.NewMatrix(3 * nat, nat);

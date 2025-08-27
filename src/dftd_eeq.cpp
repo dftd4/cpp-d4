@@ -31,6 +31,8 @@
 
 // wrap all charge models in the multicharge namespace
 namespace multicharge {
+  using dftd4::NCoordErf;
+  using dftd4::NCoordErfEN;
 
 // constants
 static const double small = 1e-14;
@@ -70,17 +72,16 @@ int ChargeModel::get_charges(
 ) {
   int info{0};
   bool lverbose{false};
-  int nat = realIdx.Max() + 1;
+  const int nat = realIdx.Max() + 1;
+  TVector<double> cn;  // coordination number
+  TMatrix<double> dcndr;  // derivative of the coordination number
 
-  dftd4::NCoordErf ncoord_erf;
-
-  // get the EEQ coordination number
-  info = ncoord_erf.get_ncoord(mol, realIdx, dist, lgrad);
-  if (info != EXIT_SUCCESS) return info;
+  // get correct cn for current charge model
+  get_cn(mol, realIdx, dist, cn, dcndr, lgrad);
 
   // corresponds to model%solve in Fortran
   info =
-    eeq_chrgeq(mol, realIdx, dist, charge, ncoord_erf.cn, q, ncoord_erf.dcndr, dqdr, lgrad, lverbose);
+    eeq_chrgeq(mol, realIdx, dist, cn, dcndr, charge, q, dqdr, lgrad, lverbose);
   if (info != EXIT_SUCCESS) return info;
 
   return EXIT_SUCCESS;
@@ -90,17 +91,17 @@ int ChargeModel::eeq_chrgeq(
   const TMolecule &mol,
   const TIVector &realIdx,
   const TMatrix<double> &dist,
-  const int &charge,
   const TVector<double> &cn,
+  const TMatrix<double> &dcndr,
+  const int &charge,
   TVector<double> &qvec,
-  TMatrix<double> &dcndr,
   TMatrix<double> &dqdr,
   bool lgrad /*= false*/,
   bool lverbose /*= false*/
 ) {
   double qtotal = 0.0;
-  int info = 0;
-  int n = realIdx.Max() + 1;
+  int info{0};
+  const int n = realIdx.Max() + 1;
   int m = n + 1;
 
   TMatrix<double> Amat; // Coulomb matrix
@@ -111,10 +112,10 @@ int ChargeModel::eeq_chrgeq(
   TVector<double> dxdcn; // Derivative of chi vector w.r.t. CN
   if (lgrad) dxdcn.NewVec(m);
 
-  info = get_vrhs(mol, realIdx, charge, cn, xvec, dxdcn, lgrad);
+  info = get_vrhs(mol, realIdx, charge, dist, cn, xvec, dxdcn, lgrad);
   if (info != EXIT_SUCCESS) return info;
 
-  info = get_amat_0d(mol, realIdx, dist, Amat);
+  info = get_amat_0d(mol, realIdx, dist, cn, Amat);
   if (info != EXIT_SUCCESS) return info;
 
   TVector<double> vrhs;
@@ -228,20 +229,23 @@ EEQModel::EEQModel()
     gam(multicharge_param::eeq::gam),
     kappa(multicharge_param::eeq::kappa),
     alp(multicharge_param::eeq::alp)
-{}
+{
+  ncoord_erf = NCoordErf();
+}
 
 int EEQModel::get_vrhs(
   const TMolecule &mol,
   const TIVector &realIdx,
   const int &charge,
+  const TMatrix<double> &dist,
   const TVector<double> &cn,
-  TVector<double> &Xvec,
-  TVector<double> &dXvec,
+  TVector<double> &xvec,
+  TVector<double> &dxvec,
   bool lgrad
-) const {
+) {
   double tmp{0.0};
   int izp;
-  int nat = realIdx.Max() + 1;
+  const int nat = realIdx.Max() + 1;
 
   if (lgrad) {
     for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
@@ -250,10 +254,10 @@ int EEQModel::get_vrhs(
 
       izp = mol.ATNO(i);
       tmp = kappa[izp] / std::sqrt(cn(ii) + small);
-      Xvec(ii) = -xi[izp] + tmp * cn(ii);
-      dXvec(ii) = 0.5 * tmp;
+      xvec(ii) = -xi[izp] + tmp * cn(ii);
+      dxvec(ii) = 0.5 * tmp;
     }
-    dXvec(nat) = 0.0;
+    dxvec(nat) = 0.0;
   } else {
     for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
       ii = realIdx(i);
@@ -261,12 +265,12 @@ int EEQModel::get_vrhs(
 
       izp = mol.ATNO(i);
       tmp = kappa[izp] / std::sqrt(cn(ii) + small);
-      Xvec(ii) = -xi[izp] + tmp * cn(ii);
+      xvec(ii) = -xi[izp] + tmp * cn(ii);
     }
   }
 
   // place charge at last index of xvec
-  Xvec(nat) = charge;
+  xvec(nat) = charge;
 
   return EXIT_SUCCESS;
 };
@@ -275,6 +279,7 @@ int EEQModel::get_amat_0d(
   const TMolecule &mol,
   const TIVector &realIdx,
   const TMatrix<double> &dist,
+  const TVector<double> &cn,
   TMatrix<double> &Amat
 ) const {
   double gamij = 0.0;
@@ -369,5 +374,346 @@ int EEQModel::get_damat_0d(
   return EXIT_SUCCESS;
 };
 
+// Calculate the coordination number, forwarding to get_ncoord
+int EEQModel::get_cn(
+  const TMolecule &mol,
+  const TIVector &realIdx,
+  const TMatrix<double> &dist,
+  TVector<double> &cn,
+  TMatrix<double> &dcndr,
+  bool lgrad
+)
+{
+  int info{0};
+
+  // get the EEQ coordination number
+  info = ncoord_erf.get_ncoord(mol, realIdx, dist, cn, dcndr, lgrad);
+  if (info != EXIT_SUCCESS) {
+    throw std::runtime_error("EEQModel::get_cn: Failed to compute coordination numbers.");
+  }
+
+  return info;
+};
+
+// EEQ-BC model class derived from ChargeModel
+EEQBCModel::EEQBCModel()
+  // Constructor initializer list
+  : kcnrad(multicharge_param::eeqbc::kcnrad),
+    kbc(multicharge_param::eeqbc::kbc),
+    cutoff(multicharge_param::eeqbc::cutoff),
+    cn_exp(multicharge_param::eeqbc::cn_exp),
+    norm_exp(multicharge_param::eeqbc::norm_exp),
+    chi(multicharge_param::eeqbc::eeqbc_chi),
+    eta(multicharge_param::eeqbc::eeqbc_eta),
+    rad(multicharge_param::eeqbc::eeqbc_rad),
+    kcnchi(multicharge_param::eeqbc::eeqbc_kcnchi),
+    kqchi(multicharge_param::eeqbc::eeqbc_kqchi),
+    kqeta(multicharge_param::eeqbc::eeqbc_kqeta),
+    cap(multicharge_param::eeqbc::eeqbc_cap),
+    cov_radii(multicharge_param::eeqbc::eeqbc_cov_radii),
+    avg_cn(multicharge_param::eeqbc::eeqbc_avg_cn),
+    rvdw(multicharge_param::eeqbc::eeqbc_rvdw)
+{
+  ncoord_erf = NCoordErf(
+    ncoorderf_kcn,
+    ncoorderf_norm_exp,
+    ncoorderf_cutoff,
+    ncoorderf_f_directed,
+    ncoorderf_cn_max,
+    multicharge_param::eeqbc::eeqbc_cov_radii);
+}
+
+// Calculate the right-hand side (RHS) vector of the system of linear equations for EEQ-BC
+int EEQBCModel::get_vrhs(
+  const TMolecule &mol,
+  const TIVector &realIdx,
+  const int &charge,
+  const TMatrix<double> &dist,
+  const TVector<double> &cn,
+  TVector<double> &xvec,
+  TVector<double> &dxvec,
+  bool lgrad
+) {
+  int info{0};
+  const int n_atoms = realIdx.Max() + 1;
+  // calculate the capacitance matrix
+  cmat.NewMatrix(n_atoms + 1, n_atoms + 1);
+  info = get_cmat(mol, realIdx, dist, cmat);
+  if (info != EXIT_SUCCESS) {
+     printf("EEQBCModel::get_vrhs: Failed to calculate the capacitance matrix.");
+     return info;
+  }
+  
+  // calculate the right-hand side
+  info = get_xvec(mol, realIdx, dist, cn, cmat, charge, xvec);
+  if (info != EXIT_SUCCESS) {
+     printf("EEQBCModel::get_vrhs: Failed to calculate the right hand side.");
+     return info;
+  }
+  return EXIT_SUCCESS;
+};
+
+// Calculate the Coulomb matrix for EEQ-BC
+int EEQBCModel::get_amat_0d(
+  const TMolecule &mol,
+  const TIVector &realIdx,
+  const TMatrix<double> &dist,
+  const TVector<double> &cn,
+  TMatrix<double> &Amat
+) const {
+  const int nat = mol.NAtoms;
+  int iat, jat; // atomic numbers
+  double norm_cn; // coordination number normalization factor
+  double r, radi, radj, gamij2, tmp;
+
+
+  for (int i = 0, ii = 0; i < nat; i++) {
+    ii = realIdx(i);
+    if (ii < 0) continue;
+    iat = mol.ATNO(i);
+    norm_cn = 1.0 / pow(avg_cn[iat], norm_exp);
+    radi = rad[iat] * (1.0 - kcnrad*cn(ii)*norm_cn);
+
+    for (int j = 0, jj = 0; j < i; j++) {
+      jj = realIdx(j);
+      if (jj < 0) continue;
+      jat = mol.ATNO(j);
+      r = dist(ii, jj);
+      norm_cn =  1.0 / pow(avg_cn[jat], norm_exp);
+      radj = rad[jat] * (1.0 - kcnrad*cn(jj)*norm_cn);
+      gamij2 = 1.0 / (radi * radi + radj * radj);
+      tmp = cmat(jj, ii) * erf(r * sqrt(gamij2)) / r;
+      Amat(jj, ii) = Amat(jj, ii) + tmp;
+      Amat(ii, jj) = Amat(ii, jj) + tmp;
+    }
+    tmp = eta[iat] + kqeta[iat] * qloc(ii) + sqrt(2.0/pi) / radi;
+    Amat(ii, ii) = Amat(ii, ii) + tmp * cmat(ii, ii) + 1.0;
+    // Set entries for charge constraint
+    Amat(nat, ii) = 1.0;
+    Amat(ii, nat) = 1.0;
+  }
+  Amat(nat, nat) = 0.0; 
+
+  return EXIT_SUCCESS;
+};
+
+// Calculate the derivative of the Coulomb matrix w.r.t. the coordinates for EEQ-BC
+int EEQBCModel::get_damat_0d(
+  const TMolecule &mol,
+  const TIVector &realIdx,
+  const TMatrix<double> &dist,
+  const TVector<double> &q,
+  const TMatrix<double> &Amat,
+  TMatrix<double> &dAmat,
+  TMatrix<double> &atrace
+) const {
+  
+  return EXIT_SUCCESS;
+};
+
+// Get purely geometry-dependent local charges
+int EEQBCModel::get_qloc(
+  const TMolecule &mol,
+  const TIVector &realIdx,
+  const TMatrix<double> &dist,
+  const double q_tot,  // total system charge
+  TVector<double> &qloc
+) 
+{
+  const double cutoff = 25.0;
+  bool lgrad = false;
+  TVector<double> cn;
+  TMatrix<double> dcndr;
+  // Electronegativity scaled coordination number with EEQ-BC parameters
+  NCoordErfEN ncoord_erf_en(
+    ncoorderf_kcn,
+    ncoorderf_norm_exp,
+    ncoorderf_cutoff,
+    ncoorderfen_f_directed,
+    ncoorderf_cn_max);
+  qloc.NewVector(mol.NAtoms);
+  const double q_tot_norm = q_tot/mol.NAtoms;
+
+  ncoord_erf_en.get_ncoord(mol, dist, cn, dcndr, lgrad);
+
+  for (int i = 0, ii = 0; i < mol.NAtoms; i++) {
+    ii = realIdx(i);
+    if (ii < 0) continue;
+    qloc(ii) = cn(ii) + q_tot_norm;
+  }
+
+  return EXIT_SUCCESS;
+};
+
+
+// Calculate the coordination number, forwarding to get_ncoord
+int EEQBCModel::get_cn(
+  const TMolecule &mol,
+  const TIVector &realIdx,
+  const TMatrix<double> &dist,
+  TVector<double> &cn,
+  TMatrix<double> &dcndr,
+  bool lgrad
+)
+{
+  int info{0};
+
+  info = ncoord_erf.get_ncoord(mol, realIdx, dist, cn, dcndr, lgrad);
+  if (info != EXIT_SUCCESS) {
+    throw std::runtime_error("EEQBCModel::get_cn: Failed to compute coordination numbers.");
+  }
+
+  return info;
+};
+
+// Get capacitance for bond between atoms i and j for EEQ-BC 
+int EEQBCModel::get_cpair(
+  int iat,  // atom type of i
+  int jat,  // atom type of j
+  double &dist_ij,  // distance between atom j to atom i
+  double &c_ij  // Out: Capacitance for bond ij
+) const {
+  int iat_zero = iat;  // convert to index counting from zero (e.g. H=0)
+  int jat_zero = jat;  // convert to index counting from zero (e.g. H=0)
+  int ij_at;
+  if (iat_zero > jat_zero) {
+    ij_at = (jat_zero + iat_zero*(iat_zero - 1)/2) - 1;
+  } else {
+    ij_at = (iat_zero + jat_zero*(jat_zero - 1)/2) - 1;
+  }
+  // Calculate the argument of the error function
+  double arg = - kbc*(dist_ij - rvdw[ij_at])/(rvdw[ij_at]);
+  c_ij = sqrt(cap[iat]*cap[jat])*0.5*(1.0 + erf(arg));
+
+  return EXIT_SUCCESS;
+}
+
+// Get the capacitance matrix
+int EEQBCModel::get_cmat(
+  const TMolecule &mol,  // molecular geometry
+  const TIVector &realIdx,  // The real atom indices (for excluding dummy atoms)
+  const TMatrix<double> &dist, // atom distances
+  TMatrix<double> &cmat  // Out: Capacitance matrix
+) {
+  int iat;  // atom type of i
+  int jat;  // atom type of j
+  double c_ij;  // Capacitance for bond between atoms i and j
+  double dist_ij; // distance between atoms i and j
+  const int n_atoms = realIdx.Max() + 1;
+  for (int i = 0, ii = 0; i < mol.NAtoms; i++)
+  {
+    ii = realIdx(i);
+    if (ii < 0) continue;
+    iat = mol.ATNO(i);
+    for (int j = 0, jj = 0; j < i; j++)
+    {
+      jj = realIdx(j);
+      if (jj < 0) continue;
+      jat = mol.ATNO(j);
+      dist_ij = dist(ii,jj);
+      get_cpair(iat, jat, dist_ij, c_ij);
+      // Calulate Off-diagonal elements; bond capacitances
+      cmat(ii, jj) = - c_ij;
+      cmat(jj, ii) = - c_ij;
+      // Calculate diagonal elements; self-capacitance as the negative sum of bond capacitances
+      cmat(ii, ii) = cmat(ii, ii) + c_ij;
+      cmat(jj, jj) = cmat(jj, jj) + c_ij;
+    }
+  }
+  cmat(n_atoms, n_atoms) = 1.0;
+  return EXIT_SUCCESS;
+}
+
+// Get the right-hand side vector b
+// A * q = b with Coulomb matrix A and partial charges q
+// b = X * C with electronegativity vector X and capacitance matrix C
+int EEQBCModel::get_xvec(
+  const TMolecule &mol,  // molecular geometry
+  const TIVector &realIdx,  // The real atom indices (for excluding dummy atoms)
+  const TMatrix<double> &dist,  // atom distances
+  const TVector<double> &cn,
+  TMatrix<double> &cmat, // capacitance matrix
+  int charge,  // total charge of the system
+  TVector<double> &xvec  // Out: electronegativity vector
+) {
+  int info{0};
+  const int n_atoms = realIdx.Max() + 1;
+  TVector<double> x_tmp;  // dummy for xvec, has dimension N+1 including the constraint
+  x_tmp.NewVector(n_atoms+1);
+  int i_atno;  // atomic number of atom i
+
+  // get local charge
+  info = get_qloc(mol, realIdx, dist, charge, qloc);
+
+  for (int i = 0, ii = 0; i < mol.NAtoms; i++)
+  {
+    ii = realIdx(i);
+    if (ii < 0) continue;
+    i_atno = mol.ATNO(i);
+    x_tmp(ii) = - chi[i_atno] + kcnchi[i_atno]*cn(ii) + kqchi[i_atno]*qloc(ii);
+  }
+  
+  xvec.NewVector(n_atoms + 1);
+  xvec(n_atoms) = charge;
+  for (int i = 0; i < n_atoms; i++)
+  {
+    for (int j = 0; j < n_atoms; j++)
+    {
+      xvec(i) = xvec(i) + cmat(i, j) * x_tmp(j);
+    }
+  }
+
+  return EXIT_SUCCESS; 
+}
+
+// numerical gradient of partial charges w.r.t. atom positions
+int EEQBCModel::num_grad_dqdr(
+  TMolecule &mol,  // molecular geometry
+  const TIVector &realIdx,  // The real atom indices (for excluding dummy atoms)
+  int charge, // total charge of the system
+  TMatrix<double> &num_dqdr // numerical gradient
+) {
+  TVector<double> q_r, q_l;  // forward and backward point
+  double step{1.0e-6};  // step size of finite differences
+  const int nat = realIdx.Max() +1;  // number of atoms
+  TVector<double> cn;  // coordination number
+  TMatrix<double> dcndr;  // derivative of the coordination number
+  TMatrix<double> dqdr;  // dummy variable for analytical derivative
+  dqdr.NewMat(3 * nat, nat);
+  num_dqdr.NewMat(3 * nat, nat);
+  TMatrix<double> dist;  // matrix with pairwise atomic distances
+  multicharge::EEQBCModel eeqbc_model;  // instance of the EEQ-BC model
+
+  // calculate numerical gradient via finite difference method
+  for (int i = 0, ii = 0; i < mol.NAtoms; i++) {
+    ii = realIdx(i);
+    if (ii < 0) continue;
+    for (int c = 0; c < 3; c++) {
+      // calculate forward point
+      mol.CC(i, c) += step;
+      dist.NewMatrix(nat, nat);
+      calc_distances(mol, realIdx, dist);
+      eeqbc_model.get_cn(mol, realIdx, dist, cn, dcndr, false);
+      q_r.NewVec(nat);
+      eeqbc_model.eeq_chrgeq(mol, realIdx, dist, cn, dcndr, charge, q_r, dqdr, false, false);
+
+      // calculate backward point
+      mol.CC(i, c) = mol.CC(i, c) - 2 * step;
+      dist.NewMatrix(nat, nat);
+      calc_distances(mol, realIdx, dist);
+      eeqbc_model.get_cn(mol, realIdx, dist, cn, dcndr, false);
+      q_l.NewVec(nat);
+      eeqbc_model.eeq_chrgeq(mol, realIdx, dist, cn, dcndr, charge, q_l, dqdr, false, false);
+
+      // calculate numerical gradient as finite difference
+      mol.CC(i, c) = mol.CC(i, c) + step;
+      for (int j = 0, jj = 0; j < nat; j++) {
+        num_dqdr(3 * ii + c, j) = 0.5 * (q_r(j) - q_l(j)) / step;
+
+      }
+    }
+  }
+  return EXIT_SUCCESS;
+}
 
 } // namespace multicharge
