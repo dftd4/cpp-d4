@@ -309,7 +309,6 @@ int EEQModel::get_vrhs(
         dxvecdr(ii, 3*jj+2) = dxdcn(ii) * dcndr(ii, 3 * jj + 2); 
       }
     }
-    dxdcn(nat) = 0.0;
   } else {
     for (int i = 0, ii = 0; i != mol.NAtoms; i++) {
       ii = realIdx(i);
