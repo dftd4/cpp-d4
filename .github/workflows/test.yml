@@ -26,9 +26,9 @@ env:
     ninja
     cmake
     gcovr
+
 jobs:
   gcc-build:
-    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
@@ -43,6 +43,11 @@ jobs:
             sanitizer: none
             buildtype: release
 
+    runs-on: ${{ matrix.os }}
+
+    permissions:
+      contents: read
+
     env:
       FC: gfortran
       CC: gcc
@@ -52,7 +57,9 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
@@ -62,23 +69,29 @@ jobs:
       - name: Install GCC ${{ matrix.GCC_V }} (OSX)
         if: contains(matrix.os, 'macos')
         run: |
-          ln -s /usr/local/bin/gfortran-${{ env.GCC_V }} /usr/local/bin/gfortran
-          ln -s /usr/local/bin/gcc-${{ env.GCC_V }} /usr/local/bin/gcc
-          ln -s /usr/local/bin/g++-${{ env.GCC_V }} /usr/local/bin/g++
+          ln -s /usr/local/bin/gfortran-${GCC_V} /usr/local/bin/gfortran
+          ln -s /usr/local/bin/gcc-${GCC_V} /usr/local/bin/gcc
+          ln -s /usr/local/bin/g++-${GCC_V} /usr/local/bin/g++
+        env:
+          GCC_V: ${{ env.GCC_V }}
 
       - name: Install GCC (Linux)
         run: |
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test
           sudo apt-get update
-          sudo apt-get install gcc-${{ env.GCC_V }} g++-${{ env.GCC_V }} gfortran-${{ env.GCC_V }}
+          sudo apt-get install gcc-${GCC_V} g++-${GCC_V} gfortran-${GCC_V}
+        env:
+          GCC_V: ${{ env.GCC_V }}
 
       - name: Set GCC Version (Linux)
         if: contains(matrix.os, 'ubuntu')
         run: >-
           sudo update-alternatives
-          --install /usr/bin/gcc gcc /usr/bin/gcc-${{ env.GCC_V }} 100
-          --slave /usr/bin/gfortran gfortran /usr/bin/gfortran-${{ env.GCC_V }}
-          --slave /usr/bin/gcov gcov /usr/bin/gcov-${{ env.GCC_V }}
+          --install /usr/bin/gcc gcc /usr/bin/gcc-${GCC_V} 100
+          --slave /usr/bin/gfortran gfortran /usr/bin/gfortran-${GCC_V}
+          --slave /usr/bin/gcov gcov /usr/bin/gcov-${GCC_V}
+        env:
+          GCC_V: ${{ env.GCC_V }}
 
       - name: Install CBLAS and LAPACKE
         if: contains(matrix.os, 'ubuntu')
@@ -95,7 +108,7 @@ jobs:
           --libdir=lib
           --warnlevel=0
           -Dsanitizer=${{ matrix.sanitizer }}
-          -Db_coverage=${{ env.COVERAGE }}
+          -Db_coverage=${COVERAGE}
         env:
           COVERAGE: ${{ contains(matrix.os, 'ubuntu') && 'true' || 'false' }}
 
@@ -107,7 +120,7 @@ jobs:
           meson test -C ${{ env.M_BUILD_DIR }} --print-errorlogs --no-rebuild --num-processes 2 -t 2
 
       - name: Create coverage report
-        if: matrix.os == 'ubuntu-latest' && matrix.GCC_V == '11'
+        if: matrix.os == 'ubuntu-latest' && matrix.GCC_V == '12'
         run: |
           ninja -C ${{ env.M_BUILD_DIR }} coverage
 
@@ -117,7 +130,8 @@ jobs:
           echo "DFTD4_PREFIX=$PWD/_dist" >> $GITHUB_ENV
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        if: matrix.os == 'ubuntu-latest' && matrix.GCC_V == '11'
+        uses: codecov/codecov-action@7f8b4b4bde536c465e797be725718b88c5d95e0e # 5.1.1
+        if: matrix.os == 'ubuntu-latest' && matrix.GCC_V == '12'
         with:
           files: ./coverage.xml # optional
+          verbose: true # optional (default = false)
