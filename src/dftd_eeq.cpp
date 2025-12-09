@@ -648,13 +648,13 @@ int EEQBCModel::get_damat_0d(
         dAmatdr(3*ii+c, jj) += +dtmp2 * q(ii) * dgamdr(3*ii+c) * cmat(jj, ii);
         dAmatdr(3*jj+c, ii) += +dtmp2 * q(jj) * dgamdr(3*jj+c) * cmat(ii, jj);
         // Capacitance derivative off-diagonal
-        atrace(ii, c) += -dtmp3 * q(jj) * dcmatdr(3*jj+c, ii);
-        atrace(jj, c) += -dtmp3 * q(ii) * dcmatdr(3*ii+c, jj);
-        dAmatdr(3*ii+c, jj) += +dtmp3 * q(ii) * dcmatdr(3*ii+c, jj);
-        dAmatdr(3*jj+c, ii) += +dtmp3 * q(jj) * dcmatdr(3*jj+c, ii);
+        atrace(ii, c) += -dtmp3 * q(jj) * dcmatdr(ii, 3*jj+c);
+        atrace(jj, c) += -dtmp3 * q(ii) * dcmatdr(jj, 3*ii+c);
+        dAmatdr(3*ii+c, jj) += +dtmp3 * q(ii) * dcmatdr(jj, 3*ii+c);
+        dAmatdr(3*jj+c, ii) += +dtmp3 * q(jj) * dcmatdr(ii, 3*jj+c);
         // Capacitance derivative diagonal
-        dAmatdr(3*jj+c, ii) += -dtmp4 * dcmatdr(3*jj+c, ii);
-        dAmatdr(3*ii+c, jj) += -dtmp5 * dcmatdr(3*ii+c, jj);
+        dAmatdr(3*jj+c, ii) += -dtmp4 * dcmatdr(ii, 3*jj+c);
+        dAmatdr(3*ii+c, jj) += -dtmp5 * dcmatdr(jj, 3*ii+c);
       }
     }  // jj
       dtmp1 = kqeta[izp] * q(ii) * cmat(ii, ii);  // Hardness
@@ -672,7 +672,7 @@ int EEQBCModel::get_damat_0d(
       // Capacitance derivative
       dtmp3 = (eta[izp] + kqeta[izp] * qloc(ii) + sqrt2pi / radi) * q(ii);
       for (int c = 0; c < 3; c++) {
-        dAmatdr(3*ii+c, ii) += +dtmp3 * dcmatdr(3*ii+c, ii); 
+        dAmatdr(3*ii+c, ii) += +dtmp3 * dcmatdr(ii, 3*ii+c);
       }
 }  // ii
 
@@ -835,7 +835,7 @@ int EEQBCModel::get_dcmatdr(
   TVector<double> dcdr_ij; // Part ij of capacitance derivative
   dcdr_ij.NewVec(3);
   const int n_atoms = realIdx.Max() + 1;
-  dcmatdr.NewMat(3 * n_atoms, n_atoms);
+  dcmatdr.NewMat(n_atoms, 3 * n_atoms);
   for (int i = 0, ii = 0; i < mol.NAtoms; i++)
   {
     ii = realIdx(i);
@@ -858,11 +858,11 @@ int EEQBCModel::get_dcmatdr(
       get_dcpair( dist_ij, rvdw_ijat, cap_ij, vec, dcdr_ij);
       for (int c = 0; c < 3; c++) {
       // Calculate Off-diagonal elements; bond capacitances
-      dcmatdr(3*ii+c,   jj) = - dcdr_ij(c);
-      dcmatdr(3*jj+c,   ii) = + dcdr_ij(c);
+      dcmatdr(jj, 3*ii+c) = - dcdr_ij(c);
+      dcmatdr(ii, 3*jj+c) = + dcdr_ij(c);
       // Calculate diagonal elements; self-capacitance as the negative sum of bond capacitances
-      dcmatdr(3*ii+c,   ii) = dcmatdr(3*ii+c,   ii) + dcdr_ij(c);
-      dcmatdr(3*jj+c,   jj) = dcmatdr(3*jj+c,   jj) - dcdr_ij(c);
+      dcmatdr(ii, 3*ii+c) = dcmatdr(ii, 3*ii+c) + dcdr_ij(c);
+      dcmatdr(jj, 3*jj+c) = dcmatdr(jj, 3*jj+c) - dcdr_ij(c);
       }
     }
   }
@@ -986,17 +986,7 @@ int EEQBCModel::get_xvec_derivs(
   
   xvec.NewVector(n_atoms + 1);
   xvec(n_atoms) = charge;
-  for (int i = 0, ii = 0; i < mol.NAtoms; i++)
-  {
-    ii = realIdx(i);
-    if (ii < 0) continue;
-    for (int j = 0, jj = 0; j < mol.NAtoms; j++)
-    {
-      jj = realIdx(j);
-      if (jj < 0) continue;
-      xvec(ii) = xvec(ii) + cmat(ii, jj) * x_tmp(jj);
-    }
-  }
+  BLAS_Add_Mat_x_Vec(xvec, cmat, x_tmp, false, 1.0);
 
   for (int i = 0, ii = 0; i < mol.NAtoms; i++)
   {
@@ -1008,15 +998,15 @@ int EEQBCModel::get_xvec_derivs(
       if (jj < 0) continue;
       for (int c = 0; c < 3; c++) {
         // setup dCij/dR * Xj
-        dxvecdr(ii, 3*ii+c) += x_tmp(jj) * dcmatdr(3*ii+c, jj);
-        dxvecdr(jj, 3*jj+c) += x_tmp(ii) * dcmatdr(3*jj+c, ii);
-        dxvecdr(jj, 3*ii+c) += (x_tmp(ii)-x_tmp(jj)) * dcmatdr(3*ii+c, jj);
-        dxvecdr(ii, 3*jj+c) += (x_tmp(jj)-x_tmp(ii)) * dcmatdr(3*jj+c, ii);
+        dxvecdr(ii, 3*ii+c) += x_tmp(jj) * dcmatdr(jj, 3*ii+c);
+        dxvecdr(jj, 3*jj+c) += x_tmp(ii) * dcmatdr(ii, 3*jj+c);
+        dxvecdr(jj, 3*ii+c) += (x_tmp(ii)-x_tmp(jj)) * dcmatdr(jj, 3*ii+c);
+        dxvecdr(ii, 3*jj+c) += (x_tmp(jj)-x_tmp(ii)) * dcmatdr(ii, 3*jj+c);
       }
     }
-    dxvecdr(ii, 3*ii  ) += x_tmp(ii) * dcmatdr(3*ii  , ii);
-    dxvecdr(ii, 3*ii+1) += x_tmp(ii) * dcmatdr(3*ii+1, ii);
-    dxvecdr(ii, 3*ii+2) += x_tmp(ii) * dcmatdr(3*ii+2, ii);
+    dxvecdr(ii, 3*ii  ) += x_tmp(ii) * dcmatdr(ii, 3*ii  );
+    dxvecdr(ii, 3*ii+1) += x_tmp(ii) * dcmatdr(ii, 3*ii+1);
+    dxvecdr(ii, 3*ii+2) += x_tmp(ii) * dcmatdr(ii, 3*ii+2);
   }
 
   return EXIT_SUCCESS; 
