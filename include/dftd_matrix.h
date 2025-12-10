@@ -1,13 +1,16 @@
 /*
  * This file contains code adapted from the ORCA quantum chemistry program.
- * ORCA is developed by the group of Prof. Frank Neese at the Max-Planck-Institut für Kohlenforschung,
- * Mülheim an der Ruhr and FAccTs GmbH. ORCA is licensed by the Max-Planck-Institut für Kohlenforschung and FAccTs GmbH.
+ * ORCA is developed by the group of Prof. Frank Neese at the
+ * Max-Planck-Institut für Kohlenforschung, Mülheim an der Ruhr and FAccTs GmbH.
+ * ORCA is licensed by the Max-Planck-Institut für Kohlenforschung and FAccTs
+ * GmbH.
  *
- * The inclusion of ORCA code in this file has been done with the explicit permission
- * of the ORCA developers.
+ * The inclusion of ORCA code in this file has been done with the explicit
+ * permission of the ORCA developers.
  *
- * For reuse or licensing of this code, please contact the ORCA team at the Max-Planck-Institut
- * für Kohlenforschung (https://orcaforum.kofo.mpg.de/) or FAccTs GmbH (https://www.faccts.de/).
+ * For reuse or licensing of this code, please contact the ORCA team at the
+ * Max-Planck-Institut für Kohlenforschung (https://orcaforum.kofo.mpg.de/) or
+ * FAccTs GmbH (https://www.faccts.de/).
  */
 
 #pragma once

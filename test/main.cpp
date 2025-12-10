@@ -24,9 +24,9 @@
 #include "test_disp2.h"
 #include "test_ghost.h"
 #include "test_grad.h"
+#include "test_multi.h"
 #include "test_ncoord.h"
 #include "test_param.h"
-#include "test_multi.h"
 
 enum test {
   invalid,

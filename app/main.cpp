@@ -96,7 +96,7 @@ void help() {
 
    <file> is a valid xmol file (coordinates in Ångström).
    (Turbomole coordinate file (coordinates in Bohr) not yet supported!)
-   
+
 
    Options:
 
@@ -146,7 +146,8 @@ int main(int argc, char **argv) {
   } else if (args.getflag("-f")) {
     func = args.getopt("-f");
   } else {
-    printf("WARNING: No functional given (via '--func'). Defaulting to PBE.\n\n"
+    printf(
+      "WARNING: No functional given (via '--func'). Defaulting to PBE.\n\n"
     );
     func = "pbe";
   }

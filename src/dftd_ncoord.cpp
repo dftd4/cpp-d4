@@ -27,8 +27,8 @@
 
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
-#include "dftd_ncoord.h"
 #include "dftd_multicharge_param.h"
+#include "dftd_ncoord.h"
 
 namespace dftd4 {
 
@@ -38,14 +38,11 @@ NCoordBase::NCoordBase(
   double optional_cutoff,
   double optional_f_directed,
   double optional_cn_max,
-  const double* optional_rcov
-) : kcn(optional_kcn),
-    norm_exp(optional_norm_exp),
-    cutoff(optional_cutoff),
-    f_directed(optional_f_directed),
-    cn_max(optional_cn_max),
-    rcov(optional_rcov)
-{}
+  const double *optional_rcov
+)
+  : kcn(optional_kcn), norm_exp(optional_norm_exp), cutoff(optional_cutoff),
+    f_directed(optional_f_directed), cn_max(optional_cn_max),
+    rcov(optional_rcov) {}
 
 /**
  * Covalent radii (taken from Pyykko and Atsumi, Chem. Eur. J. 15, 2009,
@@ -117,8 +114,8 @@ const double NCoordBase::rad[119]{
   3.98102303586706, 3.72905955258434, 3.95582668753879,
 };
 
-
-static const double hlfosqrtpi = 1.0 / 1.7724538509055159;  // one over square root of pi
+static const double hlfosqrtpi =
+  1.0 / 1.7724538509055159; // one over square root of pi
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -186,7 +183,7 @@ int NCoordBase::get_ncoord(
   const int nat = realIdx.Max() + 1;
   cn.NewVector(nat);
   if (lgrad) dcndr.NewMatrix(nat, 3 * nat);
-  
+
   if (lgrad) {
     info = dr_ncoord_base(mol, realIdx, dist, cn, dcndr);
   } else {
@@ -194,7 +191,8 @@ int NCoordBase::get_ncoord(
   }
   if (info != EXIT_SUCCESS) return info;
 
-  if (cn_max > 0.0) { // cn_max = -1.0 for EEQ-BC for cn and qloc; using NCoordErf and NCoordErfEN
+  if (cn_max > 0.0) { // cn_max = -1.0 for EEQ-BC for cn and qloc; using
+                      // NCoordErf and NCoordErfEN
     info = cut_coordination_number(cn_max, cn, dcndr, lgrad);
     if (info != EXIT_SUCCESS) return info;
   }
@@ -268,19 +266,19 @@ int NCoordBase::dr_ncoord_base(
       cn(jj) += countf * f_directed;
 
       dcountf = f_en * dr_count_fct(r, rcovij) / pow(rcovij, norm_exp);
-      dcndr(jj, 3 * jj    ) -= dcountf * rx * f_directed;
+      dcndr(jj, 3 * jj) -= dcountf * rx * f_directed;
       dcndr(jj, 3 * jj + 1) -= dcountf * ry * f_directed;
       dcndr(jj, 3 * jj + 2) -= dcountf * rz * f_directed;
 
-      dcndr(jj, 3 * ii    ) += dcountf * rx * f_directed;
+      dcndr(jj, 3 * ii) += dcountf * rx * f_directed;
       dcndr(jj, 3 * ii + 1) += dcountf * ry * f_directed;
       dcndr(jj, 3 * ii + 2) += dcountf * rz * f_directed;
 
-      dcndr(ii, 3 * jj    ) -= dcountf * rx;
+      dcndr(ii, 3 * jj) -= dcountf * rx;
       dcndr(ii, 3 * jj + 1) -= dcountf * ry;
       dcndr(ii, 3 * jj + 2) -= dcountf * rz;
 
-      dcndr(ii, 3 * ii    ) += dcountf * rx;
+      dcndr(ii, 3 * ii) += dcountf * rx;
       dcndr(ii, 3 * ii + 1) += dcountf * ry;
       dcndr(ii, 3 * ii + 2) += dcountf * rz;
     }
@@ -293,32 +291,32 @@ int NCoordBase::dr_ncoord_base(
 ///////////////////////////////////////////////////////////////////////////////
 
 double NCoordErf::count_fct(double r, double rc) const {
-  return 0.5 * (1.0 + erf(-kcn * (r - rc)/pow(rc, norm_exp)));
+  return 0.5 * (1.0 + erf(-kcn * (r - rc) / pow(rc, norm_exp)));
 }
 
 double NCoordErf::dr_count_fct(double r, double rc) const {
   const double rc_norm_exp = pow(rc, norm_exp);
-  const double exponent_term = -pow(kcn * (r - rc)/rc_norm_exp, 2);
+  const double exponent_term = -pow(kcn * (r - rc) / rc_norm_exp, 2);
   return -kcn * hlfosqrtpi * exp(exponent_term);
 }
 
 double NCoordErfEN::count_fct(double r, double rc) const {
-  return 0.5 * (1.0 + erf(-kcn * (r - rc)/pow(rc, norm_exp)));
+  return 0.5 * (1.0 + erf(-kcn * (r - rc) / pow(rc, norm_exp)));
 }
 
 double NCoordErfEN::dr_count_fct(double r, double rc) const {
   const double rc_norm_exp = pow(rc, norm_exp);
-  const double exponent_term = -pow(kcn * (r - rc)/rc_norm_exp, 2);
+  const double exponent_term = -pow(kcn * (r - rc) / rc_norm_exp, 2);
   return -kcn * hlfosqrtpi * exp(exponent_term);
 }
 
 double NCoordErfD4::count_fct(double r, double rc) const {
-  return 0.5 * (1.0 + erf(-kcn * (r - rc)/pow(rc, norm_exp)));
+  return 0.5 * (1.0 + erf(-kcn * (r - rc) / pow(rc, norm_exp)));
 }
 
 double NCoordErfD4::dr_count_fct(double r, double rc) const {
   const double rc_norm_exp = pow(rc, norm_exp);
-  const double exponent_term = -pow(kcn * (r - rc)/rc_norm_exp, 2);
+  const double exponent_term = -pow(kcn * (r - rc) / rc_norm_exp, 2);
   return -kcn * hlfosqrtpi * exp(exponent_term);
 }
 
@@ -337,12 +335,13 @@ int NCoordErf::cut_coordination_number(
   bool lgrad
 ) {
   if (lgrad) {
-    // cutting the cn is not (anti)symmetric, so dcndr is not antisymmetric anymore
+    // cutting the cn is not (anti)symmetric, so dcndr is not antisymmetric
+    // anymore
     double dcnpdcn;
     for (int i = 0; i != cn.N; i++) {
       dcnpdcn = dlog_cn_cut(cn_max, cn(i));
       for (int j = 0; j != cn.N; j++) {
-        dcndr(i, 3 * j    ) *= dcnpdcn;
+        dcndr(i, 3 * j) *= dcnpdcn;
         dcndr(i, 3 * j + 1) *= dcnpdcn;
         dcndr(i, 3 * j + 2) *= dcnpdcn;
       }

@@ -105,10 +105,11 @@ int get_dispersion(
   TVector<double> q;        // partial charges from EEQ model
   TMatrix<double> dqdr;     // derivative of partial charges
   TVector<double> gradient; // derivative of dispersion energy
-  NCoordErfD4 ncoord_erf_d4;  // instance of erf() based coordination number for D4
-  TVector<double> cn;  // coordination number
+  NCoordErfD4
+    ncoord_erf_d4;       // instance of erf() based coordination number for D4
+  TVector<double> cn;    // coordination number
   TMatrix<double> dcndr; // derivative of the coordination number
-  multicharge::EEQModel chrg_model;  // EEQ charge model
+  multicharge::EEQModel chrg_model; // EEQ charge model
 
   q.NewVector(nat);
   if (lgrad) {
@@ -117,7 +118,9 @@ int get_dispersion(
   }
 
   // calculate partial charges from EEQ model
-  info = chrg_model.get_charges(mol, realIdx, dist, charge, cutoff.cn_eeq, q, dqdr, lgrad);
+  info = chrg_model.get_charges(
+    mol, realIdx, dist, charge, cutoff.cn_eeq, q, dqdr, lgrad
+  );
   if (info != EXIT_SUCCESS) return info;
 
   // get the D4 coordination number

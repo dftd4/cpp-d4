@@ -20,7 +20,7 @@ cat > qcdftd4param.h << 'EOT'
  * Extension for Fr, Ra and Actinides by:
  * Marvin Friede <friede@thch.uni-bonn.de> (MF121223)
  */
- 
+
 #ifndef QCDFTD4PARAM_H
 #define QCDFTD4PARAM_H
 

@@ -82,8 +82,9 @@ int test_water(
   q.NewVector(nat);
 
   // calculate partial charges from EEQ model
-  info =
-    chrg_model.get_charges(mol, realIdx, dist, charge, cn_eeq_default, q, dqdr, false);
+  info = chrg_model.get_charges(
+    mol, realIdx, dist, charge, cn_eeq_default, q, dqdr, false
+  );
   if (info != EXIT_SUCCESS) return info;
 
   // compare to ref
@@ -152,7 +153,9 @@ int test_water(
   if (info != EXIT_SUCCESS) return info;
 
   dqdr.NewMatrix(3 * nat, nat);
-  info = chrg_model.get_charges(mol, realIdx, dist, charge, cutoff.cn_eeq, q, dqdr, lgrad);
+  info = chrg_model.get_charges(
+    mol, realIdx, dist, charge, cutoff.cn_eeq, q, dqdr, lgrad
+  );
   if (info != EXIT_SUCCESS) return info;
 
   info = get_dispersion(mol, realIdx, charge, d4, par, cutoff, energy, d4grad);

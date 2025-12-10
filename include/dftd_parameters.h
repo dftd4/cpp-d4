@@ -29,7 +29,7 @@
 namespace dftd4 {
 
 // TODO keep in sync with qcelems.h???
-constexpr int MAXELEMENT = 118+2; //dummy + H..Og + point charge
+constexpr int MAXELEMENT = 118 + 2; // dummy + H..Og + point charge
 
 // clang-format off
 /**
@@ -263,11 +263,11 @@ static const double gam[119]{
 };
 
 static const int refn[MAXELEMENT]{
-  0, 2, 1, 3, 4, 5, 7, 5, 4, 2, 1, 3, 4, 4, 5, 4, 3, 2, 1, 3, 4, 4, 4, 4, 4, 3,
-  3, 4, 4, 2, 2, 3, 5, 4, 3, 2, 1, 3, 4, 3, 4, 4, 4, 3, 3, 4, 3, 2, 2, 4, 5, 4,
-  3, 2, 1, 3, 4, 3, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 3, 3, 3, 5,
-  3, 2, 2, 4, 5, 4, 3, 2, 1, 2, 3, 7, 5, 6, 7, 7, 7, 7, 7, 5, 7, 7, 7, 5, 7, 7,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+  0, 2, 1, 3, 4, 5, 7, 5, 4, 2, 1, 3, 4, 4, 5, 4, 3, 2, 1, 3, 4, 4, 4, 4,
+  4, 3, 3, 4, 4, 2, 2, 3, 5, 4, 3, 2, 1, 3, 4, 3, 4, 4, 4, 3, 3, 4, 3, 2,
+  2, 4, 5, 4, 3, 2, 1, 3, 4, 3, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+  4, 4, 3, 3, 3, 5, 3, 2, 2, 4, 5, 4, 3, 2, 1, 2, 3, 7, 5, 6, 7, 7, 7, 7,
+  7, 5, 7, 7, 7, 5, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
 // 1
@@ -6188,9 +6188,8 @@ static const double *refsq[MAXELEMENT]{
   refsq80, refsq81, refsq82, refsq83, refsq84,  refsq85,  refsq86,  refsq87,
   refsq88, refsq89, refsq90, refsq91, refsq92,  refsq93,  refsq94,  refsq95,
   refsq96, refsq97, refsq98, refsq99, refsq100, refsq101, refsq102, refsq103,
-                            nullptr,    nullptr,    nullptr,     nullptr,
-  nullptr,     nullptr,     nullptr,    nullptr,    nullptr,     nullptr,
-  nullptr,     nullptr,     nullptr,    nullptr,    nullptr,     nullptr
+  nullptr, nullptr, nullptr, nullptr, nullptr,  nullptr,  nullptr,  nullptr,
+  nullptr, nullptr, nullptr, nullptr, nullptr,  nullptr,  nullptr,  nullptr
 };
 
 static const double *refalpha[MAXELEMENT]{
@@ -6236,10 +6235,10 @@ static const double *refascale[MAXELEMENT]{
   refascale85,  refascale86,  refascale87,  refascale88,  refascale89,
   refascale90,  refascale91,  refascale92,  refascale93,  refascale94,
   refascale95,  refascale96,  refascale97,  refascale98,  refascale99,
-  refascale100, refascale101, refascale102, refascale103,
-                            nullptr,    nullptr,    nullptr,     nullptr,
-  nullptr,     nullptr,     nullptr,    nullptr,    nullptr,     nullptr,
-  nullptr,     nullptr,     nullptr,    nullptr,    nullptr,     nullptr
+  refascale100, refascale101, refascale102, refascale103, nullptr,
+  nullptr,      nullptr,      nullptr,      nullptr,      nullptr,
+  nullptr,      nullptr,      nullptr,      nullptr,      nullptr,
+  nullptr,      nullptr,      nullptr,      nullptr,      nullptr
 };
 static const double *refscount[MAXELEMENT]{
   nullptr,      refscount1,   refscount2,   refscount3,   refscount4,
@@ -6262,10 +6261,10 @@ static const double *refscount[MAXELEMENT]{
   refscount85,  refscount86,  refscount87,  refscount88,  refscount89,
   refscount90,  refscount91,  refscount92,  refscount93,  refscount94,
   refscount95,  refscount96,  refscount97,  refscount98,  refscount99,
-  refscount100, refscount101, refscount102, refscount103,
-                            nullptr,    nullptr,    nullptr,     nullptr,
-  nullptr,     nullptr,     nullptr,    nullptr,    nullptr,     nullptr,
-  nullptr,     nullptr,     nullptr,    nullptr,    nullptr,     nullptr
+  refscount100, refscount101, refscount102, refscount103, nullptr,
+  nullptr,      nullptr,      nullptr,      nullptr,      nullptr,
+  nullptr,      nullptr,      nullptr,      nullptr,      nullptr,
+  nullptr,      nullptr,      nullptr,      nullptr,      nullptr
 };
 static const int *refsys[MAXELEMENT]{
   nullptr,  refsys1,  refsys2,   refsys3,   refsys4,   refsys5,   refsys6,
@@ -6282,27 +6281,27 @@ static const int *refsys[MAXELEMENT]{
   refsys77, refsys78, refsys79,  refsys80,  refsys81,  refsys82,  refsys83,
   refsys84, refsys85, refsys86,  refsys87,  refsys88,  refsys89,  refsys90,
   refsys91, refsys92, refsys93,  refsys94,  refsys95,  refsys96,  refsys97,
-  refsys98, refsys99, refsys100, refsys101, refsys102, refsys103,
-                            nullptr,    nullptr,    nullptr,     nullptr,
-  nullptr,     nullptr,     nullptr,    nullptr,    nullptr,     nullptr,
-  nullptr,     nullptr,     nullptr,    nullptr,    nullptr,     nullptr
+  refsys98, refsys99, refsys100, refsys101, refsys102, refsys103, nullptr,
+  nullptr,  nullptr,  nullptr,   nullptr,   nullptr,   nullptr,   nullptr,
+  nullptr,  nullptr,  nullptr,   nullptr,   nullptr,   nullptr,   nullptr,
+  nullptr
 };
 static const int *refc[MAXELEMENT]{
-  nullptr, refc1,   refc2,   refc3,   refc4,   refc5,  refc6,  refc7,  refc8,
-  refc9,   refc10,  refc11,  refc12,  refc13,  refc14, refc15, refc16, refc17,
-  refc18,  refc19,  refc20,  refc21,  refc22,  refc23, refc24, refc25, refc26,
-  refc27,  refc28,  refc29,  refc30,  refc31,  refc32, refc33, refc34, refc35,
-  refc36,  refc37,  refc38,  refc39,  refc40,  refc41, refc42, refc43, refc44,
-  refc45,  refc46,  refc47,  refc48,  refc49,  refc50, refc51, refc52, refc53,
-  refc54,  refc55,  refc56,  refc57,  refc58,  refc59, refc60, refc61, refc62,
-  refc63,  refc64,  refc65,  refc66,  refc67,  refc68, refc69, refc70, refc71,
-  refc72,  refc73,  refc74,  refc75,  refc76,  refc77, refc78, refc79, refc80,
-  refc81,  refc82,  refc83,  refc84,  refc85,  refc86, refc87, refc88, refc89,
-  refc90,  refc91,  refc92,  refc93,  refc94,  refc95, refc96, refc97, refc98,
-  refc99,  refc100, refc101, refc102, refc103,
-                            nullptr,    nullptr,    nullptr,     nullptr,
-  nullptr,     nullptr,     nullptr,    nullptr,    nullptr,     nullptr,
-  nullptr,     nullptr,     nullptr,    nullptr,    nullptr,     nullptr
+  nullptr, refc1,   refc2,   refc3,   refc4,   refc5,   refc6,   refc7,
+  refc8,   refc9,   refc10,  refc11,  refc12,  refc13,  refc14,  refc15,
+  refc16,  refc17,  refc18,  refc19,  refc20,  refc21,  refc22,  refc23,
+  refc24,  refc25,  refc26,  refc27,  refc28,  refc29,  refc30,  refc31,
+  refc32,  refc33,  refc34,  refc35,  refc36,  refc37,  refc38,  refc39,
+  refc40,  refc41,  refc42,  refc43,  refc44,  refc45,  refc46,  refc47,
+  refc48,  refc49,  refc50,  refc51,  refc52,  refc53,  refc54,  refc55,
+  refc56,  refc57,  refc58,  refc59,  refc60,  refc61,  refc62,  refc63,
+  refc64,  refc65,  refc66,  refc67,  refc68,  refc69,  refc70,  refc71,
+  refc72,  refc73,  refc74,  refc75,  refc76,  refc77,  refc78,  refc79,
+  refc80,  refc81,  refc82,  refc83,  refc84,  refc85,  refc86,  refc87,
+  refc88,  refc89,  refc90,  refc91,  refc92,  refc93,  refc94,  refc95,
+  refc96,  refc97,  refc98,  refc99,  refc100, refc101, refc102, refc103,
+  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
 };
 
 // sec. 1

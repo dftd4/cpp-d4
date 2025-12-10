@@ -23,34 +23,35 @@
 
 #pragma once
 
-#include <cmath>
 #include "dftd_geometry.h"
 #include "dftd_matrix.h"
 #include "dftd_multicharge_param.h"
+#include <cmath>
 
 namespace dftd4 {
 
-class NCoordBase
-{
+class NCoordBase {
   public:
-    static const double rad[];  // cov. radii default: D3 covalent radii from dftd_ncoord.cpp
-    double kcn;  // Steepness of counting function 
-    double norm_exp;  // exponent of the normalizing-factor in the counting function
-    double cutoff;  // Coordination number cutoff distance
+    static const double
+      rad[];    // cov. radii default: D3 covalent radii from dftd_ncoord.cpp
+    double kcn; // Steepness of counting function
+    double
+      norm_exp; // exponent of the normalizing-factor in the counting function
+    double cutoff;      // Coordination number cutoff distance
     double f_directed;  // directed factor for EN scaled coordination number
-    double cn_max;  // (Soft-)maximum value for the coordination number
-    const double* rcov;  // covalent radii for CN
+    double cn_max;      // (Soft-)maximum value for the coordination number
+    const double *rcov; // covalent radii for CN
     // Get the coordination number
     /**
-    * Wrapper for coordination number calculation.
-    *
-    * @param mol Molecule object.
-    * @param dist Distance matrix.
-    * @param cn Coordination number.
-    * @param dcndr Derivative of the coordination number.
-    * @param lgrad Flag for gradient computation.
-    * @return Exit status.
-    */
+     * Wrapper for coordination number calculation.
+     *
+     * @param mol Molecule object.
+     * @param dist Distance matrix.
+     * @param cn Coordination number.
+     * @param dcndr Derivative of the coordination number.
+     * @param lgrad Flag for gradient computation.
+     * @return Exit status.
+     */
     int get_ncoord( // without ghost atom indices
       const TMolecule &mol,
       const TMatrix<double> &dist,
@@ -58,17 +59,18 @@ class NCoordBase
       TMatrix<double> &dcndr,  // derivative of the coordination number
       bool lgrad);
     /**
-    * Wrapper for coordination number calculation.
-    * Allocates the cn vector unconditionally, and the dcndr matrix only if lgrad is true.
-    *
-    * @param mol Molecule object.
-    * @param realIdx List for real atoms excluding ghost/non atoms.
-    * @param dist Distance matrix.
-    * @param cn Coordination number.
-    * @param dcndr Derivative of the coordination number.
-    * @param lgrad Flag for gradient computation.
-    * @return Exit status.
-    */
+     * Wrapper for coordination number calculation.
+     * Allocates the cn vector unconditionally, and the dcndr matrix only if
+     * lgrad is true.
+     *
+     * @param mol Molecule object.
+     * @param realIdx List for real atoms excluding ghost/non atoms.
+     * @param dist Distance matrix.
+     * @param cn Coordination number.
+     * @param dcndr Derivative of the coordination number.
+     * @param lgrad Flag for gradient computation.
+     * @return Exit status.
+     */
     int get_ncoord(  // with ghost atoms
       const TMolecule &mol,
       const TIVector &realIdx,
@@ -77,89 +79,98 @@ class NCoordBase
       TMatrix<double> &dcndr,  // derivative of the coordination number
       bool lgrad);
     /**
-    * Calculate the coordination number.
-    *
-    * @param mol Molecule object.
-    * @param realIdx List for real atoms excluding ghost/non atoms.
-    * @param dist Distance matrix.
-    * @param cn Coordination number.
-    * @param dcndr Derivative of the coordination number.
-    * @return Exit status.
-    */
+     * Calculate the coordination number.
+     *
+     * @param mol Molecule object.
+     * @param realIdx List for real atoms excluding ghost/non atoms.
+     * @param dist Distance matrix.
+     * @param cn Coordination number.
+     * @param dcndr Derivative of the coordination number.
+     * @return Exit status.
+     */
     int ncoord_base(
       const TMolecule &mol,
       const TIVector &realIdx,
       const TMatrix<double> &dist,
-      TVector<double> &cn);
+      TVector<double> &cn
+    );
     /**
-    * Calculate error function coordination number and derivative
-    * w.r.t. nuclear coordinates.
-    *
-    * @param mol Molecule object.
-    * @param realIdx List for real atoms excluding ghost/non atoms.
-    * @param dist Distance matrix.
-    * @param cn Coordination number.
-    * @param dcndr Derivative of the coordination number.
-    * @return Exit status.
-    */
+     * Calculate error function coordination number and derivative
+     * w.r.t. nuclear coordinates.
+     *
+     * @param mol Molecule object.
+     * @param realIdx List for real atoms excluding ghost/non atoms.
+     * @param dist Distance matrix.
+     * @param cn Coordination number.
+     * @param dcndr Derivative of the coordination number.
+     * @return Exit status.
+     */
     int dr_ncoord_base(
       const TMolecule &mol,
       const TIVector &realIdx,
       const TMatrix<double> &dist,
       TVector<double> &cn,
-      TMatrix<double> &dcndr);
+      TMatrix<double> &dcndr
+    );
     /**
-    * Electronegativity factor.
-    *
-    * @param i atom index
-    * @param j atom index
-    * @return Value of the electronegativity factor.
-    */
+     * Electronegativity factor.
+     *
+     * @param i atom index
+     * @param j atom index
+     * @return Value of the electronegativity factor.
+     */
     virtual double get_en_factor(int i, int j) const;
     // Calculate the element pair-specific covalent radii
     virtual double get_rcov(int, int) const;
     /**
-    * base class function for coordination number contributions.
-    *
-    * @param r distance between the two atoms 
-    * @param rc summed up covalent radii of the two atoms
-    * @return Value of the counting function.
-    */
+     * base class function for coordination number contributions.
+     *
+     * @param r distance between the two atoms
+     * @param rc summed up covalent radii of the two atoms
+     * @return Value of the counting function.
+     */
     virtual double count_fct(double r, double rc) const = 0;
     /**
-    * Derivative of the counting function w.r.t. the distance.
-    *
-    * @param r distance between the two atoms 
-    * @param rc summed up covalent radii of the two atoms
-    * @return Derivative of the counting function.
-    */
+     * Derivative of the counting function w.r.t. the distance.
+     *
+     * @param r distance between the two atoms
+     * @param rc summed up covalent radii of the two atoms
+     * @return Derivative of the counting function.
+     */
     virtual double dr_count_fct(double r, double rc) const = 0;
     /**
-    * TCutoff function for large coordination numbers
-    *
-    * @param cn_max Maximum CN (not strictly obeyed).
-    * @param cn On input coordination number, on output modified CN.
-    * @param dcndr On input derivative of CN w.r.t. cartesian coordinates,
-    * on output derivative of modified CN.
-    * @param lgrad Flag for gradient calculation.
-    */
-    virtual int cut_coordination_number(const double cn_max, TVector<double> &cn, TMatrix<double> &dcndr, bool lgrad) = 0;
+     * TCutoff function for large coordination numbers
+     *
+     * @param cn_max Maximum CN (not strictly obeyed).
+     * @param cn On input coordination number, on output modified CN.
+     * @param dcndr On input derivative of CN w.r.t. cartesian coordinates,
+     * on output derivative of modified CN.
+     * @param lgrad Flag for gradient calculation.
+     */
+    virtual int cut_coordination_number(
+      const double cn_max,
+      TVector<double> &cn,
+      TMatrix<double> &dcndr,
+      bool lgrad
+    ) = 0;
     // Constructor
-    NCoordBase(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0,
-    double optional_f_directed = 1.0, double optional_cn_max = 8.0, const double* optional_rcov = rad);
+    NCoordBase(
+      double optional_kcn = 7.5,
+      double optional_norm_exp = 1.0,
+      double optional_cutoff = 25.0,
+      double optional_f_directed = 1.0,
+      double optional_cn_max = 8.0,
+      const double *optional_rcov = rad
+    );
     // Virtual destructor
-    virtual ~NCoordBase() {
-    }
+    virtual ~NCoordBase() {}
 };
 
-inline double NCoordBase::get_en_factor(int i, int j) const {
-  return 1.0;
-}
+inline double NCoordBase::get_en_factor(int i, int j) const { return 1.0; }
 
 inline double NCoordBase::get_rcov(int i, int j) const {
   return rcov[i] + rcov[j];
 }
-
 
 // derived CN-class for erf()-based CN; includes default CN-cutoff
 class NCoordErf : public NCoordBase {
@@ -169,11 +180,29 @@ class NCoordErf : public NCoordBase {
     // derivative of the erf() based counting function
     double dr_count_fct(double, double) const override;
     // Soft maximum/cutoff for coordination number
-    int cut_coordination_number(const double, TVector<double>&, TMatrix<double>&, bool) override;
+    int cut_coordination_number(
+      const double,
+      TVector<double> &,
+      TMatrix<double> &,
+      bool
+    ) override;
     // Constructor
-    NCoordErf(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0,
-    double optional_f_directed = 1.0, double optional_cn_max = 8.0, const double* optional_rcov = rad)
-    : NCoordBase(optional_kcn, optional_norm_exp, optional_cutoff, optional_f_directed, optional_cn_max, optional_rcov){}
+    NCoordErf(
+      double optional_kcn = 7.5,
+      double optional_norm_exp = 1.0,
+      double optional_cutoff = 25.0,
+      double optional_f_directed = 1.0,
+      double optional_cn_max = 8.0,
+      const double *optional_rcov = rad
+    )
+      : NCoordBase(
+          optional_kcn,
+          optional_norm_exp,
+          optional_cutoff,
+          optional_f_directed,
+          optional_cn_max,
+          optional_rcov
+        ) {}
     // Use default destructor; base class handles cleanup
     ~NCoordErf() override = default;
 };
@@ -186,27 +215,45 @@ class NCoordErfEN : public NCoordBase {
     // derivative of the erf() based counting function
     double dr_count_fct(double, double) const override;
     // Soft maximum/cutoff for coordination number
-    int cut_coordination_number(const double, TVector<double>&, TMatrix<double>&, bool) override;
+    int cut_coordination_number(
+      const double,
+      TVector<double> &,
+      TMatrix<double> &,
+      bool
+    ) override;
     // coordination number scaling factor based on electronegativity difference
     double get_en_factor(int, int) const override;
     // Calculate the element pair-specific covalent radii for EEQ-BC qloc
     double get_rcov(int, int) const override;
     // Constructor
-    NCoordErfEN(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0,
-    double optional_f_directed = -1.0, double optional_cn_max = 8.0, const double* optional_rcov = multicharge_param::eeqbc::eeqbc_cov_radii)
-    : NCoordBase(optional_kcn, optional_norm_exp, optional_cutoff, optional_f_directed, optional_cn_max, optional_rcov){}
+    NCoordErfEN(
+      double optional_kcn = 7.5,
+      double optional_norm_exp = 1.0,
+      double optional_cutoff = 25.0,
+      double optional_f_directed = -1.0,
+      double optional_cn_max = 8.0,
+      const double *optional_rcov = multicharge_param::eeqbc::eeqbc_cov_radii
+    )
+      : NCoordBase(
+          optional_kcn,
+          optional_norm_exp,
+          optional_cutoff,
+          optional_f_directed,
+          optional_cn_max,
+          optional_rcov
+        ) {}
     // Use default destructor; base class handles cleanup
     ~NCoordErfEN() override = default;
 };
 
 inline double NCoordErfEN::get_en_factor(int i, int j) const {
-  return multicharge_param::eeqbc::eeqbc_en[j] - multicharge_param::eeqbc::eeqbc_en[i];
+  return multicharge_param::eeqbc::eeqbc_en[j] -
+         multicharge_param::eeqbc::eeqbc_en[i];
 }
 
 inline double NCoordErfEN::get_rcov(int i, int j) const {
   return rcov[i] + rcov[j];
 }
-
 
 // derived CN-class for the D4 model
 class NCoordErfD4 : public NCoordBase {
@@ -214,6 +261,7 @@ class NCoordErfD4 : public NCoordBase {
     static constexpr double k4 = 4.10451;
     static constexpr double k5 = 19.08857;
     static constexpr double k6 = 2 * 11.28174 * 11.28174;
+
   public:
     // erf() based counting function
     double count_fct(double, double) const override;
@@ -222,11 +270,29 @@ class NCoordErfD4 : public NCoordBase {
     // coordination number scaling factor based on electronegativity difference
     double get_en_factor(int, int) const override;
     // Soft maximum/cutoff for coordination number
-    int cut_coordination_number(const double, TVector<double>&, TMatrix<double>&, bool) override;
+    int cut_coordination_number(
+      const double,
+      TVector<double> &,
+      TMatrix<double> &,
+      bool
+    ) override;
     // Constructor
-    NCoordErfD4(double optional_kcn = 7.5, double optional_norm_exp = 1.0, double optional_cutoff = 25.0,
-    double optional_f_directed = 1.0, double optional_cn_max = 8.0, const double* optional_rcov = rad)
-    : NCoordBase(optional_kcn, optional_norm_exp, optional_cutoff, optional_f_directed, optional_cn_max, optional_rcov){}
+    NCoordErfD4(
+      double optional_kcn = 7.5,
+      double optional_norm_exp = 1.0,
+      double optional_cutoff = 25.0,
+      double optional_f_directed = 1.0,
+      double optional_cn_max = 8.0,
+      const double *optional_rcov = rad
+    )
+      : NCoordBase(
+          optional_kcn,
+          optional_norm_exp,
+          optional_cutoff,
+          optional_f_directed,
+          optional_cn_max,
+          optional_rcov
+        ) {}
     // Use default destructor; base class handles cleanup
     ~NCoordErfD4() override = default;
 };

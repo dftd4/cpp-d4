@@ -43,7 +43,7 @@ if get_option('buildtype') == 'debug'
 
   add_project_arguments('-fno-omit-frame-pointer', language: 'cpp')
   add_project_link_arguments('-fno-omit-frame-pointer', language: 'cpp')
-  
+
   sanitizer = get_option('sanitizer')
   if sanitizer == 'asan'
     message('Enabling ASan + UBSan + LSan')
@@ -56,11 +56,11 @@ if get_option('buildtype') == 'debug'
   elif sanitizer == 'msan'
       message('Enabling Memory Sanitizer (MSan)')
       add_project_arguments('-Db_sanitize=memory', language: 'cpp')
-      
+
   elif sanitizer == 'tsan'
       message('Enabling Thread Sanitizer (TSan)')
       add_project_arguments('-Db_sanitize=thread', language: 'cpp')
-      
+
   else
       message('No sanitizers enabled')
   endif

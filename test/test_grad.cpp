@@ -18,10 +18,10 @@
 #include <dftd_cutoff.h>
 #include <dftd_damping.h>
 #include <dftd_dispersion.h>
+#include <dftd_eeq.h>
 #include <dftd_matrix.h>
 #include <dftd_model.h>
 #include <dftd_ncoord.h>
-#include <dftd_eeq.h>
 
 #include "molecules.h"
 #include "test_grad.h"
@@ -169,11 +169,7 @@ int test_tpss0d4mbd_rost61m1() {
   return test_numgrad(mol, charge, par);
 }
 
-int test_numgrad_dqdr_eeq(
-  int n,
-  const char atoms[][3],
-  const double coord[]
-) {
+int test_numgrad_dqdr_eeq(int n, const char atoms[][3], const double coord[]) {
   // assemble molecule
   int info;
   TMolecule mol;
@@ -185,16 +181,15 @@ int test_numgrad_dqdr_eeq(
 
   TMatrix<double> dist;
   dist.NewMat(mol.NAtoms, mol.NAtoms);
-  TMatrix<double> num_dqdr;  // numerical gradient of the partial charges
+  TMatrix<double> num_dqdr; // numerical gradient of the partial charges
   num_dqdr.NewMat(3 * mol.NAtoms, mol.NAtoms);
-  TMatrix<double> analytic_dqdr;  // analytical gradient of the partial charges
+  TMatrix<double> analytic_dqdr; // analytical gradient of the partial charges
   analytic_dqdr.NewMat(3 * mol.NAtoms, mol.NAtoms);
   multicharge::EEQModel eeq_model;
   TVector<double> q;
   TMatrix<double> dqdr;
   q.NewVec(mol.NAtoms);
   dqdr.NewMat(3 * mol.NAtoms, mol.NAtoms);
-
 
   TCutoff cutoff;
 
@@ -209,8 +204,9 @@ int test_numgrad_dqdr_eeq(
 
   // analytical gradient
   calc_distances(mol, realIdx, dist);
-  info =
-    eeq_model.get_charges(mol, realIdx, dist, 0, cutoff.cn_eeq, q, analytic_dqdr, true);
+  info = eeq_model.get_charges(
+    mol, realIdx, dist, 0, cutoff.cn_eeq, q, analytic_dqdr, true
+  );
   if (info != EXIT_SUCCESS) return info;
 
   // calculate numerical gradient via finite difference method
@@ -220,19 +216,22 @@ int test_numgrad_dqdr_eeq(
       q_r.NewVec(n);
       mol.CC(i, c) += step;
       calc_distances(mol, realIdx, dist);
-      eeq_model.get_charges(mol, realIdx, dist, 0, cutoff.cn_eeq, q_r, dqdr, false);
+      eeq_model.get_charges(
+        mol, realIdx, dist, 0, cutoff.cn_eeq, q_r, dqdr, false
+      );
 
       // calculate backward point
       q_l.NewVec(n);
       mol.CC(i, c) = mol.CC(i, c) - 2 * step;
       calc_distances(mol, realIdx, dist);
-      eeq_model.get_charges(mol, realIdx, dist, 0, cutoff.cn_eeq, q_l, dqdr, false);
+      eeq_model.get_charges(
+        mol, realIdx, dist, 0, cutoff.cn_eeq, q_l, dqdr, false
+      );
 
       // calculate numerical gradient as finite difference
       mol.CC(i, c) = mol.CC(i, c) + step;
       for (int j = 0; j < mol.NAtoms; j++) {
         num_dqdr(3 * i + c, j) = 0.5 * (q_r(j) - q_l(j)) / step;
-
       }
     }
   }
@@ -241,8 +240,13 @@ int test_numgrad_dqdr_eeq(
   for (int i = 0; i < mol.NAtoms; i++) {
     for (int c = 0; c < 3; c++) {
       for (int j = 0; j < mol.NAtoms; j++) {
-        if (check(analytic_dqdr(3 * i + c, j), num_dqdr(3 * i + c, j), thr) != EXIT_SUCCESS) {
-          print_fail("Gradient mismatch for dqdr in EEQ.\n", analytic_dqdr(3 * i + c, j), num_dqdr(3 * i + c, j));
+        if (check(analytic_dqdr(3 * i + c, j), num_dqdr(3 * i + c, j), thr) !=
+            EXIT_SUCCESS) {
+          print_fail(
+            "Gradient mismatch for dqdr in EEQ.\n",
+            analytic_dqdr(3 * i + c, j),
+            num_dqdr(3 * i + c, j)
+          );
           return EXIT_FAILURE;
         }
       }
@@ -268,9 +272,9 @@ int test_numgrad_dqdr_eeqbc(
 
   TMatrix<double> dist;
   dist.NewMat(mol.NAtoms, mol.NAtoms);
-  TMatrix<double> num_dqdr;  // numerical gradient of the partial charges
+  TMatrix<double> num_dqdr; // numerical gradient of the partial charges
   num_dqdr.NewMat(3 * mol.NAtoms, mol.NAtoms);
-  TMatrix<double> analytic_dqdr;  // analytical gradient of the partial charges
+  TMatrix<double> analytic_dqdr; // analytical gradient of the partial charges
   analytic_dqdr.NewMat(3 * mol.NAtoms, mol.NAtoms);
   multicharge::EEQBCModel eeqbc_model;
   TVector<double> q;
@@ -291,8 +295,9 @@ int test_numgrad_dqdr_eeqbc(
 
   // analytical gradient
   calc_distances(mol, realIdx, dist);
-  info =
-    eeqbc_model.get_charges(mol, realIdx, dist, 0, cutoff.cn_eeq, q, analytic_dqdr, true);
+  info = eeqbc_model.get_charges(
+    mol, realIdx, dist, 0, cutoff.cn_eeq, q, analytic_dqdr, true
+  );
   if (info != EXIT_SUCCESS) return info;
 
   // calculate numerical gradient via finite difference method
@@ -302,13 +307,17 @@ int test_numgrad_dqdr_eeqbc(
       q_r.NewVec(n);
       mol.CC(i, c) += step;
       calc_distances(mol, realIdx, dist);
-      eeqbc_model.get_charges(mol, realIdx, dist, 0, cutoff.cn_eeq, q_r, dqdr, false);
+      eeqbc_model.get_charges(
+        mol, realIdx, dist, 0, cutoff.cn_eeq, q_r, dqdr, false
+      );
 
       // calculate backward point
       q_l.NewVec(n);
       mol.CC(i, c) = mol.CC(i, c) - 2 * step;
       calc_distances(mol, realIdx, dist);
-      eeqbc_model.get_charges(mol, realIdx, dist, 0, cutoff.cn_eeq, q_l, dqdr, false);
+      eeqbc_model.get_charges(
+        mol, realIdx, dist, 0, cutoff.cn_eeq, q_l, dqdr, false
+      );
 
       // calculate numerical gradient as finite difference
       mol.CC(i, c) = mol.CC(i, c) + step;
@@ -322,8 +331,13 @@ int test_numgrad_dqdr_eeqbc(
   for (int i = 0; i < mol.NAtoms; i++) {
     for (int c = 0; c < 3; c++) {
       for (int j = 0; j < mol.NAtoms; j++) {
-        if (check(analytic_dqdr(3 * i + c, j), num_dqdr(3 * i + c, j), thr) != EXIT_SUCCESS) {
-          print_fail("Gradient mismatch for dqdr in EEQ-BC.\n", analytic_dqdr(3 * i + c, j), num_dqdr(3 * i + c, j));
+        if (check(analytic_dqdr(3 * i + c, j), num_dqdr(3 * i + c, j), thr) !=
+            EXIT_SUCCESS) {
+          print_fail(
+            "Gradient mismatch for dqdr in EEQ-BC.\n",
+            analytic_dqdr(3 * i + c, j),
+            num_dqdr(3 * i + c, j)
+          );
           return EXIT_FAILURE;
         }
       }
@@ -336,12 +350,12 @@ int test_numgrad_dqdr_eeqbc(
 int test_grad() {
   int info{0};
 
-  info = test_numgrad_dqdr_eeq(
-    mb16_43_01_n, mb16_43_01_atoms, mb16_43_01_coord);
+  info =
+    test_numgrad_dqdr_eeq(mb16_43_01_n, mb16_43_01_atoms, mb16_43_01_coord);
   if (info != EXIT_SUCCESS) return info;
 
-  info = test_numgrad_dqdr_eeqbc(
-    mb16_43_01_n, mb16_43_01_atoms, mb16_43_01_coord);
+  info =
+    test_numgrad_dqdr_eeqbc(mb16_43_01_n, mb16_43_01_atoms, mb16_43_01_coord);
   if (info != EXIT_SUCCESS) return info;
 
   info = test_pbed4_mb01();
