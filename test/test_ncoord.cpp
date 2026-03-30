@@ -117,8 +117,10 @@ int test_numgrad_d4(int n, const char atoms[][3], const double coord[]) {
   for (int c = 0; c < 3; c++) {
     for (int i = 0; i < mol.NAtoms; i++) {
       for (int k = 0; k < i; k++) {
-        if (abs(analytic_dcndr(k, 3 * i + c) + analytic_dcndr(i, 3 * k + c)) >
-            1.0e-9) {
+        if (
+          abs(analytic_dcndr(k, 3 * i + c) + analytic_dcndr(i, 3 * k + c)) >
+          1.0e-9
+        ) {
           print_fail(
             "Analytical CN-gradient is not antisymmetric for NCoordErfD4",
             analytic_dcndr(k, 3 * i + c) + analytic_dcndr(i, 3 * k + c),
@@ -153,8 +155,10 @@ int test_numgrad_d4(int n, const char atoms[][3], const double coord[]) {
   for (int i = 0; i < mol.NAtoms; i++) {
     for (int c = 0; c < 3; c++) {
       for (int j = 0; j < mol.NAtoms; j++) {
-        if (check(analytic_dcndr(j, 3 * i + c), num_dcndr(j, 3 * i + c), thr) !=
-            EXIT_SUCCESS) {
+        if (
+          check(analytic_dcndr(j, 3 * i + c), num_dcndr(j, 3 * i + c), thr) !=
+          EXIT_SUCCESS
+        ) {
           print_fail(
             "Gradient mismatch for NCoordErfD4 dcndr",
             analytic_dcndr(j, 3 * i + c),
@@ -227,8 +231,10 @@ int test_numgrad(int n, const char atoms[][3], const double coord[]) {
   for (int i = 0; i < mol.NAtoms; i++) {
     for (int c = 0; c < 3; c++) {
       for (int j = 0; j < mol.NAtoms; j++) {
-        if (check(analytic_dcndr(j, 3 * i + c), num_dcndr(j, 3 * i + c), thr) !=
-            EXIT_SUCCESS) {
+        if (
+          check(analytic_dcndr(j, 3 * i + c), num_dcndr(j, 3 * i + c), thr) !=
+          EXIT_SUCCESS
+        ) {
           print_fail(
             "Gradient mismatch for NCoordErf dcndr",
             analytic_dcndr(j, 3 * i + c),

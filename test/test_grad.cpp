@@ -240,8 +240,10 @@ int test_numgrad_dqdr_eeq(int n, const char atoms[][3], const double coord[]) {
   for (int i = 0; i < mol.NAtoms; i++) {
     for (int c = 0; c < 3; c++) {
       for (int j = 0; j < mol.NAtoms; j++) {
-        if (check(analytic_dqdr(3 * i + c, j), num_dqdr(3 * i + c, j), thr) !=
-            EXIT_SUCCESS) {
+        if (
+          check(analytic_dqdr(3 * i + c, j), num_dqdr(3 * i + c, j), thr) !=
+          EXIT_SUCCESS
+        ) {
           print_fail(
             "Gradient mismatch for dqdr in EEQ.\n",
             analytic_dqdr(3 * i + c, j),
@@ -331,8 +333,10 @@ int test_numgrad_dqdr_eeqbc(
   for (int i = 0; i < mol.NAtoms; i++) {
     for (int c = 0; c < 3; c++) {
       for (int j = 0; j < mol.NAtoms; j++) {
-        if (check(analytic_dqdr(3 * i + c, j), num_dqdr(3 * i + c, j), thr) !=
-            EXIT_SUCCESS) {
+        if (
+          check(analytic_dqdr(3 * i + c, j), num_dqdr(3 * i + c, j), thr) !=
+          EXIT_SUCCESS
+        ) {
           print_fail(
             "Gradient mismatch for dqdr in EEQ-BC.\n",
             analytic_dqdr(3 * i + c, j),

@@ -99,8 +99,10 @@ inline int BLAS_Add_Mat_x_Mat(
   const double alpha
 ) {
   // check for size 0 matrices
-  if (A.cols == 0 || A.rows == 0 || B.cols == 0 || B.rows == 0 || C.cols == 0 ||
-      C.rows == 0) {
+  if (
+    A.cols == 0 || A.rows == 0 || B.cols == 0 || B.rows == 0 || C.cols == 0 ||
+    C.rows == 0
+  ) {
     exit(EXIT_FAILURE);
   };
 

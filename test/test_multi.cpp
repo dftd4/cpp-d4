@@ -13,9 +13,11 @@ int test_multi_param() {
   // to be the same
   //  as in the EEQ-BC parameter header file
   // Chi parameter (currently first in constructor initializer list)
-  if (check(
-        multicharge_param::eeqbc::eeqbc_chi[1], param_eeqbc_chi_ref[0], 1.0E-9
-      ) == EXIT_FAILURE) {
+  if (
+    check(
+      multicharge_param::eeqbc::eeqbc_chi[1], param_eeqbc_chi_ref[0], 1.0E-9
+    ) == EXIT_FAILURE
+  ) {
     print_fail(
       "Multicharge: Param",
       multicharge_param::eeqbc::eeqbc_chi[1],
@@ -23,9 +25,11 @@ int test_multi_param() {
     );
     return EXIT_FAILURE;
   }
-  if (check(
-        multicharge_param::eeqbc::eeqbc_chi[103], param_eeqbc_chi_ref[1], 1.0E-9
-      ) == EXIT_FAILURE) {
+  if (
+    check(
+      multicharge_param::eeqbc::eeqbc_chi[103], param_eeqbc_chi_ref[1], 1.0E-9
+    ) == EXIT_FAILURE
+  ) {
     print_fail(
       "Multicharge: Param",
       multicharge_param::eeqbc::eeqbc_chi[103],
@@ -39,11 +43,13 @@ int test_multi_param() {
   int jat = 1;
   int ij_at = (((iat - 1) * iat) / 2 + jat) -
               1; // calculate index for half-vectorized matrix rvdw
-  if (check(
-        multicharge_param::eeqbc::eeqbc_rvdw[ij_at],
-        param_eeqbc_rvdw_ref[0],
-        1.0E-4
-      ) == EXIT_FAILURE) {
+  if (
+    check(
+      multicharge_param::eeqbc::eeqbc_rvdw[ij_at],
+      param_eeqbc_rvdw_ref[0],
+      1.0E-4
+    ) == EXIT_FAILURE
+  ) {
     print_fail(
       "Multicharge: Param",
       multicharge_param::eeqbc::eeqbc_rvdw[ij_at],
@@ -55,11 +61,13 @@ int test_multi_param() {
   jat = 102;
   ij_at = (((iat - 1) * iat) / 2 + jat) -
           1; // calculate index for half-vectorized matrix rvdw
-  if (check(
-        multicharge_param::eeqbc::eeqbc_rvdw[ij_at],
-        param_eeqbc_rvdw_ref[1],
-        1.0E-4
-      ) == EXIT_FAILURE) {
+  if (
+    check(
+      multicharge_param::eeqbc::eeqbc_rvdw[ij_at],
+      param_eeqbc_rvdw_ref[1],
+      1.0E-4
+    ) == EXIT_FAILURE
+  ) {
     print_fail(
       "Multicharge: Param",
       multicharge_param::eeqbc::eeqbc_rvdw[ij_at],
@@ -71,11 +79,13 @@ int test_multi_param() {
   jat = 103;
   ij_at = (((iat - 1) * iat) / 2 + jat) -
           1; // calculate index for half-vectorized matrix rvdw
-  if (check(
-        multicharge_param::eeqbc::eeqbc_rvdw[ij_at],
-        param_eeqbc_rvdw_ref[2],
-        1.0E-4
-      ) == EXIT_FAILURE) {
+  if (
+    check(
+      multicharge_param::eeqbc::eeqbc_rvdw[ij_at],
+      param_eeqbc_rvdw_ref[2],
+      1.0E-4
+    ) == EXIT_FAILURE
+  ) {
     print_fail(
       "Multicharge: Param",
       multicharge_param::eeqbc::eeqbc_rvdw[ij_at],
